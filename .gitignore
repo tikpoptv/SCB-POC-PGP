@@ -1,2 +1,25 @@
 # Kiro working spec files — internal, not pushed (เผยแพร่สำเนาใน docs/ แทน)
 .kiro/
+
+# VPN / WireGuard configs — มีความลับ (PrivateKey/PresharedKey) ห้าม push
+vpn/
+*.conf
+wg*.conf
+
+# --- Benchmark POC build artifacts (task 1.1 scaffolding) ---
+
+# Python harness
+harness/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Go runner build output
+runners/go/go-runner
+runners/go/*.test
+
+# Java runner build output (keep mvnw, mvnw.cmd, .mvn/ committed)
+runners/java/target/
+
+MEETING-SUMMARY.md

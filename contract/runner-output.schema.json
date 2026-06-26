@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://poc.local/pgp-benchmark/contract/runner-output.schema.json",
+  "title": "RunnerOutput",
+  "description": "RunnerOutput JSON written by a Runner to stdout (exactly one object). Carries raw per-operation samples plus run metadata. CPU/RAM samples are collected externally by the Harness. Derived from design.md (Data Models / RunnerOutput).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "runnerId",
+    "variantId",
+    "mode",
+    "scenarioId",
+    "cryptoProfileId",
+    "concurrency",
+    "outputEncoding",
+    "hardwareAccel",
+    "keySetChecksumSeen",
+    "corpusChecksumSeen",
+    "operations"
+  ],
+  "properties": {
+    "runnerId": {
+      "type": "string",
+      "enum": ["go", "java"],
+      "description": "Which Runner produced this output."
+    },
+    "variantId": { "type": "string", "minLength": 1, "description": "Implementation_Variant identifier (Req 6.5)." },
+    "mode": { "type": "string", "enum": ["cold_start", "steady_state"], "description": "Execution mode (Req 21)." },
+    "scenarioId": { "type": "string", "minLength": 1, "description": "Scenario identifier this run belongs to." },
+    "cryptoProfileId": { "type": "string", "minLength": 1, "description": "Crypto_Profile identifier used for the run." },
+    "concurrency": { "type": "integer", "minimum": 1, "description": "Concurrency level actually used." },
+    "outputEncoding": {
+      "type": "string",
+      "enum": ["binary", "armored"],
+      "description": "OpenPGP output encoding actually used (Req 4.7)."
+    },
+    "processStartupMs": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Process_Startup_Time, cold_start only. Supplementary cold-start metric, NOT merged into core/steady-state (Req 21.4, 21.7). null when not applicable."
+    },
+    "hardwareAccel": { "type": "boolean", "description": "Whether hardware AES (AES-NI) was actually used (Req 23.1)." },
+    "keySetChecksumSeen": {
+      "$ref": "#/$defs/checksum",
+      "description": "Checksum the Runner actually computed for the Key_Set it loaded (Req 4.6)."
+    },
+    "corpusChecksumSeen": {
+      "$ref": "#/$defs/checksum",
+      "description": "Checksum the Runner actually computed for the Test_Corpus it loaded (Req 4.6)."
+    },
+    "gc": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["collections", "totalPauseMs", "gcType"],
+          "properties": {
+            "collections": { "type": "integer", "minimum": 0 },
+            "totalPauseMs": { "type": "number", "minimum": 0 },
+            "gcType": { "type": "string" },
+            "heapInitMb": { "type": ["number", "null"], "minimum": 0 },
+            "heapMaxMb": { "type": ["number", "null"], "minimum": 0 }
+          }
+        }
+      ],
+      "description": "GC statistics reported by the Runner (Req 17.2, 17.3). null when unavailable."
+    },
+    "operations": {
+      "type": "array",
+      "description": "Raw per-operation samples; every value retained for audit (Req 10.1, 20.5).",
+      "items": { "$ref": "#/$defs/operation" }
+    },
+    "resourceSamplesNote": {
+      "type": "string",
+      "description": "Free-text note (e.g. that CPU/RAM are sampled externally by the Harness)."
+    }
+  },
+  "$defs": {
+    "checksum": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-fA-F]{64}$",
+      "description": "Checksum string in the form 'sha256:<64 hex chars>'."
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fileName",
+        "fileType",
+        "originalBytes",
+        "skipped",
+        "roundTripOk"
+      ],
+      "properties": {
+        "fileName": { "type": "string", "minLength": 1, "description": "Source file name." },
+        "fileType": { "type": "string", "description": "File extension including dot, e.g. '.pdf'." },
+        "originalBytes": { "type": "integer", "minimum": 0, "description": "Size of the original file in bytes." },
+        "ciphertextBytes": { "type": ["integer", "null"], "minimum": 0, "description": "Ciphertext size in bytes (Req 18.3, 30.3). null when skipped." },
+        "skipped": { "type": "boolean", "description": "True for .ctrl/.ctl or unsupported extensions (Req 32.3, 32.7)." },
+        "skipReason": { "type": ["string", "null"], "enum": ["control_file", "unsupported", null], "description": "Reason a file was skipped, if any (Req 32.3, 32.7)." },
+        "encryptMs": { "type": ["number", "null"], "minimum": 0, "description": "Crypto-only encrypt time in ms (Req 1.1, 24)." },
+        "decryptMs": { "type": ["number", "null"], "minimum": 0, "description": "Crypto-only decrypt time in ms (Req 1.1, 24)." },
+        "asymEncryptMs": { "type": ["number", "null"], "description": "Asymmetric encrypt time in ms; -1 if not separable (Req 24.3)." },
+        "asymDecryptMs": { "type": ["number", "null"], "description": "Asymmetric decrypt time in ms; -1 if not separable (Req 24.3)." },
+        "symEncryptMs": { "type": ["number", "null"], "description": "Symmetric encrypt time in ms; -1 if not separable (Req 24.3)." },
+        "symDecryptMs": { "type": ["number", "null"], "description": "Symmetric decrypt time in ms; -1 if not separable (Req 24.3)." },
+        "roundTripOk": { "type": "boolean", "description": "Byte-for-byte round-trip success (Req 5.1)." },
+        "failureType": { "type": ["string", "null"], "enum": ["operation_failure", "correctness_failure", null], "description": "Failure classification (Req 12.1)." },
+        "outputFileName": { "type": ["string", "null"], "description": "Output file name per naming rule (Req 32.2, 32.4)." }
+      }
+    }
+  }
+}

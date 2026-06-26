@@ -4,19 +4,48 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+      Java_Runner — shared CLI shell (task 11.1).
+
+      Spring Boot is used ONLY as the application/runtime shell for the CLI
+      (CommandLineRunner). There is intentionally NO web / data / actuator /
+      networking starter so the runner honours the out-of-scope guard (Req 1.2):
+      the only Spring dependency is `spring-boot-starter` (core context + logging).
+      Bouncy Castle (bcpg/bcprov) remains the OpenPGP crypto provider; Jackson
+      parses the Command JSON and serialises the RunnerOutput JSON.
+
+      NOTE: design.md targets Spring Boot 4.x / JDK 25 for the final POC. This
+      scaffold pins a current Spring Boot 3.4.x line + Java 21 so it builds and
+      runs on the present toolchain; bumping the parent + <java.version> is the
+      only change needed when JDK 25 / Spring Boot 4.x are in place.
+    -->
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.1</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.poc.pgp</groupId>
-    <artifactId>java-inmem-runner</artifactId>
+    <artifactId>java-runner</artifactId>
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <properties>
-        <!-- ใช้ Java 21 เพื่อให้รันได้ทันที; POC ตัวจริงตั้งเป้า JDK LTS ล่าสุด -->
-        <maven.compiler.release>21</maven.compiler.release>
+        <!-- Java 21 so it runs on the current toolchain; POC target is JDK 25. -->
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <bouncycastle.version>1.78.1</bouncycastle.version>
     </properties>
 
     <dependencies>
+        <!-- Spring Boot CLI shell ONLY (no web/data/actuator) — Req 1.2 guard. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
         <!-- Bouncy Castle: OpenPGP (bcpg) + provider (bcprov) -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -29,42 +58,36 @@
             <version>${bouncycastle.version}</version>
         </dependency>
 
-        <!-- JSON สำหรับ parse คำสั่ง stdin / สร้างผล stdout -->
+        <!-- JSON: parse the Command (stdin) / build the RunnerOutput (stdout).
+             Version is managed by the Spring Boot BOM. -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
         </dependency>
 
-        <!-- ทดสอบ -->
+        <!-- Tests: JUnit 5 (version managed by the Spring Boot BOM). -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- รวม dependency เป็น fat-jar ให้รันด้วย java -jar ได้ -->
+            <!--
+              spring-boot-maven-plugin repackages into an executable jar that
+              keeps dependency jars NESTED (not exploded). This preserves the
+              Bouncy Castle signed-jar signature, which the JCE requires when
+              BC is registered as a security provider — an uber/shaded jar would
+              break that signature.
+            -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals><goal>shade</goal></goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.poc.pgp.JavaRunner</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.poc.pgp.JavaRunnerApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

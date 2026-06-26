@@ -1,0 +1,13 @@
+# Benchmark_Harness runtime + test dependencies (pinned for reproducibility, Req 19.1).
+# Scope guard (Req 1.2): NO network/DB/web client libraries.
+#
+# numpy/scipy  -> statistics engine (percentiles, stddev, CV, CI) (Req 10, 26)
+# psutil       -> per-process CPU/RAM sampling of Runner subprocesses (Req 11)
+# jsonschema   -> validate Command/RunnerOutput against the shared CLI contract (Req 4.7, 5.3)
+# hypothesis   -> property-based testing of the harness (test-only)
+numpy>=2.1,<3
+scipy>=1.14,<2
+psutil>=6.0,<8
+jsonschema>=4.20,<5
+hypothesis>=6.100,<7
+pytest>=8.0,<9
