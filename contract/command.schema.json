@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://poc.local/pgp-benchmark/contract/command.schema.json",
+  "title": "Command",
+  "description": "Command JSON sent by the Benchmark_Harness to a Runner on stdin. Exactly one object per process invocation. Derived from design.md (Runner CLI Contract / Data Models). The same shape is consumed by both the Go_Runner and the Java_Runner so the harness treats them identically.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "command",
+    "variantId",
+    "mode",
+    "warmupIterations",
+    "concurrency",
+    "cryptoProfile",
+    "outputEncoding",
+    "keySetPath",
+    "keySetChecksum",
+    "corpusPath",
+    "corpusChecksum",
+    "outputDir",
+    "operation"
+  ],
+  "properties": {
+    "command": {
+      "type": "string",
+      "const": "run",
+      "description": "Verb for the invocation. Currently only 'run'."
+    },
+    "variantId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique Implementation_Variant identifier, e.g. 'go-stream-parallel', 'java-inmem-single' (Req 6.1)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["cold_start", "steady_state"],
+      "description": "Execution mode (Req 21)."
+    },
+    "warmupIterations": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Warm_Up_Iteration count run before recorded samples (Req 8.6); steady/soak require >= 1 (Req 17.1)."
+    },
+    "concurrency": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Concurrency level for parallel variants, 1..vCPU (Req 16)."
+    },
+    "cryptoProfile": { "$ref": "#/$defs/cryptoProfile" },
+    "outputEncoding": { "$ref": "#/$defs/outputEncoding" },
+    "keySetPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Path to the shared Key_Set (typically on tmpfs)."
+    },
+    "keySetChecksum": {
+      "$ref": "#/$defs/checksum",
+      "description": "Reference checksum the Runner must confirm for the Key_Set (Req 4.5, 4.6)."
+    },
+    "corpusPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Path to the scenario Test_Corpus directory."
+    },
+    "corpusChecksum": {
+      "$ref": "#/$defs/checksum",
+      "description": "Reference checksum the Runner must confirm for the Test_Corpus (Req 4.5, 4.6)."
+    },
+    "outputDir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Directory where the Runner writes ciphertext / decrypted output for this run."
+    },
+    "operation": {
+      "type": "string",
+      "enum": ["encrypt", "decrypt", "roundtrip"],
+      "description": "Operation to perform. 'roundtrip' = encrypt then decrypt with byte-for-byte verification (Req 5.1)."
+    }
+  },
+  "$defs": {
+    "outputEncoding": {
+      "type": "string",
+      "enum": ["binary", "armored"],
+      "description": "OpenPGP output encoding. Must be identical for all Runners within a Scenario so ciphertext sizes and interop are comparable (Req 4.7)."
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-fA-F]{64}$",
+      "description": "Checksum string in the form 'sha256:<64 hex chars>'."
+    },
+    "cryptoProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pubAlg", "cipher", "compression", "hash"],
+      "properties": {
+        "pubAlg": { "type": "string", "minLength": 1, "description": "Public-key algorithm, e.g. 'RSA-2048', 'RSA-4096', 'Curve25519'." },
+        "cipher": { "type": "string", "minLength": 1, "description": "Symmetric cipher, e.g. 'AES-256', 'CHACHA20'." },
+        "compression": { "type": "string", "minLength": 1, "description": "Compression algorithm, e.g. 'ZLIB', 'NONE'." },
+        "hash": { "type": "string", "minLength": 1, "description": "Hash algorithm, e.g. 'SHA-256'." }
+      }
+    }
+  }
+}

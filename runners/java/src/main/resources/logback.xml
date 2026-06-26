@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Logging configuration for the Java_Runner CLI shell.
+
+  The CLI contract requires that stdout carry EXACTLY one RunnerOutput JSON
+  object and nothing else (design.md, Runner CLI Contract). Logback's default
+  console appender writes to System.out, which would corrupt that stream, so we
+  send ALL log/diagnostic output to System.err instead — matching the Go_Runner,
+  which logs only to stderr.
+-->
+<configuration>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{24} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDERR"/>
+    </root>
+</configuration>

@@ -1,0 +1,32 @@
+{
+  "description": "Shared Runner process exit codes for the PGP benchmark CLI contract (design.md, Runner CLI Contract). Single source of truth referenced by the Go_Runner, Java_Runner, and Python harness. Any code > 0 that is not 2, 3, or 4 denotes a generic operation failure (Req 5.3).",
+  "codes": [
+    {
+      "name": "SUCCESS",
+      "code": 0,
+      "meaning": "Success. Includes runs where per-file correctness failures were recorded in the RunnerOutput JSON (the process itself completed normally)."
+    },
+    {
+      "name": "CHECKSUM_OR_VERSION_MISMATCH",
+      "code": 2,
+      "meaning": "Key_Set/Test_Corpus checksum mismatch or version mismatch. Input did not match the reference; results must not enter statistics (Req 4.6, 2.5)."
+    },
+    {
+      "name": "CONFIG_ERROR",
+      "code": 3,
+      "meaning": "Invalid config/command JSON (malformed, missing required fields, or out-of-range values) (Req 19.6)."
+    },
+    {
+      "name": "UNSUPPORTED_CRYPTO_PROFILE",
+      "code": 4,
+      "meaning": "Requested crypto-profile (cipher/compression/pubAlg) is not supported by this Runner (Req 4.4, 18.5)."
+    },
+    {
+      "name": "OPERATION_FAILURE",
+      "code": 1,
+      "meaning": "Generic operation failure. Canonical value is 1, but any code > 0 other than 2, 3, or 4 is treated as an operation failure (Req 5.3)."
+    }
+  ],
+  "reserved": [2, 3, 4],
+  "operationFailureFallback": true
+}
