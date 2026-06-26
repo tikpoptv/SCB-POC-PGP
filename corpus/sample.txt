@@ -1,0 +1,7 @@
+PGP benchmark POC - sample text file.
+This is a small, compressible text file used to test encrypt/decrypt round-trip.
+บรรทัดภาษาไทยเพื่อทดสอบ non-ASCII / UTF-8 ด้วย.
+1234567890 the quick brown fox jumps over the lazy dog.
+the quick brown fox jumps over the lazy dog.
+the quick brown fox jumps over the lazy dog.
+the quick brown fox jumps over the lazy dog.
