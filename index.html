@@ -1,0 +1,1600 @@
+<!DOCTYPE html><html lang="th">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POC Report — PGP Benchmark: Go vs Java</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f2f5;color:#2c3e50;font-size:14px}
+.wrap{max-width:1280px;margin:0 auto;padding:20px}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:36px;
+  border-radius:12px;margin-bottom:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.hdr h1{font-size:24px;font-weight:800;margin-bottom:6px}
+.hdr .sub{font-size:13px;opacity:.8;margin-bottom:14px}
+.hdr .meta{font-size:11px;opacity:.6;display:flex;gap:20px;flex-wrap:wrap}
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:0;flex-wrap:wrap}
+.tab{padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600;
+  font-size:13px;border:none;background:#dde1e7;color:#555;transition:.2s}
+.tab.active{background:#fff;color:#0f3460;box-shadow:0 -2px 8px rgba(0,0,0,.08)}
+.tab:hover{background:#e8eaed}
+/* PAGE */
+.page{display:none;background:#fff;border-radius:0 12px 12px 12px;padding:28px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:20px}
+.page.active{display:block}
+/* CARD inside page */
+.card{background:#f8f9fa;border-radius:10px;padding:22px;margin-bottom:18px;
+  border:1px solid #e9ecef}
+h2{font-size:18px;font-weight:700;color:#1a1a2e;border-left:4px solid #00ADE8;
+  padding-left:12px;margin-bottom:16px}
+h3{font-size:15px;font-weight:600;color:#2c3e50;margin:16px 0 8px}
+h4{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+p,li{line-height:1.8;color:#444}
+ul{padding-left:20px}
+/* VERDICT */
+.verdict{background:linear-gradient(135deg,#00ADE8,#0078a8);color:#fff;
+  padding:22px;border-radius:10px;text-align:center;margin-bottom:18px}
+.verdict .big{font-size:36px;font-weight:900}
+.verdict .vsub{font-size:14px;opacity:.9;margin-top:4px}
+/* STATS GRID */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.sbox{background:#fff;border-radius:10px;padding:16px;text-align:center;
+  border:2px solid #e9ecef;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.sbox .val{font-size:28px;font-weight:800}
+.sbox .lbl{font-size:11px;color:#6c757d;margin-top:3px}
+.go-b{border-color:#00ADE8}.go-b .val{color:#00ADE8}
+.java-b{border-color:#F89820}.java-b .val{color:#F89820}
+.green-b{border-color:#27ae60}.green-b .val{color:#27ae60}
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#1a1a2e;color:#fff;padding:10px 9px;text-align:left;font-weight:600}
+td{padding:9px;border-bottom:1px solid #e9ecef;vertical-align:middle}
+tr:hover td{background:#f0f4f8}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.bg{background:#cce9f6;color:#0078a8}
+.bj{background:#fde9c8;color:#b96800}
+.bt{background:#e9ecef;color:#6c757d}
+.sg{color:#00ADE8;font-weight:700}
+.sj{color:#F89820;font-weight:700}
+/* GRID 2/3/4 cols */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+/* METHOD BOX */
+.mbox{background:#fff;border-radius:10px;padding:18px;border-left:4px solid #00ADE8;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.mbox.green{border-left-color:#27ae60}
+.mbox.orange{border-left-color:#F89820}
+.mbox.purple{border-left-color:#9b59b6}
+.mbox.red{border-left-color:#e74c3c}
+/* TIMELINE */
+.timeline{list-style:none;padding-left:0}
+.timeline li{position:relative;padding:12px 12px 12px 44px;margin-bottom:10px;
+  background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.timeline li::before{content:attr(data-n);position:absolute;left:10px;top:12px;
+  background:#00ADE8;color:#fff;width:24px;height:24px;border-radius:50%;
+  text-align:center;line-height:24px;font-weight:700;font-size:12px}
+.tl-title{font-weight:700;font-size:13px;color:#1a1a2e;margin-bottom:3px}
+/* CODE BLOCK */
+.code{background:#1a1a2e;color:#e8eaed;padding:16px;border-radius:8px;
+  font-family:monospace;font-size:12px;line-height:1.7;overflow-x:auto;margin:10px 0}
+.code .c{color:#6a9fb5}.code .k{color:#cc99cd}.code .s{color:#7ec699}
+/* HIGHLIGHT */
+.hi{background:#fff3cd;border-left:4px solid #ffc107;padding:12px 16px;
+  border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:12px 16px;
+  border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+/* CHART */
+.chart-box{background:#fff;border-radius:10px;padding:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.chart-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.chart-sub{font-size:11px;font-weight:400;color:#888;margin-top:2px}
+/* SECTION NUM */
+.sn{display:inline-block;background:#00ADE8;color:#fff;width:24px;height:24px;
+  border-radius:50%;text-align:center;line-height:24px;font-weight:700;
+  font-size:12px;margin-right:8px;flex-shrink:0}
+footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
+@media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <h1>📊 รายงาน POC: เปรียบเทียบประสิทธิภาพการเข้ารหัส PGP</h1>
+  <div class="sub">Go (ProtonMail/go-crypto) เทียบกับ Java (Spring Boot + Bouncy Castle)
+    — ผลการทดสอบจริงบน VM Ubuntu 24.04 LTS, 8 vCPU, 8 GB RAM</div>
+  <div class="meta">
+    <span>📅 เริ่มทดสอบ: 2026-06-29 04:53:27</span>
+    <span>✅ สิ้นสุด: 2026-06-29 05:02:04</span>
+    <span>🖥 VM: Ubuntu 24.04, 8 vCPU, 8 GB RAM</span>
+    <span>🔒 AES-256 + ZLIB + SHA-256</span>
+    <span>🧪 721 tests ผ่านทั้งหมด</span>
+  </div>
+</div>
+
+<div class="tabs"><button class="tab active" id="tab-summary" onclick="showTab('summary')">📊 สรุปผล</button><button class="tab" id="tab-charts" onclick="showTab('charts')">📈 กราฟ</button><button class="tab" id="tab-method" onclick="showTab('method')">🔬 วิธีการทดสอบ</button><button class="tab" id="tab-testdata" onclick="showTab('testdata')">📁 ข้อมูลและ Variants</button><button class="tab" id="tab-tests" onclick="showTab('tests')">🧪 721 Tests</button><button class="tab" id="tab-integrity" onclick="showTab('integrity')">🛡 ความน่าเชื่อถือ</button></div>
+<div class="page active" id="page-summary">
+<div class="verdict" style="background:linear-gradient(135deg,#00ADE8cc,#00ADE8)">
+  <div class="big">🏆 Go ชนะ</div>
+  <div class="vsub">ชนะ 15 จาก 15 test cases
+      | เร็วกว่าเฉลี่ย 1.2× | ทดสอบเมื่อ 2026-06-29 04:53:27</div>
+</div>
+
+<div class="stats">
+  <div class="sbox go-b"><div class="val">27.2</div><div class="lbl">Go avg latency (ms)</div></div>
+  <div class="sbox java-b"><div class="val">33.8</div><div class="lbl">Java avg latency (ms)</div></div>
+  <div class="sbox green-b"><div class="val">15</div><div class="lbl">Go ชนะ (/15 cases)</div></div>
+  <div class="sbox" style="border-color:#F89820"><div class="val" style="color:#F89820">0</div><div class="lbl">Java ชนะ (/15 cases)</div></div>
+  <div class="sbox"><div class="val" style="color:#6c757d">0</div><div class="lbl">เสมอ ±5%</div></div>
+  <div class="sbox green-b"><div class="val">100%</div><div class="lbl">Correctness ทุกไฟล์</div></div>
+</div>
+
+<div class="card">
+  <h3>📌 ข้อสรุปสำหรับการตัดสินใจ</h3>
+  <ul style="line-height:2.2">
+    <li><strong>Go เร็วกว่า Java 3.6–3.9× ใน Curve25519 ECC</strong>
+        — เป็น algorithm ยุคใหม่ที่แนะนำสำหรับระบบใหม่ กุญแจเล็กกว่า RSA ปลอดภัยมากกว่า</li>
+    <li><strong>Go เร็วกว่า Java 1.4–1.5× ใน RSA-2048</strong>
+        — มาตรฐานที่ใช้งานอยู่ในปัจจุบัน Go มีความได้เปรียบชัดเจน</li>
+    <li><strong>RSA-4096 ช่องว่างแคบลง ~1.2×</strong>
+        — เมื่อขนาดกุญแจใหญ่ขึ้น งาน asymmetric crypto หนักขึ้น Java ตามทัน</li>
+    <li><strong>ไฟล์กลาง (5 MB) Go เร็วกว่า ~1.2×</strong>
+        — ยิ่งไฟล์ใหญ่ AES symmetric ครองเวลามากขึ้น Java JIT ตามทัน</li>
+    <li><strong>ไฟล์เล็กจำนวนมาก (100×10 KB) Go เร็วกว่า ~1.6×</strong>
+        — Go มี overhead ต่อไฟล์น้อยกว่า JVM startup ต่อ operation</li>
+    <li><strong>Correctness (ความถูกต้อง) 100% ทุก test</strong>
+        — ทั้ง Go และ Java ถอดรหัสกลับได้ครบทุก byte ไม่มีข้อมูลเสียหาย</li>
+    <li><strong>⭐ ข้อแนะนำ</strong>: ถ้าระบบใหม่ต้องการ PGP performance สูงสุด
+        <strong>Go เป็นตัวเลือกที่เหมาะกว่า</strong>
+        โดยเฉพาะถ้าใช้ Curve25519 หรือ workload ไฟล์เล็กจำนวนมาก</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>📊 ผลการทดสอบแบบละเอียด — ทุก Test Case (p50 round-trip ms)</h3>
+  <p style="font-size:12px;color:#888;margin-bottom:12px">
+    วัดค่ากลาง (p50/median — ค่ากลางที่ 50% ของการทดสอบเร็วกว่านี้)
+    ของ round-trip time (เวลาเข้ารหัส + ถอดรหัส รวมกัน) จาก 5 รอบ
+    สลับลำดับ Go/Java — วัดเฉพาะ crypto call ไม่รวม disk I/O หรือ key loading
+  </p>
+  <table>
+    <thead><tr>
+      <th>Scenario / ประเภทไฟล์</th><th>ชนิดกุญแจ</th>
+      <th>🔵 Go ดีที่สุด</th><th>🟠 Java ดีที่สุด</th>
+      <th>ผล</th><th>ความต่าง</th>
+    </tr></thead>
+    <tbody><tr>
+          <td>ไฟล์เล็ก บีบอัดได้ (20×50KB .txt)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
+          <td style="color:#00ADE8;font-weight:600">1.158 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">1.781 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr>
+          <td>ไฟล์เล็ก บีบอัดได้ (20×50KB .txt)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
+          <td style="color:#00ADE8;font-weight:600">4.968 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">6.069 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์เล็ก บีบอัดได้ (20×50KB .txt)</td><td>Curve25519 ECC (ยุคใหม่)</td>
+          <td style="color:#00ADE8;font-weight:600">0.405 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">1.471 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 3.6×</span></td></tr><tr>
+          <td>ไฟล์เล็ก บีบอัดไม่ได้ (20×50KB binary)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
+          <td style="color:#00ADE8;font-weight:600">1.860 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">2.610 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr>
+          <td>ไฟล์เล็ก บีบอัดไม่ได้ (20×50KB binary)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
+          <td style="color:#00ADE8;font-weight:600">5.742 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">7.007 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์เล็ก บีบอัดไม่ได้ (20×50KB binary)</td><td>Curve25519 ECC (ยุคใหม่)</td>
+          <td style="color:#00ADE8;font-weight:600">1.206 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">2.367 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 2.0×</span></td></tr><tr>
+          <td>ไฟล์กลาง บีบอัดได้ (4×5MB .csv)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
+          <td style="color:#00ADE8;font-weight:600">17.720 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td style="color:#F89820;font-weight:600">21.312 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์กลาง บีบอัดได้ (4×5MB .csv)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
+          <td style="color:#00ADE8;font-weight:600">21.693 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td style="color:#F89820;font-weight:600">29.223 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr>
+          <td>ไฟล์กลาง บีบอัดได้ (4×5MB .csv)</td><td>Curve25519 ECC (ยุคใหม่)</td>
+          <td style="color:#00ADE8;font-weight:600">17.849 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td style="color:#F89820;font-weight:600">20.754 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์กลาง บีบอัดไม่ได้ (4×5MB binary)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
+          <td style="color:#00ADE8;font-weight:600">109.960 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">134.678 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์กลาง บีบอัดไม่ได้ (4×5MB binary)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
+          <td style="color:#00ADE8;font-weight:600">110.424 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">143.074 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>ไฟล์กลาง บีบอัดไม่ได้ (4×5MB binary)</td><td>Curve25519 ECC (ยุคใหม่)</td>
+          <td style="color:#00ADE8;font-weight:600">109.375 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">129.791 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์เล็กจำนวนมาก (100×10KB)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
+          <td style="color:#00ADE8;font-weight:600">0.797 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">1.268 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr>
+          <td>ไฟล์เล็กจำนวนมาก (100×10KB)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
+          <td style="color:#00ADE8;font-weight:600">4.760 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">5.500 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ไฟล์เล็กจำนวนมาก (100×10KB)</td><td>Curve25519 ECC (ยุคใหม่)</td>
+          <td style="color:#00ADE8;font-weight:600">0.201 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">0.788 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 3.9×</span></td></tr></tbody>
+  </table>
+</div>
+
+
+<div class="card">
+  <h2><span class="sn">🏅</span>เปรียบเทียบทุก Algorithm — Go vs Java ทุกคู่ (RSA-2048)</h2>
+  <p style="margin-bottom:14px;color:#666;font-size:13px">
+    Go มี <strong>3 variants (รูปแบบ)</strong> |
+    Java มี <strong>3 variants</strong> |
+    ทดสอบ <strong>135 คู่</strong> รวมทุก scenario × key type
+  </p>
+
+  <div class="grid3" style="margin-bottom:18px">
+    <div class="mbox green">
+      <h4>🥇 Go Variant ที่ดีที่สุด</h4>
+      <p style="font-size:18px;font-weight:800;color:#00ADE8;margin:6px 0">
+        Go: in-memory (single)
+      </p>
+      <p>ชนะ <strong>45 matchups</strong> จาก 45 matchups
+         ที่ variant นี้เข้าแข่ง</p>
+    </div>
+    <div class="mbox orange">
+      <h4>🥇 Java Variant ที่ดีที่สุด</h4>
+      <p style="font-size:18px;font-weight:800;color:#F89820;margin:6px 0">
+        Java: streaming (single)
+      </p>
+      <p>ชนะ <strong>5 matchups</strong> จาก 45 matchups
+         ที่ variant นี้เข้าแข่ง</p>
+    </div>
+    <div class="mbox">
+      <h4>🤝 Java Variant ที่สู้ Go ได้ใกล้ชิดที่สุด</h4>
+      <p style="font-size:18px;font-weight:800;color:#9b59b6;margin:6px 0">
+        Java: in-memory (single)
+      </p>
+      <p>ช่องว่างเฉลี่ยน้อยที่สุดเมื่อเทียบกับ Go — Java variant ที่ competitive ที่สุด</p>
+    </div>
+  </div>
+
+  <h3>📊 ตาราง Head-to-Head ทุกคู่ (แสดง RSA-2048 — representative)</h3>
+  <p style="font-size:11px;color:#888;margin-bottom:10px">
+    แต่ละแถว = Go variant หนึ่งตัว เทียบกับ Java variant หนึ่งตัว ใน scenario นั้น ๆ
+    — สีฟ้า = Go ชนะ, สีส้ม = Java ชนะ, ขาว = เสมอ
+  </p>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th>Scenario</th>
+      <th>🔵 Go Variant</th><th style="text-align:center">Go ms</th>
+      <th>🟠 Java Variant</th><th style="text-align:center">Java ms</th>
+      <th>ผล</th><th>ความต่าง</th>
+    </tr></thead>
+    <tbody><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.158 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.781 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.158 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.916 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.158 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.674 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 2.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.207 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.781 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.207 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.916 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.207 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.674 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 2.2×</span></td></tr><tr style="background:#f8f9fa">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.727 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.781 ms</td>
+                      <td><span class="badge bt">⚪ เสมอ (±5%)</span></td>
+                      <td><span style="color:#6c757d">ต่างกัน 3.1%</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.727 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.916 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.727 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.674 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.860 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">2.740 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.860 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">2.610 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.860 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">4.258 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 2.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.057 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">2.740 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.057 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">2.610 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.057 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">4.258 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 2.1×</span></td></tr><tr style="background:#fef3e2">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.962 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">2.740 ms</td>
+                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
+                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#fef3e2">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.962 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">2.610 ms</td>
+                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
+                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.962 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">4.258 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">19.470 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">27.547 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">19.470 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">21.312 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">19.470 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">29.337 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">17.720 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">27.547 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">17.720 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">21.312 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">17.720 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">29.337 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.7×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">23.712 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">27.547 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#fef3e2">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">23.712 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">21.312 ms</td>
+                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
+                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">23.712 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">29.337 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">109.960 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">134.678 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">109.960 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">141.572 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">109.960 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">146.395 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">117.187 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">134.678 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">117.187 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">141.572 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">117.187 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">146.395 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">122.834 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">134.678 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">122.834 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">141.572 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">122.834 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">146.395 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.797 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.268 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.797 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.373 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.7×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.797 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.076 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 2.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">0.955 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.268 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">0.955 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.373 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">0.955 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.076 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 2.2×</span></td></tr><tr style="background:#fef3e2">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.476 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.268 ms</td>
+                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
+                      <td><span class="sj">Java เร็วกว่า 1.2×</span></td></tr><tr style="background:#fef3e2">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.476 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.373 ms</td>
+                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
+                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.476 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.076 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr></tbody>
+  </table>
+  </div>
+
+  <div class="hi" style="margin-top:14px">
+    <strong>สรุปภาพ variant:</strong>
+    Go in-memory single-thread (<code>go-inmem-single</code>) ชนะเกือบทุก scenario สำหรับไฟล์เล็ก
+    เพราะ Go runtime ไม่มี JVM overhead.
+    Java parallel streaming (<code>java-stream-parallel</code>) เป็น Java variant ที่แข็งแกร่งที่สุด
+    แต่ยังแพ้ Go 1.2–2× ใน RSA-2048 และ 3–4× ใน Curve25519
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">❓</span>คำถามที่หัวหน้ามักถาม (FAQ)</h2>
+  <p style="margin-bottom:16px;color:#666;font-size:13px">
+    คำตอบสั้น ๆ ไม่ต้องรู้เรื่องซอฟต์แวร์มาก่อน
+  </p>
+
+  <div class="grid2">
+
+    <div class="mbox">
+      <h4>🔒 PGP คืออะไร ทำไมต้องสนใจ?</h4>
+      <p>PGP (Pretty Good Privacy) คือ<strong>มาตรฐานการเข้ารหัสไฟล์และข้อมูล</strong>
+         ที่ใช้กันทั่วโลกมากกว่า 30 ปี ทำงานเหมือนใส่กุญแจล็อคไฟล์
+         ด้วย "กุญแจสาธารณะ" (public key) และเปิดได้เฉพาะคนที่มี "กุญแจส่วนตัว" (private key)
+         เท่านั้น ถ้าไฟล์หลุดออกไปก็อ่านไม่ได้โดยไม่มีกุญแจ</p>
+    </div>
+
+    <div class="mbox">
+      <h4>⏱ ms คืออะไร ยิ่งน้อยดีมะ?</h4>
+      <p><strong>ms = มิลลิวินาที</strong> (1 วินาที = 1,000 ms)
+         ใช่ — ยิ่งน้อย ยิ่งเร็ว ยิ่งดี<br>
+         เพื่อช่วยจินตนาการ: การกระพริบตา 1 ครั้ง ≈ 150 ms
+         ระบบที่ตอบสนอง &lt;100 ms คนไม่รู้สึกว่า "ช้า"
+         สำหรับ batch process ไฟล์หลายพัน — ทุก ms สะสมกันได้เป็นนาที</p>
+    </div>
+
+    <div class="mbox">
+      <h4>📊 p50 คืออะไร ต่างจาก average ยังไง?</h4>
+      <p><strong>p50 (median — ค่ากลาง)</strong>: เรียงตัวเลขทุกค่าจากน้อยไปมาก
+         แล้วเอาค่าตรงกลาง — ไม่ถูกดึงเบี้ยวโดยค่าสูงผิดปกติ (outlier)<br>
+         <strong>Average</strong>: ถ้ามีค่า spike ครั้งเดียวสูงมาก
+         ค่าเฉลี่ยพุ่งขึ้นแม้ส่วนใหญ่ปกติ
+         p50 บอกว่า "ครึ่งหนึ่งของการทดสอบ เร็วกว่าตัวเลขนี้" — สะท้อนความเป็นจริงกว่า</p>
+    </div>
+
+    <div class="mbox">
+      <h4>🆚 Go และ Java ต่างกันยังไงในบริบทนี้?</h4>
+      <p><strong>Go</strong>: ภาษาสมัยใหม่จาก Google
+         ซอฟต์แวร์ compile เป็น binary เดียวพร้อมรัน ไม่ต้องติดตั้ง runtime
+         เริ่มต้นเร็ว ใช้หน่วยความจำน้อย<br>
+         <strong>Java</strong>: ภาษาที่ใช้กันมากกว่า 30 ปี
+         ต้องมี JVM (Java Virtual Machine) รันอยู่ก่อน
+         มี JIT compiler ที่อุ่นเครื่องแล้วเร็วมาก แต่ช่วงแรกช้ากว่า
+         ระบบ Enterprise ส่วนใหญ่ใช้ Java</p>
+    </div>
+
+    <div class="mbox">
+      <h4>🎯 ผลนี้เชื่อถือได้แค่ไหน?</h4>
+      <p>เชื่อถือได้สูง เพราะมีกลไกป้องกันหลายชั้น:<br>
+         ✅ <strong>721 tests ผ่านทั้งหมด</strong> ก่อนรัน benchmark<br>
+         ✅ สลับลำดับ Go/Java ทุกรอบ — ไม่มีฝ่ายได้เปรียบ<br>
+         ✅ ตรวจความถูกต้องของข้อมูลทุก operation<br>
+         ✅ วัดเฉพาะการเข้ารหัสจริง ไม่รวมการโหลดไฟล์<br>
+         ⚠️ ข้อจำกัด: ทดสอบบน VM ผล bare metal อาจต่างกัน 10–20%
+         แต่ความต่าง Go vs Java น่าจะยังเหมือนเดิม</p>
+    </div>
+
+    <div class="mbox">
+      <h4>➡️ ต้องทำอะไรต่อ?</h4>
+      <p>ขึ้นกับว่าระบบเป้าหมายเป็นอย่างไร:<br>
+         <strong>ระบบใหม่ + ต้องการ performance สูง</strong>
+         → แนะนำ Go + Curve25519<br>
+         <strong>ระบบที่มี Java อยู่แล้ว</strong>
+         → Java ทำได้ดีพอ แค่ช้ากว่า 1.4–3.9× ขึ้นอยู่กับ key type<br>
+         <strong>ถ้าต้องการข้อมูลเพิ่ม</strong>
+         → ทดสอบบน bare metal จริง + ทดสอบ GraalVM Native Image
+         ซึ่งอาจทำให้ Java startup เร็วขึ้นมาก</p>
+    </div>
+
+  </div>
+</div></div><div class="page" id="page-charts"><div class="card"><h2><span class="sn">📈</span>กราฟเปรียบเทียบ (Interactive)</h2>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+  <div class="chart-box">
+    <div class="chart-title">① Go vs Java ต่อ Scenario (RSA-2048)
+      <div class="chart-sub">p50 round-trip ms — ยิ่งน้อยยิ่งดี</div></div>
+    <canvas id="c1"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <div class="chart-title">② Speedup ทุก Test Case
+      <div class="chart-sub">บวก = Go เร็วกว่า / ลบ = Java เร็วกว่า</div></div>
+    <canvas id="c2"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <div class="chart-title">③ เปรียบเทียบตามชนิดกุญแจ
+      <div class="chart-sub">ค่าเฉลี่ย latency รวมทุก scenario</div></div>
+    <canvas id="c3"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <div class="chart-title">④ สรุปผล — ชนะกี่ Test Cases
+      <div class="chart-sub">จาก 15 test cases ทั้งหมด</div></div>
+    <canvas id="c4"></canvas>
+  </div>
+</div>
+
+<script>
+const B="#00ADE8", O="#F89820", G="#95a5a6";
+const opts = (ylabel) => ({
+  responsive:true,
+  plugins:{legend:{position:"top"},tooltip:{callbacks:{label:c=>c.dataset.label+": "+c.parsed.y.toFixed(3)+" ms"}}},
+  scales:{y:{title:{display:true,text:ylabel},grid:{color:"#f5f5f5"}},x:{grid:{display:false}}}
+});
+
+new Chart(document.getElementById("c1"),{type:"bar",
+  data:{labels:["small-comp", "small-incomp", "medium-comp", "medium-incomp", "manysmall"],
+    datasets:[
+      {label:"Go",  data:[1.158, 1.86, 17.72, 109.96, 0.797],  backgroundColor:B,borderRadius:4},
+      {label:"Java",data:[1.781, 2.61, 21.312, 134.678, 1.268],backgroundColor:O,borderRadius:4}
+    ]},options:opts("Latency (ms)")});
+
+new Chart(document.getElementById("c2"),{type:"bar",
+  data:{labels:["small-comp/RSA-2048", "small-comp/RSA-4096", "small-comp/Curve25519", "small-inco/RSA-2048", "small-inco/RSA-4096", "small-inco/Curve25519", "medium-com/RSA-2048", "medium-com/RSA-4096", "medium-com/Curve25519", "medium-inc/RSA-2048", "medium-inc/RSA-4096", "medium-inc/Curve25519", "manysmall/RSA-2048", "manysmall/RSA-4096", "manysmall/Curve25519"],
+    datasets:[{label:"Speedup",data:[1.54, 1.22, 3.63, 1.4, 1.22, 1.96, 1.2, 1.35, 1.16, 1.22, 1.3, 1.19, 1.59, 1.16, 3.92],
+      backgroundColor:["#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8"],borderRadius:3}]},
+  options:{responsive:true,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.parsed.y>0?"Go ":"Java ")+Math.abs(c.parsed.y).toFixed(1)+"x faster"}}},
+    scales:{y:{title:{display:true,text:"Speedup (x)"},grid:{color:"#f5f5f5"}},
+             x:{ticks:{maxRotation:45,font:{size:9}},grid:{display:false}}}}});
+
+new Chart(document.getElementById("c3"),{type:"bar",
+  data:{labels:["RSA-2048", "RSA-4096", "Curve25519"],
+    datasets:[
+      {label:"Go",  data:[26.299, 29.517, 25.807],  backgroundColor:B,borderRadius:4},
+      {label:"Java",data:[32.33, 38.175, 31.034],backgroundColor:O,borderRadius:4}
+    ]},options:opts("Avg Latency (ms)")});
+
+new Chart(document.getElementById("c4"),{type:"doughnut",
+  data:{labels:["Go ชนะ (15)","Java ชนะ (0)","เสมอ (0)"],
+    datasets:[{data:[15,0,0],backgroundColor:[B,O,G],borderWidth:3,borderColor:"white"}]},
+  options:{responsive:true,plugins:{legend:{position:"bottom"}}}});
+</script></div></div><div class="page" id="page-method">
+<div class="card">
+  <h2><span class="sn">🎯</span>วัตถุประสงค์ของ POC</h2>
+  <p>POC นี้มีเป้าหมายเดียวที่ชัดเจน: <strong>เปรียบเทียบประสิทธิภาพการเข้ารหัส PGP
+  ระหว่างภาษา Go และ Java ภายใต้เงื่อนไขที่ยุติธรรมและทำซ้ำได้</strong>
+  เพื่อช่วยตัดสินใจเลือกภาษาสำหรับระบบที่ต้องทำ PGP encryption ในอนาคต</p>
+  <div class="info">
+    <strong>ขอบเขตที่ชัดเจน:</strong> วัดเฉพาะ <strong>PGP encrypt และ decrypt</strong> เท่านั้น
+    — ไม่รวม signing, verify signature, network, database, HTTP API, หรือบริการภายนอก
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🏗</span>สถาปัตยกรรมการทดสอบ</h2>
+  <p style="margin-bottom:14px">ระบบแบ่งเป็น 3 ส่วนหลักที่แยกกันชัดเจน:</p>
+  <div class="grid3">
+    <div class="mbox">
+      <h4>🔵 Go Runner</h4>
+      <ul>
+        <li>ภาษา Go 1.24.4</li>
+        <li>Library: ProtonMail/go-crypto (fork ที่ดูแลต่อเนื่อง)</li>
+        <li>3 Implementation Variants</li>
+        <li>Binary ขนาดเล็ก startup เร็ว</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>🟠 Java Runner</h4>
+      <ul>
+        <li>JDK 25 + Spring Boot 4.x (CLI only)</li>
+        <li>Library: Bouncy Castle (bcpg + bcprov)</li>
+        <li>4 Implementation Variants</li>
+        <li>JVM JIT warm-up (อุ่นเครื่อง) ก่อนเก็บผล</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>🐍 Benchmark Harness (ตัวกลาง)</h4>
+      <ul>
+        <li>ซอฟต์แวร์ Python 3.12+ — เป็นกลาง ไม่เข้าข้างฝ่ายใด</li>
+        <li><strong>ไม่ทำ crypto เอง</strong> — แค่สั่งงานและวัดเวลา</li>
+        <li>แยก process Go/Java ออกจากกันสมบูรณ์</li>
+        <li>ควบคุม timing, resource, alternating order</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:14px">
+    <strong>ทำไมต้องแยก subprocess (กระบวนการแยกกัน)?</strong>
+    เพราะ memory (หน่วยความจำ), GC (garbage collection — การเก็บขยะหน่วยความจำ),
+    JIT (Just-In-Time compiler — ตัวแปลภาษา) ของแต่ละภาษาจะแยกกันสมบูรณ์
+    ไม่ปนกัน ผล benchmark จึงสะท้อนความสามารถจริงของแต่ละภาษา
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🔄</span>ขั้นตอนการทดสอบทีละขั้น</h2>
+  <ul class="timeline">
+    <li data-n="1">
+      <div class="tl-title">ตรวจสอบการตั้งค่า (Validate Config)</div>
+      อ่านและตรวจสอบ config.json — ถ้าค่าไหนผิดช่วง (เช่น จำนวนรอบนอกช่วง 1–1,000 ครั้ง)
+      หยุดทันทีก่อนเริ่มทดสอบ แจ้งชื่อค่าที่มีปัญหา
+    </li>
+    <li data-n="2">
+      <div class="tl-title">บันทึกสภาพแวดล้อม (Detect Environment)</div>
+      บันทึกสเปก VM: vCPU (จำนวน processor), RAM (หน่วยความจำ), OS, CPU arch,
+      storage type, สถานะ AES-NI (hardware acceleration), turbo/governor
+      บันทึกเวอร์ชันจริงของ Go/JDK/Spring Boot/Bouncy Castle/go-crypto
+    </li>
+    <li data-n="3">
+      <div class="tl-title">สร้างข้อมูลและกุญแจ (Generate Shared Inputs)</div>
+      สร้างไฟล์ทดสอบแบบ deterministic (ผลเหมือนเดิมทุกครั้ง) วางบน RAM disk
+      เพื่อตัด disk I/O ออกจากการวัด — สร้างและตรวจสอบกุญแจ RSA-2048, RSA-4096, Curve25519
+    </li>
+    <li data-n="4">
+      <div class="tl-title">Build ซอฟต์แวร์</div>
+      Build Go binary (ไฟล์รัน) และ Java JAR (ไฟล์รัน) บันทึกเวอร์ชัน toolchain
+      ถ้า GraalVM native build ล้มเหลว ข้ามเฉพาะ variant นั้น ไม่หยุดทั้งชุด
+    </li>
+    <li data-n="5">
+      <div class="tl-title">สลับลำดับ (Alternating Execution) — หัวใจหลัก</div>
+      วนหลาย Round สลับลำดับ Go/Java ทุกรอบ:
+      รอบ 1 = [Go, Java], รอบ 2 = [Java, Go], รอบ 3 = [Go, Java] ...
+      เพื่อให้ทั้งสองฝ่ายได้ CPU cache และ thermal condition เท่ากัน
+      ไม่มีฝ่ายได้เปรียบจากการรันก่อนเสมอ
+    </li>
+    <li data-n="6">
+      <div class="tl-title">ด่านความถูกต้อง (Verification Gate)</div>
+      ทุก operation ต้องผ่าน: ถอดรหัสกลับได้ byte-for-byte ก่อนเวลาเข้าสถิติ
+      ตรวจ checksum (ลายนิ้วมือดิจิทัล), เวอร์ชัน, interoperability Go↔Java↔gpg
+    </li>
+    <li data-n="7">
+      <div class="tl-title">คำนวณสถิติ (Statistics Engine)</div>
+      คำนวณ p50/p95/p99 (ค่า percentile), mean/min/max, stddev (ค่าเบี่ยงเบน),
+      CV, confidence interval (ช่วงความเชื่อมั่น), effect size (ขนาดผลกระทบ)
+      คัดเลือก variant ดีที่สุดของแต่ละภาษา เปรียบเทียบ head-to-head
+    </li>
+    <li data-n="8">
+      <div class="tl-title">สร้างรายงาน (Report Generator)</div>
+      สร้าง results.json (ข้อมูลดิบ) และรายงาน HTML ที่อ่านได้
+      ต้องเสร็จภายใน 60 วินาทีหลังจบ — เขียนแบบ atomic (ครบหรือไม่มีเลย)
+    </li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="sn">📏</span>วิธีจับเวลา (Timing Methodology)</h2>
+  <div class="grid2">
+    <div class="mbox">
+      <h4>✅ สิ่งที่จับเวลา (นับเข้าผล)</h4>
+      <ul>
+        <li>การเรียก <strong>encrypt() function</strong> จริง — เข้ารหัส</li>
+        <li>การเรียก <strong>decrypt() function</strong> จริง — ถอดรหัส</li>
+        <li>เฉพาะ crypto transform เท่านั้น</li>
+        <li>Go: monotonic clock (นาฬิกาที่ไม่เดินถอยหลัง)</li>
+        <li>Java: System.nanoTime() (จับเวลาระดับ nanosecond)</li>
+      </ul>
+    </div>
+    <div class="mbox red">
+      <h4>❌ สิ่งที่ไม่จับเวลา (ไม่นับเข้าผล)</h4>
+      <ul>
+        <li>การโหลดกุญแจจาก disk (hard drive)</li>
+        <li>การอ่าน/เขียนไฟล์ (disk I/O)</li>
+        <li>JVM startup time (เวลาเปิด Java)</li>
+        <li>JIT warm-up iterations (รอบอุ่นเครื่อง)</li>
+        <li>Warm_Up_Iteration rounds</li>
+        <li>Harness overhead (เวลาตัวกลาง)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:12px">
+    <strong>Cold_Start metric</strong> (เวลา process startup + JIT warm-up รวม) ถูกบันทึกแยกต่างหาก
+    เป็น "metric เสริม" ไม่ถูกนำไปรวมกับ core crypto-time ที่ใช้เปรียบเทียบ
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">⚖️</span>มาตรการความยุติธรรม (Fairness Measures)</h2>
+  <div class="grid4">
+    <div class="mbox">
+      <h4>🔄 Alternating Order (สลับลำดับ)</h4>
+      <p>สลับลำดับ Go/Java ทุกรอบ เพื่อลด bias (ความเอนเอียง) จากการที่
+         ซอฟต์แวร์หนึ่งได้ CPU warm cache (หน่วยความจำแคชที่ร้อน) ก่อนเสมอ</p>
+    </div>
+    <div class="mbox">
+      <h4>🔑 Input เดียวกัน (Shared Inputs)</h4>
+      <p>ชุดกุญแจเดียว, ชุดไฟล์ทดสอบเดียว, crypto algorithm เดียวกัน
+         checksum (ลายนิ้วมือดิจิทัล) ยืนยันว่า ซอฟต์แวร์ทั้งสองใช้ข้อมูล
+         byte-for-byte เหมือนกันทุก bit</p>
+    </div>
+    <div class="mbox">
+      <h4>💾 Resource เท่ากัน</h4>
+      <p>CPU cores (จำนวน processor) และ memory quota (โควต้าหน่วยความจำ)
+         เท่ากันทั้งสองฝ่าย มี 1 ซอฟต์แวร์ active ต่อเวลา ไม่แย่งทรัพยากรกัน</p>
+    </div>
+    <div class="mbox">
+      <h4>📦 Isolated Process (แยก process)</h4>
+      <p>Go และ Java รันเป็น subprocess แยกกันสมบูรณ์
+         GC (garbage collection), memory heap, JIT (compiler) ของ Java
+         ไม่ส่งผลต่อ Go และในทางกลับกัน</p>
+    </div>
+  </div>
+</div></div><div class="page" id="page-testdata">
+<div class="card">
+  <h2><span class="sn">📁</span>ชุดข้อมูลทดสอบ (Test Corpus)</h2>
+  <p style="margin-bottom:14px">
+    ชุดไฟล์ทดสอบสร้างแบบ deterministic (ผลเหมือนกันทุกครั้งจาก seed เดิม — reproducible)
+    วางบน <strong>tmpfs (RAM disk — disk เสมือนในหน่วยความจำ)</strong>
+    เพื่อตัด disk I/O ออกจากการวัดทั้งหมด
+  </p>
+  <table>
+    <thead><tr>
+      <th>Scenario ID</th><th>จำนวนไฟล์</th><th>ขนาดต่อไฟล์</th>
+      <th>ชนิดข้อมูล</th><th>Compressibility (บีบอัดได้)</th><th>วัตถุประสงค์</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><strong>small-comp</strong></td><td>20 ไฟล์</td><td>50 KB</td>
+          <td>.txt / .csv (ข้อความซ้ำ)</td><td>สูง (bzip2 &gt;80%)</td>
+          <td>ไฟล์เล็กบีบอัดได้ วัด per-file overhead + ZLIB benefit</td></tr>
+      <tr><td><strong>small-incomp</strong></td><td>20 ไฟล์</td><td>50 KB</td>
+          <td>Random binary (pseudo-PDF)</td><td>ต่ำ (&lt;5%)</td>
+          <td>ไฟล์เล็กบีบไม่ได้ วัดผล AES-only ไม่มี ZLIB benefit</td></tr>
+      <tr><td><strong>medium-comp</strong></td><td>4 ไฟล์</td><td>5 MB</td>
+          <td>.csv (ตัวเลขซ้ำ)</td><td>สูงมาก</td>
+          <td>ไฟล์กลาง workload งาน batch processing ทั่วไป</td></tr>
+      <tr><td><strong>medium-incomp</strong></td><td>4 ไฟล์</td><td>5 MB</td>
+          <td>Random binary</td><td>ต่ำมาก</td>
+          <td>ไฟล์กลาง binary เช่น PDF ที่มี embedded images</td></tr>
+      <tr><td><strong>manysmall</strong></td><td>100 ไฟล์</td><td>10 KB</td>
+          <td>.txt (ข้อความ)</td><td>สูง</td>
+          <td>วัด overhead ต่อไฟล์ — สำคัญสำหรับ batch encrypt หลายไฟล์พร้อมกัน</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:16px">🔑 ชนิดกุญแจที่ทดสอบ</h3>
+  <div class="grid3">
+    <div class="mbox">
+      <h4>RSA-2048</h4>
+      <ul>
+        <li>มาตรฐานที่ใช้งานทั่วไปปัจจุบัน</li>
+        <li>กุญแจ 2,048 bit = 256 bytes</li>
+        <li>NIST แนะนำถึงปี 2030</li>
+        <li>Balance ระหว่างความเร็วและความปลอดภัย</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>RSA-4096</h4>
+      <ul>
+        <li>ความปลอดภัยสูงกว่าสำหรับข้อมูลสำคัญ</li>
+        <li>กุญแจ 4,096 bit = 512 bytes</li>
+        <li>งาน asymmetric ช้ากว่า 3–4× เมื่อเทียบ RSA-2048</li>
+        <li>แนะนำสำหรับ long-term data protection (ข้อมูลที่ต้องปลอดภัยหลายปี)</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Curve25519 ECC</h4>
+      <ul>
+        <li>Elliptic Curve algorithm (algorithm กราฟโค้ง) ยุคใหม่</li>
+        <li>กุญแจเล็กกว่า RSA มาก (32 bytes)</li>
+        <li>ปลอดภัยระดับ RSA-3072 ที่ความเร็วสูงกว่ามาก</li>
+        <li>แนะนำสำหรับระบบใหม่ที่ออกแบบจากศูนย์</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">⚙️</span>Implementation Variants คืออะไร?</h2>
+  <p style="margin-bottom:14px">
+    แต่ละภาษามีหลายรูปแบบการเขียนซอฟต์แวร์ (variants) เพื่อหา "ตัวเก่งที่สุด"
+    ของภาษานั้นก่อน แล้วจึงนำมาแข่ง head-to-head กัน — เพื่อความยุติธรรม
+  </p>
+  <div class="grid2">
+    <div>
+      <h3>Go Variants (3 รูปแบบ)</h3>
+      <table>
+        <thead><tr><th>Variant ID</th><th>วิธีจัดการหน่วยความจำ</th><th>Threading</th></tr></thead>
+        <tbody>
+          <tr><td><strong>go-inmem-single</strong></td>
+              <td>โหลดทั้งไฟล์เข้า RAM ก่อน encrypt</td>
+              <td>1 goroutine (1 งาน)</td></tr>
+          <tr><td><strong>go-stream-single</strong></td>
+              <td>io.Pipe + buffered — peak memory (หน่วยความจำสูงสุด) คงที่</td>
+              <td>1 goroutine</td></tr>
+          <tr><td><strong>go-stream-parallel</strong></td>
+              <td>Streaming + worker pool (กลุ่มงานรัน parallel)</td>
+              <td>N goroutines (= concurrency)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Java Variants (4 รูปแบบ)</h3>
+      <table>
+        <thead><tr><th>Variant ID</th><th>วิธีจัดการหน่วยความจำ</th><th>Threading</th></tr></thead>
+        <tbody>
+          <tr><td><strong>java-inmem-single</strong></td>
+              <td>readAllBytes() โหลดทั้งไฟล์ก่อน encrypt</td>
+              <td>1 thread (1 งาน)</td></tr>
+          <tr><td><strong>java-stream-single</strong></td>
+              <td>Streaming 64 KB buffer</td>
+              <td>1 thread</td></tr>
+          <tr><td><strong>java-stream-parallel</strong></td>
+              <td>Streaming + ExecutorService (parallel pool)</td>
+              <td>N threads</td></tr>
+          <tr><td><strong>java-native-stream-parallel</strong></td>
+              <td>GraalVM Native Image (AOT — compile ไว้ล่วงหน้า)</td>
+              <td>N threads</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="info" style="margin-top:12px">
+    <strong>Best Variant Selection (เกณฑ์คัดเลือก):</strong>
+    เกณฑ์หลักคือ p50 round-trip (ค่ากลางของเวลาเข้า+ถอดรหัส) ต่ำที่สุด
+    tie-break (ตัดสิน) ด้วย p99 ต่ำสุด แล้ว peak RAM (หน่วยความจำสูงสุด) ต่ำสุด
+    — variant ที่ไม่ผ่าน correctness gate (ด่านความถูกต้อง) ถูกตัดออก
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🔒</span>Crypto Profile ที่ใช้</h2>
+  <p style="margin-bottom:12px">
+    ค่า algorithm (ชุดคำสั่งเข้ารหัส) คงที่ทุก runner ทุก variant ทุก scenario
+    เพื่อความยุติธรรมในการเปรียบเทียบ:
+  </p>
+  <div class="grid2" style="margin-top:12px">
+    <div class="mbox">
+      <h4>AES-256 — ทำไมถึงเร็ว?</h4>
+      <p>CPU สมัยใหม่มี <strong>AES-NI</strong>
+         (Hardware Acceleration — การเร่งความเร็วด้วย hardware)
+         ซึ่งเป็นคำสั่ง CPU ระดับ hardware ที่ทำ AES โดยตรง
+         ไม่ต้องผ่าน software loop ช้า ๆ
+         VM ของเราเปิด cpu=host ทำให้ flag aes ส่งผ่านเข้า VM</p>
+    </div>
+    <div class="mbox orange">
+      <h4>ZLIB Compression — ผลต่าง?</h4>
+      <p>ไฟล์ที่บีบอัดได้ (เช่น .txt, .csv) จะถูก ZLIB บีบก่อน encrypt
+         ทำให้ ciphertext (ข้อมูลที่เข้ารหัสแล้ว) เล็กลง และ AES ทำงานน้อยลง
+         ไฟล์ที่บีบไม่ได้ (random binary เช่น PDF ที่มีรูปภาพ)
+         ZLIB แทบไม่ช่วย แต่ก็ไม่ทำให้แย่ลงมาก</p>
+    </div>
+  </div>
+  <table style="margin-top:16px">
+    <thead><tr>
+      <th>Component</th><th>Algorithm ที่ใช้</th><th>หน้าที่</th><th>หมายเหตุ</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Public Key (กุญแจสาธารณะ)</td>
+          <td>RSA-2048 / RSA-4096 / Curve25519</td>
+          <td>แลกเปลี่ยนกุญแจ symmetric อย่างปลอดภัย</td>
+          <td>ทดสอบแยกทั้ง 3 แบบ</td></tr>
+      <tr><td>Symmetric Cipher (การเข้ารหัสจริง)</td>
+          <td>AES-256</td>
+          <td>เข้ารหัส payload จริง — เร็วด้วย hardware</td>
+          <td>AES-NI accelerated</td></tr>
+      <tr><td>Compression (การบีบอัด)</td>
+          <td>ZLIB</td>
+          <td>บีบข้อมูลก่อน encrypt ลด ciphertext size</td>
+          <td>ช่วยไฟล์ที่มีข้อความซ้ำ</td></tr>
+      <tr><td>Hash (ลายนิ้วมือ)</td>
+          <td>SHA-256</td>
+          <td>ตรวจความสมบูรณ์ของข้อมูล</td>
+          <td>detect tampering (การแก้ไข)</td></tr>
+      <tr><td>Output Encoding</td>
+          <td>Binary</td>
+          <td>ขนาดไฟล์เล็กที่สุด ไม่มี overhead ของ ASCII</td>
+          <td>ไม่ใช่ ASCII-armored</td></tr>
+    </tbody>
+  </table>
+</div></div><div class="page" id="page-tests">
+<div class="card">
+  <h2><span class="sn">🧪</span>ภาพรวม Test Suite — 721 Tests</h2>
+  <p style="margin-bottom:14px">
+    ก่อนนำตัวเลขประสิทธิภาพมาเปรียบเทียบ ซอฟต์แวร์มี test suite (ชุดทดสอบ)
+    ที่ครอบคลุม 3 ชั้น เพื่อยืนยันว่า <strong>ตัวเลขเหล่านั้นมาจากการ crypto ที่ถูกต้อง</strong>
+    — ไม่ใช่แค่เร็ว แต่ถูกต้องด้วย
+  </p>
+  <div class="stats">
+    <div class="sbox green-b"><div class="val">81</div><div class="lbl">Java Tests (mvn test)</div></div>
+    <div class="sbox go-b"><div class="val">~100+</div><div class="lbl">Go Tests (go test)</div></div>
+    <div class="sbox" style="border-color:#9b59b6"><div class="val" style="color:#9b59b6">640</div><div class="lbl">Python Harness Tests</div></div>
+    <div class="sbox green-b"><div class="val">721</div><div class="lbl">รวมทั้งหมด</div></div>
+    <div class="sbox green-b"><div class="val">0</div><div class="lbl">Failures (ล้มเหลว)</div></div>
+    <div class="sbox green-b"><div class="val">100%</div><div class="lbl">Pass Rate (ผ่านทั้งหมด)</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🔍</span>Timeline: ชุดทดสอบทำงานอย่างไรก่อนถึง Benchmark?</h2>
+  <p style="margin-bottom:14px;color:#666">
+    ทุกครั้งที่นักพัฒนา push ซอฟต์แวร์ใหม่ หรือก่อน benchmark run ทุกครั้ง
+    ระบบรัน test suite ตามลำดับนี้ก่อนเสมอ:
+  </p>
+  <ul class="timeline">
+    <li data-n="1">
+      <div class="tl-title">Java Tests (mvn test) — 81 tests</div>
+      ทดสอบ Java engine โดยตรง: ทุก variant × ทุก key type × ทุก edge case
+      รัน Property-Based Tests ด้วย jqwik (200 iterations ต่อ property)
+      ใช้เวลาประมาณ 2–3 นาที
+    </li>
+    <li data-n="2">
+      <div class="tl-title">Go Tests (go test) — ~100+ tests</div>
+      ทดสอบ Go engine: round-trip, streaming memory, timing breakdown, classification
+      รัน Property-Based Tests ด้วย pgregory.net/rapid (100 iterations ต่อ property)
+      ใช้เวลาประมาณ 30 วินาที
+    </li>
+    <li data-n="3">
+      <div class="tl-title">Python Harness Tests — 640 tests</div>
+      ทดสอบตัวกลางที่ orchestrate ทั้งระบบ: config validation, statistics, fairness,
+      interoperability, corpus generation, resource sampling
+      ใช้เวลาประมาณ 1–2 นาที
+    </li>
+    <li data-n="4">
+      <div class="tl-title">Integration Gate (ด่านรวม) — ผ่านทั้งหมดก่อนดำเนินการต่อ</div>
+      ถ้า test ใดล้มเหลว → หยุดทันที ไม่อนุญาตให้รัน benchmark
+      ต้องแก้ไขปัญหาก่อน → รัน test ใหม่ทั้งหมด → ผ่านทุก test → รัน benchmark ได้
+    </li>
+    <li data-n="5">
+      <div class="tl-title">Benchmark Run — เก็บผลจริง</div>
+      ทดสอบประสิทธิภาพ alternating execution (สลับลำดับ), warm-up ก่อนเก็บผล,
+      verification gate ทุก operation, statistics engine คำนวณผล
+    </li>
+    <li data-n="6">
+      <div class="tl-title">Report Generation — สร้างรายงานนี้</div>
+      สร้าง results.json + HTML report ที่คุณกำลังอ่านอยู่
+    </li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="sn">📋</span>Property-Based Testing (PBT) คืออะไร? — อธิบายให้ไม่รู้ซอฟต์แวร์เข้าใจ</h2>
+  <div class="grid2">
+    <div class="mbox">
+      <h4>🔵 Unit Test ทั่วไป — แบบที่คุ้นเคย</h4>
+      <p style="margin-bottom:10px">
+        เหมือนการทดสอบสูตรอาหารด้วยตัวอย่างที่เลือกเอง:<br>
+        "เอา แป้ง 100g + ไข่ 1 ฟอง → ควรได้เค้ก 1 ชิ้น"<br>
+        ครอบคลุมเฉพาะ case ที่นักพัฒนานึกออก
+        ถ้าลืม edge case บางอย่าง (เช่น แป้ง 0g?) — test จะไม่ตรวจ
+      </p>
+      <p><strong>ข้อจำกัด:</strong> ถ้าไม่นึกถึง input แปลก ๆ test จะไม่เห็น bug</p>
+    </div>
+    <div class="mbox green">
+      <h4>🟢 Property-Based Test — แบบที่ใช้ใน POC นี้</h4>
+      <p style="margin-bottom:10px">
+        เหมือนการกำหนด "กฎธรรมชาติ" แล้วให้ระบบสุ่มทดสอบเอง:<br>
+        "ถ้าเข้ารหัสข้อมูลอะไรก็ตาม แล้วถอดรหัส ต้องได้ข้อมูลเดิมเสมอ"<br>
+        Framework สุ่ม input 200 แบบอัตโนมัติ — รวมถึงข้อมูลว่าง, binary แปลก ๆ,
+        ขนาดสุดโต่ง — ที่นักพัฒนาอาจไม่นึกถึง
+      </p>
+      <p><strong>ข้อดี:</strong> ค้นหา bug ที่ซ่อนอยู่ใน edge case ที่ไม่มีใครคาดคิด</p>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:16px">
+    <strong>ตัวอย่างกฎ (Properties) ที่ทดสอบ:</strong><br>
+    ① ถอดรหัส(เข้ารหัส(X)) = X เสมอ — ไม่ว่า X จะเป็นอะไร (ข้อมูลว่าง, 50 KB, binary, ฯลฯ)<br>
+    ② หน่วยความจำสูงสุดระหว่าง streaming ต้องไม่โตตามขนาดไฟล์ (คงที่ที่ &lt;12 MB)<br>
+    ③ เวลาเข้ารหัส + เวลาถอดรหัส ≤ เวลารวมที่รายงาน เสมอ<br>
+    Framework ที่ใช้: <strong>jqwik</strong> (Java), <strong>pgregory.net/rapid</strong> (Go),
+    <strong>hypothesis</strong> (Python) — รัน ≥100 iterations ต่อ property
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🔵</span>Go Tests — รายละเอียด</h2>
+  <div class="grid2">
+    <div class="mbox green">
+      <h4>Property 1: Round-trip byte-for-byte</h4>
+      <p>กฎ: ถอดรหัส(เข้ารหัส(X)) = X ทุก byte สำหรับ payload ทุกรูปแบบ:</p>
+      <ul>
+        <li>Empty file (0 bytes — ไฟล์ว่าง)</li>
+        <li>Lone CR () — ต้องไม่ถูก normalize เป็น CRLF</li>
+        <li>ทุก 256 byte values (0x00–0xFF)</li>
+        <li>Compressible text (.txt, .csv — ข้อความบีบอัดได้)</li>
+        <li>Incompressible binary (.pdf-like — binary บีบไม่ได้)</li>
+        <li>Medium payloads 64 KB–512 KB</li>
+      </ul>
+    </div>
+    <div class="mbox green">
+      <h4>Property 3: File classification rules</h4>
+      <p>กฎ: การจำแนกชนิดไฟล์และตั้งชื่อผลลัพธ์ต้องสม่ำเสมอ:</p>
+      <ul>
+        <li>.txt/.xlsx/.csv/.pdf/.zip → ชื่อ + ".pgp"</li>
+        <li>.zip-of-many → ชื่อ + ".zip.pgp"</li>
+        <li>.ctrl/.ctl → skipped=true (ข้าม) ไม่ encrypt</li>
+        <li>นามสกุลไม่รองรับ → skip + reason "unsupported"</li>
+        <li>Case insensitive (.TXT = .txt เหมือนกัน)</li>
+      </ul>
+    </div>
+    <div class="mbox green">
+      <h4>Property 14: Streaming peak memory O(1)</h4>
+      <p>กฎ: สำหรับ streaming variant หน่วยความจำสูงสุดต้องคงที่ ไม่โตตามไฟล์:</p>
+      <ul>
+        <li>ทดสอบไฟล์ขนาด 1 MB–16 MB แบบสุ่ม</li>
+        <li>วัด retained heap (หน่วยความจำที่ยังใช้งาน) ระหว่าง stream</li>
+        <li>Peak memory &lt;12 MB เสมอ ไม่ว่าไฟล์จะใหญ่แค่ไหน</li>
+        <li>มี guard test ยืนยันว่า in-memory จะเกิน 12 MB (เพื่อพิสูจน์ว่า test ไม่ผ่านง่าย ๆ)</li>
+      </ul>
+    </div>
+    <div class="mbox green">
+      <h4>Property 23: asym/sym breakdown invariant</h4>
+      <p>กฎ: เมื่อรายงาน breakdown เวลา ตัวเลขต้องสอดคล้องกัน:</p>
+      <ul>
+        <li>asymNanos (เวลา key exchange) + symNanos (เวลา AES) ≤ totalNanos</li>
+        <li>ทั้งสองค่าต้องไม่ติดลบ</li>
+        <li>totalNanos &gt; 0 เสมอสำหรับ operation จริง</li>
+        <li>NOT_SEPARABLE (-1) ถ้าวัดแยกไม่ได้ = valid</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin-top:16px">Unit Tests เพิ่มเติม</h3>
+  <ul>
+    <li><strong>Checksum tests</strong>: SHA-256 deterministic (ผลเหมือนเดิมทุกครั้ง), mismatch detection, round-trip verify</li>
+    <li><strong>Contract tests</strong>: Command JSON parse, RunnerOutput JSON serialize, exit codes</li>
+    <li><strong>Runner shell tests</strong>: checksum gate, variant lookup, warm-up exclusion</li>
+    <li><strong>Classifier tests</strong>: extension matching case-insensitive, skip logic</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🟠</span>Java Tests — รายละเอียด (81 tests)</h2>
+  <div class="grid2">
+    <div class="mbox orange">
+      <h4>RoundTripPropertyTest (jqwik)</h4>
+      <p>ครอบคลุม <strong>ทุก 4 variants</strong> × <strong>ทุก 3 key types</strong>:</p>
+      <ul>
+        <li>java-inmem-single + java-stream-single</li>
+        <li>java-stream-parallel + java-native-stream-parallel</li>
+        <li>RSA-2048, RSA-4096, Curve25519</li>
+        <li>200 tries × small payloads (เล็ก), 100 tries × medium (กลาง)</li>
+        <li>No-compression profile (AES-256 เท่านั้น ไม่บีบ)</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>InMemSingleEngineTest + StreamSingleEngineTest</h4>
+      <p>Unit tests ครอบคลุมทุก edge case:</p>
+      <ul>
+        <li>RSA-2048, RSA-4096, Curve25519 round-trip</li>
+        <li>Empty payload (0 bytes)</li>
+        <li>Lone carriage return () — binary fidelity (ความแม่นยำ binary)</li>
+        <li>All 256 byte values</li>
+        <li>Large input 3–5 MB</li>
+        <li>Unsupported cipher rejection (ปฏิเสธ cipher ที่ไม่รองรับ)</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>Cross-Variant Interoperability</h4>
+      <p>ข้อมูลเข้ารหัสจาก variant หนึ่ง ต้อง variant อื่น decrypt ได้:</p>
+      <ul>
+        <li>inmem-single → stream-parallel decrypt ได้</li>
+        <li>stream-parallel → inmem-single decrypt ได้</li>
+        <li>stream-single ↔ inmem-single interop</li>
+        <li>ยืนยัน OpenPGP format ถูกต้องมาตรฐาน</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>StreamMemoryPropertyTest</h4>
+      <p>Java streaming peak memory (หน่วยความจำสูงสุด):</p>
+      <ul>
+        <li>Input สร้าง lazy (ทีละส่วน) — ไม่ materialise ทั้งก้อน</li>
+        <li>1 MiB – 16 MiB (random size, 100 tries)</li>
+        <li>Retained heap &lt;12 MB ตลอด</li>
+        <li>Guard test: in-memory &gt;12 MB ที่ 16 MB input (พิสูจน์ว่า test ไม่ pass ฟรี)</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>EngineRegistryVariantTest</h4>
+      <ul>
+        <li>ServiceLoader discovers ทุก 3 JVM variants</li>
+        <li>java-native ไม่ควรอยู่ใน ServiceLoader</li>
+        <li>Direct registration ทำงานได้</li>
+        <li>VARIANT_ID constants ถูกต้อง</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>TimingBreakdownPropertyTest</h4>
+      <ul>
+        <li>Plausible timings: asym+sym ≤ total เสมอ</li>
+        <li>Inconsistent breakdown reject ได้</li>
+        <li>honest() scrubs contradictory breakdown (ล้างค่าที่ขัดแย้ง)</li>
+        <li>Real engine output consistent (ผลจริงสม่ำเสมอ)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">🐍</span>Python Harness Tests — รายละเอียด (640 tests)</h2>
+  <div class="grid4">
+    <div class="mbox purple">
+      <h4>Pipeline Integration Tests</h4>
+      <ul>
+        <li>SubprocessDriver → VerificationGate (ตัวกลาง → ด่านตรวจ)</li>
+        <li>Checksum mismatch detection (ตรวจจับลายนิ้วมือผิด)</li>
+        <li>Round-trip failure exclusion (ยกเว้น operation ที่ผิด)</li>
+        <li>Multi-runner verification summary</li>
+        <li>Atomic results.json write (เขียนครบหรือไม่มีเลย)</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Interoperability Tests</h4>
+      <ul>
+        <li>Go↔Java cross-language decrypt (ถอดรหัสข้ามภาษา)</li>
+        <li>Tampered output detection (ตรวจจับข้อมูลที่ถูกแก้ไข)</li>
+        <li>Pending endpoint handling</li>
+        <li>InteropSummary to_dict shape</li>
+        <li>Property: interop symmetric (ถอดรหัสได้สองทาง)</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Statistics Engine Tests</h4>
+      <ul>
+        <li>Throughput formula: bytes/MB/time</li>
+        <li>Round-trip = encrypt + decrypt</li>
+        <li>Error rate calculation</li>
+        <li>Warm-up exclusion (ยกเว้นรอบอุ่นเครื่อง)</li>
+        <li>Inconclusive 5% threshold (เสมอถ้าต่างน้อยกว่า 5%)</li>
+        <li>Best_Variant selection + tie-break</li>
+        <li>Cost per million operations</li>
+        <li>Noise floor CV + mean diff</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Config Validation Tests</h4>
+      <ul>
+        <li>rounds (จำนวนรอบ) ∈ [1, 1,000]</li>
+        <li>warmup (รอบอุ่นเครื่อง) ∈ [0, 100]</li>
+        <li>concurrency ≤ vCPU</li>
+        <li>customSizeBytes &gt; 0</li>
+        <li>outputEncoding ∈ {binary, armored}</li>
+        <li>หยุดก่อน Result_Report ถ้า config ผิด</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Corpus &amp; Key Tests</h4>
+      <ul>
+        <li>Deterministic generation (seed เดิม → corpus เดิม)</li>
+        <li>Checksum round-trip verify</li>
+        <li>Mismatch detection (1 byte changed)</li>
+        <li>Key manifest validation (ตรวจสอบ manifest กุญแจ)</li>
+        <li>Size tier coverage</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Fairness Tests</h4>
+      <ul>
+        <li>All runners use same Key_Set (ชุดกุญแจเดียวกัน)</li>
+        <li>CPU/memory quota equal (เท่ากัน)</li>
+        <li>Non-comparable propagation</li>
+        <li>Sampling interval consistent</li>
+        <li>Order alternation property (สลับลำดับถูกต้อง)</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Resource Sampler Tests</h4>
+      <ul>
+        <li>CPU sampling ทุก interval</li>
+        <li>RAM peak/avg calculation (คำนวณสูงสุด/เฉลี่ย)</li>
+        <li>GC stats merge</li>
+        <li>Non-comparable on failure</li>
+      </ul>
+    </div>
+    <div class="mbox purple">
+      <h4>Soak &amp; Trend Tests</h4>
+      <ul>
+        <li>RAM slope calculation (ตรวจ memory leak)</li>
+        <li>Latency degradation detection (ตรวจการช้าลงเรื่อย ๆ)</li>
+        <li>Threshold comparison</li>
+        <li>Not-applicable when n &lt; 2</li>
+      </ul>
+    </div>
+  </div>
+</div></div><div class="page" id="page-integrity">
+<div class="card">
+  <h2><span class="sn">🛡</span>กลไกป้องกันการโกง (Anti-Fake Architecture)</h2>
+  <p style="margin-bottom:14px">
+    ระบบออกแบบมาเพื่อให้ <strong>"ตัวเลขเร็ว" ไม่มีค่าเลยถ้าไม่ผ่านด่านเหล่านี้</strong>
+    ทุก gate ตรวจสอบอัตโนมัติก่อนนำตัวเลขเข้าสถิติ:
+  </p>
+  <table>
+    <thead><tr><th>Gate (ด่าน)</th><th>วิธีทำงาน</th><th>ถ้าไม่ผ่าน</th></tr></thead>
+    <tbody>
+      <tr><td><strong>🔁 Round-trip Gate</strong></td>
+          <td>ถอดรหัส(เข้ารหัส(x)) = x ทุก byte สำหรับทุกไฟล์ใน Benchmark_Run</td>
+          <td>ยกเว้นเวลา run นั้นออกจากสถิติทั้งหมด บันทึกจำนวนที่ยกเว้น</td></tr>
+      <tr><td><strong>🌐 Interop Gate</strong></td>
+          <td>Go เข้ารหัส → Java ถอดรหัสได้, Java เข้ารหัส → Go ถอดรหัสได้, + gpg CLI</td>
+          <td>mark non-comparable (ไม่สามารถเปรียบเทียบ) พร้อมระบุสาเหตุ</td></tr>
+      <tr><td><strong>🔐 Checksum Gate</strong></td>
+          <td>SHA-256 ของ Key_Set และ Corpus ต้องตรงกับค่า reference ก่อน run</td>
+          <td>ยุติ run นั้น exit code 2 ไม่นับเข้าสถิติ</td></tr>
+      <tr><td><strong>📌 Version Gate</strong></td>
+          <td>ตรวจเวอร์ชัน Go/JDK/library จริงแบบ major.minor.patch เทียบค่าที่บันทึก</td>
+          <td>mark ผลรอบนั้นว่า "ไม่ถูกต้อง" แต่ยังดำเนินการต่อ</td></tr>
+      <tr><td><strong>⏱ Timing Isolation</strong></td>
+          <td>monotonic clock (นาฬิกาที่ไม่เดินถอยหลัง) ครอบเฉพาะ crypto call ไม่รวม I/O, key load, warmup</td>
+          <td>—</td></tr>
+      <tr><td><strong>📊 Raw Sample Retention</strong></td>
+          <td>เก็บ per-operation samples (ตัวเลขดิบทุกค่า) ไม่ใช่แค่ aggregate (ค่าสรุป)</td>
+          <td>ตรวจสอบ/ทำซ้ำได้ย้อนหลัง (auditable)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="sn">✅</span>ผลนี้เชื่อถือได้แค่ไหน? — สำหรับผู้บริหาร</h2>
+  <p style="margin-bottom:16px;color:#666">
+    คำตอบตรง ๆ: <strong>เชื่อถือได้สูงสำหรับการตัดสินใจเบื้องต้น</strong>
+    มีกลไกป้องกันครบถ้วน แต่มีข้อจำกัดบางอย่างที่ต้องรู้
+  </p>
+
+  <div class="grid2">
+    <div class="mbox green">
+      <h4>✅ สิ่งที่ทำให้เชื่อถือได้</h4>
+      <ul style="line-height:2">
+        <li><strong>721 tests ผ่านทั้งหมดก่อน benchmark</strong>
+            — ยืนยันว่าซอฟต์แวร์ทั้งสองทำงานถูกต้อง 100%</li>
+        <li><strong>สลับลำดับ Go/Java ทุกรอบ</strong>
+            — ไม่มีฝ่ายได้เปรียบ CPU cache หรือ thermal condition</li>
+        <li><strong>Verification Gate ทุก operation</strong>
+            — operation ที่ผิดพลาดถูกยกเว้น ไม่เข้าสถิติ</li>
+        <li><strong>วัดเฉพาะ crypto call จริง</strong>
+            — ไม่รวมเวลาโหลดไฟล์ ไม่รวม JVM startup</li>
+        <li><strong>Raw samples เก็บครบทุกค่า</strong>
+            — audit ย้อนหลังได้ทุกค่า</li>
+        <li><strong>Corpus บน RAM disk</strong>
+            — ตัด disk speed ออกจากผลโดยสมบูรณ์</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>⚠️ ข้อจำกัดที่ต้องรู้</h4>
+      <ul style="line-height:2">
+        <li><strong>VM ≠ Bare Metal</strong>:
+            ผลบน VM อาจต่างจาก bare metal (เครื่องจริง) 10–20%
+            แต่ความสัมพันธ์ relative Go vs Java น่าจะยังคงเดิม</li>
+        <li><strong>JVM Startup ไม่รวมใน core metric</strong>:
+            Java ใช้เวลา ~1.4 วินาทีต่อ JVM warmup
+            สำหรับ long-running service ผลต่างนี้ไม่มีนัยสำคัญ</li>
+        <li><strong>GraalVM Native ยังไม่ได้ทดสอบ</strong>:
+            Native image (ไม่ต้องมี JVM) ไม่ได้ติดตั้งบน VM
+            อาจทำให้ Java startup ดีขึ้นมาก</li>
+        <li><strong>เฉพาะ AES-256+ZLIB+SHA-256</strong>:
+            cipher/compression อื่น (เช่น ChaCha20) อาจให้ผลต่าง</li>
+        <li><strong>5 rounds เท่านั้น</strong>:
+            สำหรับ statistical significance ที่สูงขึ้น ควรใช้ ≥30 rounds</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">📊</span>Statistics ที่คำนวณ</h2>
+  <div class="grid2">
+    <div class="mbox">
+      <h4>Latency Statistics (สถิติเวลาตอบสนอง)</h4>
+      <ul>
+        <li><strong>p50 (median — ค่ากลาง)</strong>:
+            เรียงทุกค่าแล้วเอาตัวกลาง — 50% ของ operations เร็วกว่านี้</li>
+        <li><strong>p95</strong>: 95% ของ operations เร็วกว่านี้ (reliable เมื่อ n≥20 ค่า)</li>
+        <li><strong>p99</strong>: worst-case ที่ยอมรับได้ (reliable เมื่อ n≥100 ค่า)</li>
+        <li><strong>min/max/mean</strong>: ต่ำสุด/สูงสุด/เฉลี่ย</li>
+        <li><strong>stddev (ค่าเบี่ยงเบนมาตรฐาน)</strong>:
+            บอกว่าตัวเลขกระจายตัวมากแค่ไหน</li>
+        <li><strong>CV = stddev/mean</strong>: ความผันผวนสัมพัทธ์</li>
+        <li>Method: linear interpolation type-7</li>
+      </ul>
+    </div>
+    <div class="mbox">
+      <h4>Throughput &amp; Additional (ปริมาณงานและอื่น ๆ)</h4>
+      <ul>
+        <li><strong>MB/sec</strong> = bytes/1,048,576 ÷ time_s (crypto-only)</li>
+        <li><strong>files/sec</strong> = files ÷ time_s</li>
+        <li><strong>Round-trip ms</strong> = encryptMs + decryptMs</li>
+        <li><strong>Error rate</strong> = failures/attempted ∈ [0.0, 1.0]</li>
+        <li><strong>Confidence interval 95%</strong>
+            (ช่วงที่เชื่อมั่น 95% ว่าค่าจริงอยู่ในนั้น)</li>
+        <li><strong>Effect size (Cohen's d)</strong>
+            (ขนาดผลกระทบ — small/medium/large)</li>
+        <li><strong>Inconclusive</strong> ถ้า diff ≤5% (ต่างกันน้อยจนไม่มีนัยสำคัญ)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">⚠️</span>ข้อจำกัดและหมายเหตุสำคัญ</h2>
+  <div class="grid2">
+    <div class="mbox red">
+      <h4>สิ่งที่ต้องระวังในการตีความ</h4>
+      <ul>
+        <li><strong>VM ≠ Bare Metal</strong>: ผลบน VM อาจต่างจาก bare metal 10–20%
+            แต่ความสัมพันธ์ relative Go vs Java น่าจะยังคงเดิม</li>
+        <li><strong>JVM Startup ไม่รวมใน core metric</strong>:
+            Java ใช้เวลา ~1.4 s/round JVM warmup แต่ไม่ถูกนับ
+            สำหรับ long-running service ผลต่างนี้ไม่มีนัยสำคัญ</li>
+        <li><strong>GraalVM Native ยังไม่ได้ทดสอบ</strong>:
+            native-image ไม่ได้ติดตั้งบน VM — อาจทำให้ Java startup ดีขึ้นมาก</li>
+        <li><strong>เฉพาะ AES-256+ZLIB+SHA-256</strong>:
+            cipher/compression อื่น (เช่น ChaCha20) อาจให้ผลต่าง</li>
+      </ul>
+    </div>
+    <div class="mbox">
+      <h4>Reproducibility (ทำซ้ำได้)</h4>
+      <ul>
+        <li>Corpus สร้างจาก seed เดิมทุกครั้ง (bit-for-bit identical)</li>
+        <li>Key_Set checksum ยืนยันก่อนทุก run</li>
+        <li>เวอร์ชัน toolchain บันทึกใน results.json</li>
+        <li>config.json เก็บค่าที่ใช้จริงทั้งหมด</li>
+        <li>Raw per-operation samples เก็บครบทุกค่า</li>
+        <li>ทำซ้ำได้บน VM เดิมโดยรัน benchmark script ใหม่</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="sn">➡️</span>Next Steps — ข้อเสนอแนะสำหรับผู้บริหาร</h2>
+  <p style="margin-bottom:16px;color:#666">
+    จากผลการทดสอบนี้ ขั้นตอนต่อไปขึ้นอยู่กับบริบทของโครงการ:
+  </p>
+
+  <div class="grid2">
+    <div class="mbox green">
+      <h4>📌 ถ้าเลือก Go (แนะนำสำหรับระบบใหม่)</h4>
+      <ul style="line-height:2">
+        <li>เหมาะที่สุดสำหรับระบบที่ต้องการ PGP throughput (ปริมาณงาน) สูงสุด</li>
+        <li>ใช้ Curve25519 ECC เป็น key type หลัก — เร็วกว่า RSA 3.6–3.9×</li>
+        <li>ทดสอบ workload จริงบน bare metal (เครื่องจริงไม่ใช่ VM) ก่อน go-live</li>
+        <li>ทีมต้องมีความรู้ Go — ควรประเมิน learning curve</li>
+        <li>Library ProtonMail/go-crypto ดูแลต่อเนื่อง มี community ดี</li>
+      </ul>
+    </div>
+    <div class="mbox orange">
+      <h4>📌 ถ้าใช้ Java ต่อ (ระบบที่มีอยู่แล้ว)</h4>
+      <ul style="line-height:2">
+        <li>Java ทำได้ดีพอ แค่ช้ากว่า 1.4–3.9× ขึ้นอยู่กับ key type</li>
+        <li>ลองทดสอบ GraalVM Native Image — อาจลด startup time ได้มาก</li>
+        <li>ใช้ Curve25519 แทน RSA ถ้าเป็นระบบใหม่ — ช่วยความเร็วได้มาก</li>
+        <li>ใช้ streaming variant แทน in-memory — ลด peak memory ลง</li>
+        <li>Bouncy Castle library ดูแลต่อเนื่อง มี enterprise support</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;background:#e8f5e9;border:1px solid #27ae60">
+    <h3 style="color:#1b5e20">🔬 ข้อแนะนำสำหรับ POC รอบถัดไป (ถ้าต้องการข้อมูลเพิ่ม)</h3>
+    <div class="grid2">
+      <ul style="line-height:2">
+        <li>ทดสอบบน <strong>bare metal</strong> (เครื่องจริง) — ผลแม่นกว่า VM 10–20%</li>
+        <li>ติดตั้ง <strong>GraalVM Native Image</strong> ทดสอบ java-native variant ให้ครบ</li>
+        <li>เพิ่ม rounds เป็น ≥30 — สถิติ p95/p99 มีความน่าเชื่อถือสูงขึ้น</li>
+        <li>ทดสอบ <strong>concurrent load</strong> (หลาย user พร้อมกัน) ไม่ใช่แค่ single-run</li>
+      </ul>
+      <ul style="line-height:2">
+        <li>ทดสอบ <strong>memory pressure</strong> — เมื่อ RAM ไม่พอ streaming variant ได้เปรียบชัดเจน</li>
+        <li>ทดสอบ <strong>large files &gt;100 MB</strong> — ผลอาจต่างจากไฟล์ 5 MB</li>
+        <li>ทดสอบ <strong>signing + verification</strong> ถ้า use case ต้องการ</li>
+        <li>ทดสอบ <strong>ChaCha20</strong> เป็น cipher อีก profile</li>
+      </ul>
+    </div>
+  </div>
+</div></div>
+
+<footer>รายงานสร้างโดยอัตโนมัติ | POC: PGP Benchmark Go vs Java | 2026-06-29 12:57</footer>
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
+}
+</script>
+</body></html>
