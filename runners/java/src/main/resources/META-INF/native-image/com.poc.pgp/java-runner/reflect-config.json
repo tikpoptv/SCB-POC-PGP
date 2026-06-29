@@ -1,0 +1,149 @@
+[
+  {
+    "name": "com.poc.pgp.NativeMain",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] },
+      { "name": "main",   "parameterTypes": ["java.lang.String[]"] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.crypto.NativeStreamParallelEngine",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.crypto.StreamParallelEngine",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.crypto.EngineRegistry",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.cli.RunnerShell",
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["com.poc.pgp.crypto.EngineRegistry"] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.contract.RunnerOutput",
+    "allDeclaredFields": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.contract.OperationSample",
+    "allDeclaredFields": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.contract.GcStats",
+    "allDeclaredFields": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.contract.Command",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String", "java.lang.String", "java.lang.String",
+          "java.lang.Integer", "java.lang.Integer",
+          "com.poc.pgp.contract.CryptoProfile",
+          "java.lang.String", "java.lang.String", "java.lang.String",
+          "java.lang.String", "java.lang.String", "java.lang.String",
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.poc.pgp.contract.CryptoProfile",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.jce.provider.BouncyCastleProvider",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.PGPEncryptedDataGenerator",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": ["org.bouncycastle.openpgp.operator.PGPDataEncryptorBuilder"]
+      }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.PGPCompressedDataGenerator",
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["int"] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.PGPLiteralDataGenerator",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder",
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["int"] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator",
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.bouncycastle.openpgp.PGPPublicKey"] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory",
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["java.io.InputStream"] }
+    ]
+  },
+  {
+    "name": "org.bouncycastle.openpgp.PGPUtil",
+    "methods": [
+      {
+        "name": "getDecoderStream",
+        "parameterTypes": ["java.io.InputStream"]
+      }
+    ]
+  }
+]

@@ -71,17 +71,16 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.9.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!--
-              spring-boot-maven-plugin repackages into an executable jar that
-              keeps dependency jars NESTED (not exploded). This preserves the
-              Bouncy Castle signed-jar signature, which the JCE requires when
-              BC is registered as a security provider — an uber/shaded jar would
-              break that signature.
-            -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -91,4 +90,45 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <imageName>java-native-runner</imageName>
+                            <mainClass>com.poc.pgp.NativeMain</mainClass>
+                            <fallback>false</fallback>
+                            <!-- Use only our captured metadata; no network repo. -->
+                            <metadataRepository>
+                                <enabled>false</enabled>
+                            </metadataRepository>
+                            <buildArgs>
+                                <buildArg>--no-fallback</buildArg>
+                                <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+                                <!-- Register Bouncy Castle as a security provider
+                                     at build time so the JCE provider-verification
+                                     succeeds in the native image (otherwise every
+                                     Cipher.getInstance throws SecurityException). -->
+                                <buildArg>-H:AdditionalSecurityProviders=org.bouncycastle.jce.provider.BouncyCastleProvider</buildArg>
+                            </buildArgs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

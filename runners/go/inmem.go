@@ -19,6 +19,11 @@ type inmemSingleEngine struct{}
 
 const inmemSingleVariantID = "go-inmem-single"
 
+// binaryHints forces a binary literal-data packet ('b'). Without it go-crypto
+// defaults to text mode ('u'), which makes consumers like gpg canonicalize line
+// endings (e.g. a lone CR is dropped), breaking byte-for-byte round-trips.
+var binaryHints = &openpgp.FileHints{IsBinary: true}
+
 func init() {
 	RegisterEngine(inmemSingleVariantID, func() CryptoEngine { return inmemSingleEngine{} })
 }
@@ -43,7 +48,7 @@ func (e inmemSingleEngine) Encrypt(plaintext io.Reader, out io.Writer, profile C
 	var ct bytes.Buffer
 	ct.Grow(len(plainBytes) + 512)
 	nanos, cryptoErr := MeasureNanos(func() error {
-		w, encErr := openpgp.Encrypt(&ct, recipients, nil, nil, config)
+		w, encErr := openpgp.Encrypt(&ct, recipients, nil, binaryHints, config)
 		if encErr != nil {
 			return encErr
 		}

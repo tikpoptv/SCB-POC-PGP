@@ -72,7 +72,7 @@ func (e streamParallelEngine) Encrypt(plaintext io.Reader, out io.Writer, profil
 	bw := bufio.NewWriterSize(out, parallelStreamBufferSize)
 
 	nanos, cryptoErr := MeasureNanos(func() error {
-		w, encErr := openpgp.Encrypt(bw, recipients, nil, nil, config)
+		w, encErr := openpgp.Encrypt(bw, recipients, nil, binaryHints, config)
 		if encErr != nil {
 			return encErr
 		}

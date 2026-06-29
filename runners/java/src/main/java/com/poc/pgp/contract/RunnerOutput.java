@@ -11,12 +11,17 @@ import java.util.List;
  * ({@code contract/runner-output.schema.json}). CPU/RAM samples are collected
  * externally by the Harness; this carries raw per-operation samples plus run
  * metadata. Field order matches the Go runner's output for readability.
+ *
+ * <p>{@code graalvmVersion}: populated only by {@code NativeMain} (the
+ * {@code java-native-stream-parallel} variant) with the actual GraalVM version
+ * string captured at start-up. Satisfies Req 22.3 — the Result_Report records
+ * the real build-toolchain version for the native binary.
  */
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @JsonPropertyOrder({
         "runnerId", "variantId", "mode", "scenarioId", "cryptoProfileId",
         "concurrency", "outputEncoding", "processStartupMs", "hardwareAccel",
-        "keySetChecksumSeen", "corpusChecksumSeen", "gc", "operations",
+        "graalvmVersion", "keySetChecksumSeen", "corpusChecksumSeen", "gc", "operations",
         "resourceSamplesNote"
 })
 public final class RunnerOutput {
@@ -33,6 +38,16 @@ public final class RunnerOutput {
     public String outputEncoding;
     public Double processStartupMs;
     public boolean hardwareAccel;
+
+    /**
+     * GraalVM version string (major.minor.patch) of the native-image runtime,
+     * recorded only when running as a native binary (Req 22.3). Null for JVM
+     * variants; the Harness reads {@code org.graalvm.nativeimage.imagecode}
+     * and this field to log it in {@code versions.graalvm} in results.json.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String graalvmVersion;
+
     public String keySetChecksumSeen;
     public String corpusChecksumSeen;
     public GcStats gc;

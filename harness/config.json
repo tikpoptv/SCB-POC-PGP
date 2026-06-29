@@ -1,0 +1,547 @@
+{
+  "_comment": "config.json สำหรับ PGP Benchmark — ออกแบบพอดีกับ VM 8 GB / 8 vCPU (ENVIRONMENT.md)",
+  "_constraints": {
+    "vm_ram_gb": 8,
+    "vm_vcpu": 8,
+    "tmpfs_corpus_gb": 2,
+    "jvm_heap": "-Xmx3g",
+    "memory_quota_per_runner_mb": 3072,
+    "large_inmem_cap_mb": 256,
+    "note": "ไฟล์ > 256 MB ต้องใช้ streaming (Req 15.4); quota เท่ากันทั้งสอง runner (ส่วนต่าง=0, Req 3.4)"
+  },
+
+  "rounds": 50,
+  "warmupIterations": 5,
+  "seed": 123456789,
+  "samplingIntervalMs": 100,
+  "resultDir": "./results",
+  "corpusOnTmpfs": true,
+  "stabilityThresholdCV": 0.05,
+  "confidenceLevel": 0.95,
+  "bestVariantCriterion": "p50_roundtrip",
+
+  "cryptoProfiles": [
+    {
+      "id": "aes256-zlib",
+      "pubAlg": "RSA-2048",
+      "cipher": "AES-256",
+      "compression": "ZLIB",
+      "hash": "SHA-256"
+    },
+    {
+      "id": "aes256-nocomp",
+      "pubAlg": "RSA-2048",
+      "cipher": "AES-256",
+      "compression": "NONE",
+      "hash": "SHA-256"
+    },
+    {
+      "id": "chacha20-nocomp",
+      "pubAlg": "RSA-2048",
+      "cipher": "CHACHA20",
+      "compression": "NONE",
+      "hash": "SHA-256",
+      "_note": "ChaCha20 ไม่ใช้ AES-NI — เปรียบเทียบ software-path (Req 18.1, 23.2)"
+    }
+  ],
+
+  "keySpecs": [
+    { "type": "RSA", "bits": 2048 },
+    { "type": "RSA", "bits": 4096 },
+    { "type": "ECC", "curve": "Curve25519" }
+  ],
+
+  "scenarios": [
+
+    {
+      "_group": "A — small files (≤1 MB): ครอบคลุม key types × cipher/compression × concurrency",
+
+      "id": "small-rsa2048-aes256zlib-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa2048-aes256zlib-multi",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa2048-aes256nocomp-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa2048-aes256nocomp-multi",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa2048-chacha20-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "chacha20-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa4096-aes256zlib-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa4096-aes256zlib-multi",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-rsa4096-aes256nocomp-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-ecc-aes256zlib-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-ecc-aes256zlib-multi",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "small-ecc-aes256nocomp-single",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+
+    {
+      "_group": "B — medium files (>1 MB ≤100 MB): key types × cipher/compression × concurrency × compressibility",
+
+      "id": "medium-rsa2048-aes256zlib-single-compressible",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "compressible",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa2048-aes256zlib-single-incompressible",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "incompressible",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa2048-aes256zlib-multi",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa2048-aes256nocomp-single",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa2048-aes256nocomp-multi",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa2048-chacha20-single",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "chacha20-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa4096-aes256zlib-single",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa4096-aes256zlib-multi",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-rsa4096-aes256nocomp-single",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-ecc-aes256zlib-single",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-ecc-aes256zlib-multi",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "medium-ecc-aes256nocomp-single",
+      "fileSizeTier": "medium",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+
+    {
+      "_group": "C — large files (>100 MB, in-memory cap ~256 MB): force streaming เมื่อ >256 MB (Req 15.4)",
+      "_note": "memoryMode=streaming บังคับตลอด เพราะ large tier อาจมีไฟล์เกิน 256 MB (Req 15.4, ENVIRONMENT.md)"
+    },
+    {
+      "id": "large-rsa2048-aes256zlib-single",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-rsa2048-aes256zlib-multi",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-rsa2048-aes256nocomp-single",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "incompressible",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-rsa2048-aes256nocomp-multi",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "incompressible",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-rsa4096-aes256zlib-single",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 1,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-rsa4096-aes256zlib-multi",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 8,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-ecc-aes256zlib-single",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 1,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "large-ecc-aes256zlib-multi",
+      "fileSizeTier": "large",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 8,
+      "memoryMode": "streaming",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+
+    {
+      "_group": "D — many-small files (≥1000 ไฟล์ ≤1 MB): วัด per-file overhead (Req 13.2)"
+    },
+    {
+      "id": "manysmall-rsa2048-aes256zlib-single",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-rsa2048-aes256zlib-multi",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-rsa2048-aes256nocomp-single",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "incompressible",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-rsa2048-aes256nocomp-multi",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-nocomp",
+      "dataCompressibility": "incompressible",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-rsa4096-aes256zlib-single",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-rsa4096-aes256zlib-multi",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "RSA", "bits": 4096 },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-ecc-aes256zlib-single",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 1,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "manysmall-ecc-aes256zlib-multi",
+      "fileSizeTier": "many_small",
+      "keySpec": { "type": "ECC", "curve": "Curve25519" },
+      "concurrency": 8,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+
+    {
+      "_group": "E — concurrency sweep (small, RSA-2048, AES-256/ZLIB): 1 → 2 → 4 → 8 เพื่อดู scaling (Req 16.1)"
+    },
+    {
+      "id": "concurrency2-small-rsa2048-aes256zlib",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 2,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    },
+    {
+      "id": "concurrency4-small-rsa2048-aes256zlib",
+      "fileSizeTier": "small",
+      "keySpec": { "type": "RSA", "bits": 2048 },
+      "concurrency": 4,
+      "memoryMode": "both",
+      "cryptoProfileId": "aes256-zlib",
+      "dataCompressibility": "both",
+      "outputEncoding": "binary",
+      "memoryQuotaMb": 3072
+    }
+
+  ],
+
+  "modes": ["cold_start", "steady_state"],
+
+  "nullTest": {
+    "enabled": true,
+    "runner": "go",
+    "_note": "รัน Go vs Go เพื่อวัด noise floor (Req 27.4)"
+  },
+
+  "soakTest": {
+    "enabled": false,
+    "durationSec": 3600,
+    "totalOperations": null,
+    "ramLeakThresholdMbPerHour": 50,
+    "latencyDegradationThresholdPct": 10,
+    "_note": "ปิดไว้เป็นค่าเริ่มต้น; เปิดเพื่อทดสอบ memory leak ระยะยาว (Req 29)"
+  },
+
+  "jvmOptions": ["-Xmx3g"],
+  "_note_jvm": "JVM max heap = 3 GB ตาม ENVIRONMENT.md; memory quota เท่ากันทั้งสอง runner (Req 3.4)"
+}
