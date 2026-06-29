@@ -50,7 +50,7 @@ func (e streamSingleEngine) Encrypt(plaintext io.Reader, out io.Writer, profile 
 		go func() {
 			err := func() error {
 				bw := bufio.NewWriterSize(pw, streamBufferSize)
-				encW, encErr := openpgp.Encrypt(bw, recipients, nil, nil, config)
+				encW, encErr := openpgp.Encrypt(bw, recipients, nil, binaryHints, config)
 				if encErr != nil {
 					return encErr
 				}

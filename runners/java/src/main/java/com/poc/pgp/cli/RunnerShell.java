@@ -47,10 +47,25 @@ import java.util.stream.Stream;
  *   <li>for steady_state, run warm-up iterations whose samples are discarded</li>
  *   <li>process the corpus, timing ONLY the crypto calls via the engine (Req 1.1, 24.1)</li>
  * </ol>
+ *
+ * <p>GraalVM version (Req 22.3): {@link com.poc.pgp.NativeMain} sets the system
+ * property {@link #GRAALVM_VERSION_PROP} before calling {@link #run} so that
+ * this shell can stamp the actual GraalVM version into every
+ * {@link com.poc.pgp.contract.RunnerOutput} it produces.
  */
 public final class RunnerShell {
 
     private static final Logger log = LoggerFactory.getLogger(RunnerShell.class);
+
+    /**
+     * System-property key written by {@link com.poc.pgp.NativeMain} (and only
+     * that entry point) to carry the actual GraalVM version string into the shell
+     * without changing the RunnerShell constructor signature. Populated from
+     * {@code java.vm.version} at native start-up; absent (null) on a JVM run.
+     * The value ends up in {@link com.poc.pgp.contract.RunnerOutput#graalvmVersion}
+     * for Req 22.3.
+     */
+    public static final String GRAALVM_VERSION_PROP = "com.poc.pgp.graalvmVersion";
 
     private final EngineRegistry registry;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -165,6 +180,7 @@ public final class RunnerShell {
         out.outputEncoding = cmd.outputEncoding();
         out.processStartupMs = processStartupMs;
         out.hardwareAccel = result.hardwareAccel;
+        out.graalvmVersion = System.getProperty(GRAALVM_VERSION_PROP); // null for JVM; set by NativeMain (Req 22.3)
         out.keySetChecksumSeen = keySeen;
         out.corpusChecksumSeen = corpusSeen;
         out.gc = null; // JVM GC stats are added by a later task.

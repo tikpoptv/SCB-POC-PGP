@@ -56,3 +56,54 @@ echo '{"command":"run","variantId":"java-stream-parallel","mode":"steady_state",
 ```
 (The example needs a registered variant; until task 11.2 lands, the shell exits 3
 on an unknown `variantId`.)
+
+## Building the GraalVM Native Image variant (`java-native-stream-parallel`)
+
+The native variant is an optional extra that competes with `java-stream-parallel`
+in Best_Variant selection (Req 22.1, 22.5). A dedicated helper script handles
+everything including graceful skip when `native-image` is not on PATH:
+
+```bash
+cd runners/java
+./build-native.sh        # builds JAR first, then native image
+./build-native.sh --skip-jar  # skips JAR step (if already built)
+```
+
+**Exit codes:**
+- `0` — native binary built at `target/java-native-runner` **OR** `native-image`
+  not found (soft skip, Req 22.5): a `target/native-build-skipped.txt` marker
+  file is written so the Harness knows to exclude this variant from selection.
+- `1` — `native-image` was found but compilation failed: `target/native-build-failed.txt`
+  marker written (Req 22.5): only this variant is excluded; the suite continues.
+
+**GraalVM version (Req 22.3):** The script prints the detected GraalVM version
+string to stdout. At runtime the native binary itself stamps `java.vm.version`
+into every `RunnerOutput` JSON it emits (field `graalvmVersion`), so the Harness
+can persist it in `results.json → versions.graalvm`.
+
+**Prerequisites:**
+```bash
+# Install GraalVM JDK (e.g. via SDKMAN — use the same major as java.version in pom.xml)
+sdk install java 21.0.x-graalce
+gu install native-image     # install the native-image component
+```
+
+**Running the native binary directly:**
+```bash
+# Smoke-test the crypto path (no corpus needed):
+./target/java-native-runner selftest ../../keys
+
+# Full run with a Command JSON (same contract as the JVM runner):
+echo '{"command":"run","variantId":"java-native-stream-parallel",...}' \
+  | ./target/java-native-runner
+```
+
+**Metadata capture (when hints need refreshing):**
+```bash
+# Run under the GraalVM tracing agent to regenerate reachability-metadata.json:
+./mvnw -q -DskipTests package
+java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image \
+     -cp target/java-runner-0.1.0.jar \
+     com.poc.pgp.AgentExercise
+# Commit the updated files in META-INF/native-image/ before rebuilding.
+```

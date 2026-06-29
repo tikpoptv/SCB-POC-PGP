@@ -10,9 +10,10 @@ is preserved and a machine-readable reason is attached.
 
 from __future__ import annotations
 
+import math
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Sequence
 
 from harness.contract.models import RunnerId
 
@@ -43,6 +44,10 @@ __all__ = [
     "CostEnergyRecord",
     "cost_per_million_ops",
     "cost_energy_record",
+    # Noise floor
+    "NoiseFloor",
+    "NoiseFloorDisabled",
+    "compute_noise_floor",
 ]
 
 #: 1 MB = 1,048,576 bytes.
@@ -410,4 +415,136 @@ def cost_energy_record(
         binary_size_mb=binary_size_mb,
         idle_ram_mb=idle_ram_mb,
         energy_reason=reason,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Noise Floor (Req 27.4, 27.5)
+# ---------------------------------------------------------------------------
+# The null test runs the same Runner against itself (e.g. Go vs Go) to measure
+# the inherent variability of the machine and the Benchmark_Harness.
+#
+# Two metrics are reported:
+#   cv_round_trip   = stddev(all round-trip samples) / mean(all round-trip samples)
+#                     Coefficient of Variation of round-trip times across all
+#                     samples from both "runs" of the null test.
+#
+#   mean_diff_pct   = |mean_run1 - mean_run2| / ((mean_run1 + mean_run2) / 2) * 100
+#                     Percent difference between the two per-run means, i.e.
+#                     how much the same Runner differs from itself.
+#
+# Both values are dimensionless (or percent for mean_diff_pct) and serve as a
+# baseline: head-to-head differences larger than the noise floor are meaningful.
+
+
+@dataclass(frozen=True)
+class NoiseFloor:
+    """Measured noise floor from the null test (same Runner vs itself).
+
+    Attributes
+    ----------
+    runner:
+        The :class:`~harness.contract.models.RunnerId` value (e.g. ``"go"``).
+    cv_round_trip:
+        Coefficient of Variation of all round-trip time samples from the null
+        test: ``stddev / mean``. ``None`` when there are fewer than 2 samples
+        or the mean is zero.
+    mean_diff_pct:
+        Percent difference between the mean of run-1 samples and the mean of
+        run-2 samples:
+        ``|mean_run1 - mean_run2| / ((mean_run1 + mean_run2) / 2) * 100``.
+        ``None`` when both means are zero or either group is empty.
+    """
+
+    runner: str
+    cv_round_trip: float | None
+    mean_diff_pct: float | None
+
+    def to_dict(self) -> dict[str, object]:
+        """Render the ``noiseFloor`` JSON shape used in ``results.json``."""
+        return {
+            "runner": self.runner,
+            "cvRoundTrip": self.cv_round_trip,
+            "meanDiffPct": self.mean_diff_pct,
+        }
+
+
+@dataclass(frozen=True)
+class NoiseFloorDisabled:
+    """Sentinel written to Result_Report when the null test is disabled.
+
+    ``enabled`` is always ``False``; ``noiseFloor`` is recorded as this object
+    rather than ``None`` so downstream consumers can distinguish "not run" from
+    "ran but data unavailable".
+    """
+
+    enabled: bool = False
+
+    def to_dict(self) -> dict[str, object]:
+        return {"enabled": self.enabled}
+
+
+def compute_noise_floor(
+    runner: str,
+    run1_round_trip_ms: Sequence[float],
+    run2_round_trip_ms: Sequence[float],
+) -> NoiseFloor:
+    """Compute the :class:`NoiseFloor` from two runs of the same Runner.
+
+    Parameters
+    ----------
+    runner:
+        The runner identifier string (e.g. ``"go"`` or ``"java"``).
+    run1_round_trip_ms:
+        Per-operation round-trip times (ms) from the first run of the null test.
+    run2_round_trip_ms:
+        Per-operation round-trip times (ms) from the second run.
+
+    Returns
+    -------
+    NoiseFloor
+        ``cv_round_trip`` is the CV of *all* samples pooled together.
+        ``mean_diff_pct`` is the percentage difference between the two per-run
+        means (using the mid-point as the denominator).
+
+    Notes
+    -----
+    * ``cv_round_trip`` is ``None`` when the pooled sample set has fewer than 2
+      elements or its mean is zero.
+    * ``mean_diff_pct`` is ``None`` when either run provides no samples, or when
+      ``(mean_run1 + mean_run2) == 0`` (both means are zero).
+    """
+    all_samples: list[float] = list(run1_round_trip_ms) + list(run2_round_trip_ms)
+
+    # CV over all pooled samples
+    cv_round_trip: float | None
+    if len(all_samples) < 2:
+        cv_round_trip = None
+    else:
+        n = len(all_samples)
+        mean = sum(all_samples) / n
+        if mean <= 0.0:
+            cv_round_trip = None
+        else:
+            variance = sum((x - mean) ** 2 for x in all_samples) / (n - 1)
+            stddev = math.sqrt(variance)
+            cv_round_trip = stddev / mean
+
+    # Mean diff % between the two runs
+    mean_diff_pct: float | None
+    if not run1_round_trip_ms or not run2_round_trip_ms:
+        mean_diff_pct = None
+    else:
+        mean1 = sum(run1_round_trip_ms) / len(run1_round_trip_ms)
+        mean2 = sum(run2_round_trip_ms) / len(run2_round_trip_ms)
+        midpoint = (mean1 + mean2) / 2.0
+        if midpoint == 0.0:
+            mean_diff_pct = None
+        else:
+            mean_diff_pct = abs(mean1 - mean2) / midpoint * 100.0
+
+    return NoiseFloor(
+        runner=runner,
+        cv_round_trip=cv_round_trip,
+        mean_diff_pct=mean_diff_pct,
     )
