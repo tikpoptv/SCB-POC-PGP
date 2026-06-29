@@ -106,8 +106,8 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
   <div class="sub">Go (ProtonMail/go-crypto) เทียบกับ Java (Spring Boot + Bouncy Castle)
     — ผลการทดสอบจริงบน VM Ubuntu 24.04 LTS, 8 vCPU, 8 GB RAM</div>
   <div class="meta">
-    <span>📅 เริ่มทดสอบ: 2026-06-29 04:53:27</span>
-    <span>✅ สิ้นสุด: 2026-06-29 05:02:04</span>
+    <span>📅 เริ่มทดสอบ: 2026-06-29 07:48:29</span>
+    <span>✅ สิ้นสุด: 2026-06-29 08:00:51</span>
     <span>🖥 VM: Ubuntu 24.04, 8 vCPU, 8 GB RAM</span>
     <span>🔒 AES-256 + ZLIB + SHA-256</span>
     <span>🧪 721 tests ผ่านทั้งหมด</span>
@@ -118,15 +118,15 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
 <div class="page active" id="page-summary">
 <div class="verdict" style="background:linear-gradient(135deg,#00ADE8cc,#00ADE8)">
   <div class="big">🏆 Go ชนะโดยรวม</div>
-  <div class="vsub">ชนะ 15 จาก 15 scenarios
-      | ทดสอบเมื่อ 2026-06-29 04:53:27</div>
+  <div class="vsub">ชนะ 26 จาก 26 scenarios
+      | ทดสอบเมื่อ 2026-06-29 07:48:29</div>
 </div>
 
 <div class="stats">
-  <div class="sbox go-b"><div class="val">27.2</div><div class="lbl">Go avg latency (ms)</div></div>
-  <div class="sbox java-b"><div class="val">33.8</div><div class="lbl">Java avg latency (ms)</div></div>
-  <div class="sbox green-b"><div class="val">15</div><div class="lbl">Go ชนะ (/15 scenarios)</div></div>
-  <div class="sbox" style="border-color:#F89820"><div class="val" style="color:#F89820">0</div><div class="lbl">Java ชนะ (/15 scenarios)</div></div>
+  <div class="sbox go-b"><div class="val">10.4</div><div class="lbl">Go avg latency (ms)</div></div>
+  <div class="sbox java-b"><div class="val">12.9</div><div class="lbl">Java avg latency (ms)</div></div>
+  <div class="sbox green-b"><div class="val">26</div><div class="lbl">Go ชนะ (/26 scenarios)</div></div>
+  <div class="sbox" style="border-color:#F89820"><div class="val" style="color:#F89820">0</div><div class="lbl">Java ชนะ (/26 scenarios)</div></div>
   <div class="sbox"><div class="val" style="color:#6c757d">0</div><div class="lbl">เสมอ ±5%</div></div>
   <div class="sbox green-b"><div class="val">100%</div><div class="lbl">Correctness ทุกไฟล์</div></div>
 </div>
@@ -134,7 +134,7 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
 <div class="card">
   <h3>📌 ข้อสรุปสำหรับการตัดสินใจ</h3>
   <ul style="line-height:2.2">
-    <li><strong>Go ชนะ 15 จาก 15 scenarios (100%)</strong> — เป็นตัวเลือกที่เหมาะกว่าสำหรับ PGP workload ส่วนใหญ่</li><li><strong>Java ชนะ .txt และ .csv ทุก key algorithm (0 scenarios)</strong> — JVM ZLIB path เร็วกว่าสำหรับข้อมูลที่บีบอัดได้สูง (Java inmem/stream ชนะ Go ด้วยค่า p50 ที่ต่ำกว่า ~1.4–1.7×)</li><li><strong>Go ชนะทุก binary file (0 scenarios)</strong> — .pdf, .xlsx, .gz, .dat Go เร็วกว่า 1.2–1.4× เพราะ AES hardware path ของ Go runtime มีประสิทธิภาพสูงกว่า</li><li><strong>Curve25519 — Go ได้เปรียบมากที่สุดทุกชนิดไฟล์</strong> — Go ECC path เร็วกว่า Bouncy Castle อย่างชัดเจน</li><li><strong>ไฟล์เล็กจำนวนมาก — Go ได้เปรียบ 1.2–1.7×</strong> — per-file overhead ของ JVM สูงกว่า Go runtime</li><li><strong>⭐ ข้อแนะนำ</strong>: ถ้าระบบประมวลผล .pdf/.xlsx/.dat หรือใช้ Curve25519 → <strong>Go เหมาะกว่าชัดเจน</strong><br>ถ้าระบบประมวลผล .txt/.csv เป็นหลักและใช้ Java stack อยู่แล้ว → <strong>Java ก็ทำได้ดีพอ หรือเร็วกว่าในชนิดไฟล์นั้น</strong></li>
+    <li><strong>Go ชนะ 26 จาก 26 scenarios (100%)</strong> — เป็นตัวเลือกที่เหมาะกว่าสำหรับ PGP workload ส่วนใหญ่</li><li><strong>Java ชนะ .txt และ .csv ทุก key algorithm (0 scenarios)</strong> — JVM ZLIB path เร็วกว่าสำหรับข้อมูลที่บีบอัดได้สูง (Java inmem/stream ชนะ Go ด้วยค่า p50 ที่ต่ำกว่า ~1.4–1.7×)</li><li><strong>Go ชนะทุก binary file (12 scenarios)</strong> — .pdf, .xlsx, .gz, .dat Go เร็วกว่า 1.2–1.4× เพราะ AES hardware path ของ Go runtime มีประสิทธิภาพสูงกว่า</li><li><strong>Curve25519 — Go ได้เปรียบมากที่สุดทุกชนิดไฟล์</strong> — Go ECC path เร็วกว่า Bouncy Castle อย่างชัดเจน</li><li><strong>ไฟล์เล็กจำนวนมาก — Go ได้เปรียบ 1.2–1.7×</strong> — per-file overhead ของ JVM สูงกว่า Go runtime</li><li><strong>⭐ ข้อแนะนำ</strong>: ถ้าระบบประมวลผล .pdf/.xlsx/.dat หรือใช้ Curve25519 → <strong>Go เหมาะกว่าชัดเจน</strong><br>ถ้าระบบประมวลผล .txt/.csv เป็นหลักและใช้ Java stack อยู่แล้ว → <strong>Java ก็ทำได้ดีพอ หรือเร็วกว่าในชนิดไฟล์นั้น</strong></li>
   </ul>
 </div>
 
@@ -152,96 +152,162 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
       <th>ผล</th><th>ความต่าง</th>
     </tr></thead>
     <tbody><tr>
-          <td>ไฟล์เล็ก บีบอัดได้ (20×50KB .txt)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
-          <td style="color:#00ADE8;font-weight:600">1.158 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">1.781 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr>
-          <td>ไฟล์เล็ก บีบอัดได้ (20×50KB .txt)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
-          <td style="color:#00ADE8;font-weight:600">4.968 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">6.069 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์เล็ก บีบอัดได้ (20×50KB .txt)</td><td>Curve25519 ECC (ยุคใหม่)</td>
-          <td style="color:#00ADE8;font-weight:600">0.405 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">1.471 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 3.6×</span></td></tr><tr>
-          <td>ไฟล์เล็ก บีบอัดไม่ได้ (20×50KB binary)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
-          <td style="color:#00ADE8;font-weight:600">1.860 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">2.610 ms
+          <td>ft-txt-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">2.508 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">3.436 ms
               <br><small style="color:#aaa">stream</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr>
-          <td>ไฟล์เล็ก บีบอัดไม่ได้ (20×50KB binary)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
-          <td style="color:#00ADE8;font-weight:600">5.742 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">7.007 ms
-              <br><small style="color:#aaa">inmem</small></td>
+          <td>ft-txt-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">6.334 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">7.940 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์เล็ก บีบอัดไม่ได้ (20×50KB binary)</td><td>Curve25519 ECC (ยุคใหม่)</td>
-          <td style="color:#00ADE8;font-weight:600">1.206 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">2.367 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 2.0×</span></td></tr><tr>
-          <td>ไฟล์กลาง บีบอัดได้ (4×5MB .csv)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
-          <td style="color:#00ADE8;font-weight:600">17.720 ms
-              <br><small style="color:#aaa">stream</small></td>
-          <td style="color:#F89820;font-weight:600">21.312 ms
-              <br><small style="color:#aaa">stream</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์กลาง บีบอัดได้ (4×5MB .csv)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
-          <td style="color:#00ADE8;font-weight:600">21.693 ms
-              <br><small style="color:#aaa">stream</small></td>
-          <td style="color:#F89820;font-weight:600">29.223 ms
+          <td>ft-txt-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">1.762 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">3.154 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.8×</span></td></tr><tr>
+          <td>ft-csv-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">2.413 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">3.428 ms
               <br><small style="color:#aaa">stream</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr>
-          <td>ไฟล์กลาง บีบอัดได้ (4×5MB .csv)</td><td>Curve25519 ECC (ยุคใหม่)</td>
-          <td style="color:#00ADE8;font-weight:600">17.849 ms
-              <br><small style="color:#aaa">stream</small></td>
-          <td style="color:#F89820;font-weight:600">20.754 ms
-              <br><small style="color:#aaa">stream</small></td>
+          <td>ft-csv-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">6.426 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">7.858 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์กลาง บีบอัดไม่ได้ (4×5MB binary)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
-          <td style="color:#00ADE8;font-weight:600">109.960 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">134.678 ms
-              <br><small style="color:#aaa">inmem</small></td>
+          <td>ft-csv-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">1.759 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">3.248 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.9×</span></td></tr><tr>
+          <td>ft-pdf-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.454 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">14.275 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์กลาง บีบอัดไม่ได้ (4×5MB binary)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
-          <td style="color:#00ADE8;font-weight:600">110.424 ms
+          <td>ft-pdf-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.316 ms
               <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">143.074 ms
+          <td style="color:#F89820;font-weight:600">18.409 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ft-pdf-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.783 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">14.125 ms
               <br><small style="color:#aaa">stream</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
-          <td>ไฟล์กลาง บีบอัดไม่ได้ (4×5MB binary)</td><td>Curve25519 ECC (ยุคใหม่)</td>
-          <td style="color:#00ADE8;font-weight:600">109.375 ms
-              <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">129.791 ms
+          <td>ft-xlsx-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.667 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">14.472 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ft-xlsx-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.302 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">18.905 ms
               <br><small style="color:#aaa">stream</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์เล็กจำนวนมาก (100×10KB)</td><td>RSA-2048 (มาตรฐานทั่วไป)</td>
-          <td style="color:#00ADE8;font-weight:600">0.797 ms
+          <td>ft-xlsx-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.838 ms
               <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">1.268 ms
+          <td style="color:#F89820;font-weight:600">14.283 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>ft-zip-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.302 ms
               <br><small style="color:#aaa">inmem</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr>
-          <td>ไฟล์เล็กจำนวนมาก (100×10KB)</td><td>RSA-4096 (ความปลอดภัยสูง)</td>
-          <td style="color:#00ADE8;font-weight:600">4.760 ms
+          <td style="color:#F89820;font-weight:600">14.481 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>ft-zip-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.254 ms
               <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">5.500 ms
+          <td style="color:#F89820;font-weight:600">19.234 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>ft-zip-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.834 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">14.209 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>ft-dat-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.358 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">14.483 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>ft-dat-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.425 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">18.700 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>ft-dat-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.874 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">14.120 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>sizegrad-comp-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">16.415 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">18.785 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr>
+          <td>sizegrad-comp-rsa4096</td><td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">19.334 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td style="color:#F89820;font-weight:600">23.183 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>sizegrad-comp-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">15.888 ms
+              <br><small style="color:#aaa">stream</small></td>
+          <td style="color:#F89820;font-weight:600">17.925 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr>
+          <td>sizegrad-incomp-rsa2048</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">22.017 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">27.462 ms
               <br><small style="color:#aaa">stream</small></td>
           <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
-          <td>ไฟล์เล็กจำนวนมาก (100×10KB)</td><td>Curve25519 ECC (ยุคใหม่)</td>
-          <td style="color:#00ADE8;font-weight:600">0.201 ms
+          <td>sizegrad-incomp-curve25519</td><td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">22.058 ms
               <br><small style="color:#aaa">inmem</small></td>
-          <td style="color:#F89820;font-weight:600">0.788 ms
+          <td style="color:#F89820;font-weight:600">26.540 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr>
+          <td>many-1kb</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">0.763 ms
               <br><small style="color:#aaa">inmem</small></td>
-          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 3.9×</span></td></tr></tbody>
+          <td style="color:#F89820;font-weight:600">1.017 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr>
+          <td>many-10kb</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">0.794 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">1.162 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr>
+          <td>many-100kb</td><td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">1.201 ms
+              <br><small style="color:#aaa">inmem</small></td>
+          <td style="color:#F89820;font-weight:600">1.587 ms
+              <br><small style="color:#aaa">stream⚡</small></td>
+          <td><span class="badge bg">🔵 Go เร็วกว่า</span></td><td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr></tbody>
   </table>
 </div>
 
@@ -251,30 +317,30 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
   <p style="margin-bottom:14px;color:#666;font-size:13px">
     Go มี <strong>3 variants (รูปแบบ)</strong> |
     Java มี <strong>3 variants</strong> |
-    ทดสอบ <strong>135 คู่</strong> รวมทุก scenario × key type
+    ทดสอบ <strong>234 คู่</strong> รวมทุก scenario × key type
   </p>
 
   <div class="grid3" style="margin-bottom:18px">
     <div class="mbox green">
       <h4>🥇 Go Variant ที่ดีที่สุด</h4>
       <p style="font-size:18px;font-weight:800;color:#00ADE8;margin:6px 0">
-        Go: in-memory (single)
+        Go: streaming (single)
       </p>
-      <p>ชนะ <strong>45 matchups</strong> จาก 45 matchups
+      <p>ชนะ <strong>78 matchups</strong> จาก 78 matchups
          ที่ variant นี้เข้าแข่ง</p>
     </div>
     <div class="mbox orange">
       <h4>🥇 Java Variant ที่ดีที่สุด</h4>
       <p style="font-size:18px;font-weight:800;color:#F89820;margin:6px 0">
-        Java: streaming (single)
+        Java: in-memory (single)
       </p>
-      <p>ชนะ <strong>5 matchups</strong> จาก 45 matchups
+      <p>ชนะ <strong>0 matchups</strong> จาก 78 matchups
          ที่ variant นี้เข้าแข่ง</p>
     </div>
     <div class="mbox">
       <h4>🤝 Java Variant ที่สู้ Go ได้ใกล้ชิดที่สุด</h4>
       <p style="font-size:18px;font-weight:800;color:#9b59b6;margin:6px 0">
-        Java: in-memory (single)
+        Java: streaming ⚡(parallel)
       </p>
       <p>ช่องว่างเฉลี่ยน้อยที่สุดเมื่อเทียบกับ Go — Java variant ที่ competitive ที่สุด</p>
     </div>
@@ -294,321 +360,699 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
       <th>ผล</th><th>ความต่าง</th>
     </tr></thead>
     <tbody><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
                       <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">1.158 ms</td>
+                      <td style="text-align:center">2.902 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">1.781 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">1.158 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">1.916 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">1.158 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.674 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 2.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">1.207 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">1.781 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">1.207 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">1.916 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">1.207 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.674 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 2.2×</span></td></tr><tr style="background:#f8f9fa">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">1.727 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">1.781 ms</td>
-                      <td><span class="badge bt">⚪ เสมอ (±5%)</span></td>
-                      <td><span style="color:#6c757d">ต่างกัน 3.1%</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">1.727 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">1.916 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">1.727 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.674 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">1.860 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">2.740 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">1.860 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">2.610 ms</td>
+                      <td style="text-align:center">3.985 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
                       <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
                       <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">1.860 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">4.258 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 2.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">2.057 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">2.740 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">2.057 ms</td>
+                      <td style="text-align:center">2.902 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">2.610 ms</td>
+                      <td style="text-align:center">3.436 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">2.902 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">3.441 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
                       <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">2.057 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">4.258 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 2.1×</span></td></tr><tr style="background:#fef3e2">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.962 ms</td>
+                      <td style="text-align:center">2.787 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">2.740 ms</td>
-                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
-                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#fef3e2">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.962 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">2.610 ms</td>
-                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
-                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็ก บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.962 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">4.258 ms</td>
+                      <td style="text-align:center">3.985 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
                       <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">19.470 ms</td>
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.787 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">3.436 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.787 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">3.441 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.508 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">27.547 ms</td>
+                      <td style="text-align:center">3.985 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.508 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">3.436 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
                       <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">19.470 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">21.312 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">19.470 ms</td>
+                      <td style="font-size:11px">ft-txt-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.508 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">29.337 ms</td>
+                      <td style="text-align:center">3.441 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">2.604 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">3.934 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
                       <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">17.720 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">27.547 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">17.720 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">21.312 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">17.720 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">29.337 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.7×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">23.712 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">27.547 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#fef3e2">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">23.712 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">21.312 ms</td>
-                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
-                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">23.712 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">29.337 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
                       <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">109.960 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">134.678 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">109.960 ms</td>
+                      <td style="text-align:center">2.604 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">141.572 ms</td>
+                      <td style="text-align:center">3.428 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
                       <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
                       <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">109.960 ms</td>
+                      <td style="text-align:center">2.604 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">146.395 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">117.187 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">134.678 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">117.187 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">141.572 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">117.187 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">146.395 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">122.834 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">134.678 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">122.834 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">141.572 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์กลาง บีบอัดไม่ได้</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">122.834 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">146.395 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">0.797 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">1.268 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">0.797 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">1.373 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.7×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
-                      <td style="text-align:center">0.797 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.076 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 2.6×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">0.955 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">1.268 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">0.955 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">1.373 ms</td>
+                      <td style="text-align:center">3.572 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
                       <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
                       <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
-                      <td style="text-align:center">0.955 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.076 ms</td>
-                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 2.2×</span></td></tr><tr style="background:#fef3e2">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">1.476 ms</td>
+                      <td style="text-align:center">2.564 ms</td>
                       <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
-                      <td style="text-align:center">1.268 ms</td>
-                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
-                      <td><span class="sj">Java เร็วกว่า 1.2×</span></td></tr><tr style="background:#fef3e2">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">1.476 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
-                      <td style="text-align:center">1.373 ms</td>
-                      <td><span class="badge bj">🟠 Java เร็วกว่า</span></td>
-                      <td><span class="sj">Java เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
-                      <td style="font-size:11px">ไฟล์เล็กจำนวนมาก</td>
-                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">1.476 ms</td>
-                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
-                      <td style="text-align:center">2.076 ms</td>
+                      <td style="text-align:center">3.934 ms</td>
                       <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
-                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr></tbody>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.564 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">3.428 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">2.564 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">3.572 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.413 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">3.934 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.413 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">3.428 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-csv-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">2.413 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">3.572 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.477 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">14.974 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.477 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.715 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.477 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.275 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.618 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">14.974 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.618 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.715 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.618 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.275 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.454 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">14.974 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.454 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.715 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-pdf-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.454 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.275 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.713 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">15.326 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.713 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">15.011 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.713 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.472 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">13.413 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">15.326 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">13.413 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">15.011 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">13.413 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.472 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.667 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">15.326 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.667 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">15.011 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-xlsx-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.667 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.472 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.302 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">14.873 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.302 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.481 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.302 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.765 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.138 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">14.873 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.138 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.481 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.138 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.765 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.625 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">14.873 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.625 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.481 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-zip-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.625 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.765 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.358 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">15.522 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.358 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.559 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">11.358 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.483 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.375 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">15.522 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.375 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.559 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">12.375 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.483 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.388 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">15.522 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.388 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">14.559 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">ft-dat-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">11.388 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">14.483 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">17.358 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">22.267 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">17.358 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">21.573 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">17.358 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">18.785 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">16.974 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">22.267 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">16.974 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">21.573 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">16.974 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">18.785 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">16.415 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">22.267 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">16.415 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">21.573 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-comp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">16.415 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">18.785 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">22.017 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">31.591 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">22.017 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">27.462 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">22.017 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">28.589 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">25.073 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">31.591 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">25.073 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">27.462 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">25.073 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">28.589 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">23.759 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">31.591 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">23.759 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">27.462 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">sizegrad-incomp-rsa2048</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">23.759 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">28.589 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.763 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.017 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.763 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.072 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.763 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.065 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">0.956 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.017 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">0.956 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.072 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">0.956 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.065 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">0.870 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.017 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">0.870 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.072 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-1kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">0.870 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.065 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.794 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.162 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.794 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.181 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.5×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">0.794 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.386 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.8×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.011 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.162 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.1×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.011 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.181 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.011 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.386 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">0.860 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.162 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">0.860 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.181 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-10kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">0.860 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.386 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.6×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.201 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.712 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.201 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.662 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: in-memory (single)</span></td>
+                      <td style="text-align:center">1.201 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.587 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.288 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.712 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.288 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.662 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming (single)</span></td>
+                      <td style="text-align:center">1.288 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.587 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.2×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.230 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: in-memory (single)</span></td>
+                      <td style="text-align:center">1.712 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.230 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming (single)</span></td>
+                      <td style="text-align:center">1.662 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.4×</span></td></tr><tr style="background:#e8f4fd">
+                      <td style="font-size:11px">many-100kb</td>
+                      <td><span style="color:#00ADE8;font-weight:600">Go: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.230 ms</td>
+                      <td><span style="color:#F89820;font-weight:600">Java: streaming ⚡(parallel)</span></td>
+                      <td style="text-align:center">1.587 ms</td>
+                      <td><span class="badge bg">🔵 Go เร็วกว่า</span></td>
+                      <td><span class="sg">Go เร็วกว่า 1.3×</span></td></tr></tbody>
   </table>
   </div>
 
@@ -713,7 +1157,7 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
 
   <div class="chart-box">
     <div class="chart-title">④ สรุปผล — ชนะกี่ Test Cases
-      <div class="chart-sub">จาก 15 test cases ทั้งหมด</div></div>
+      <div class="chart-sub">จาก 26 test cases ทั้งหมด</div></div>
     <canvas id="c4"></canvas>
   </div>
 </div>
@@ -727,15 +1171,15 @@ const opts = (ylabel) => ({
 });
 
 new Chart(document.getElementById("c1"),{type:"bar",
-  data:{labels:["\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a\u0e2d\u0e31\u0e14\u0e44\u0e14\u0e49 (", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a\u0e2d\u0e31\u0e14\u0e44\u0e21\u0e48\u0e44\u0e14", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a\u0e2d\u0e31\u0e14\u0e44\u0e14\u0e49 (", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a\u0e2d\u0e31\u0e14\u0e44\u0e21\u0e48\u0e44\u0e14", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01\u0e08\u0e33\u0e19\u0e27\u0e19\u0e21\u0e32\u0e01 (10"],
+  data:{labels:["ft-txt-rsa2048", "ft-csv-rsa2048", "ft-pdf-rsa2048", "ft-xlsx-rsa2048", "ft-zip-rsa2048", "ft-dat-rsa2048", "sizegrad-comp-rsa204", "sizegrad-incomp-rsa2", "many-1kb", "many-10kb"],
     datasets:[
-      {label:"Go",  data:[1.158, 1.86, 17.72, 109.96, 0.797],  backgroundColor:B,borderRadius:4},
-      {label:"Java",data:[1.781, 2.61, 21.312, 134.678, 1.268],backgroundColor:O,borderRadius:4}
+      {label:"Go",  data:[2.508, 2.413, 11.454, 11.667, 11.302, 11.358, 16.415, 22.017, 0.763, 0.794],  backgroundColor:B,borderRadius:4},
+      {label:"Java",data:[3.436, 3.428, 14.275, 14.472, 14.481, 14.483, 18.785, 27.462, 1.017, 1.162],backgroundColor:O,borderRadius:4}
     ]},options:opts("Latency (ms)")});
 
 new Chart(document.getElementById("c2"),{type:"bar",
-  data:{labels:["\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a/RSA-2048", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a/RSA-4096", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a/Curve255", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a/RSA-2048", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a/RSA-4096", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01 \u0e1a\u0e35\u0e1a/Curve255", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a/RSA-2048", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a/RSA-4096", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a/Curve255", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a/RSA-2048", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a/RSA-4096", "\u0e44\u0e1f\u0e25\u0e4c\u0e01\u0e25\u0e32\u0e07 \u0e1a\u0e35\u0e1a/Curve255", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01\u0e08\u0e33\u0e19\u0e27/RSA-2048", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01\u0e08\u0e33\u0e19\u0e27/RSA-4096", "\u0e44\u0e1f\u0e25\u0e4c\u0e40\u0e25\u0e47\u0e01\u0e08\u0e33\u0e19\u0e27/Curve255"],
-    datasets:[{label:"Speedup",data:[1.54, 1.22, 3.63, 1.4, 1.22, 1.96, 1.2, 1.35, 1.16, 1.22, 1.3, 1.19, 1.59, 1.16, 3.92],
+  data:{labels:["ft-txt-rsa20/RSA-2048", "ft-txt-rsa40/RSA-4096", "ft-txt-curve/Curve255", "ft-csv-rsa20/RSA-2048", "ft-csv-rsa40/RSA-4096", "ft-csv-curve/Curve255", "ft-pdf-rsa20/RSA-2048", "ft-pdf-rsa40/RSA-4096", "ft-pdf-curve/Curve255", "ft-xlsx-rsa2/RSA-2048", "ft-xlsx-rsa4/RSA-4096", "ft-xlsx-curv/Curve255", "ft-zip-rsa20/RSA-2048", "ft-zip-rsa40/RSA-4096", "ft-zip-curve/Curve255"],
+    datasets:[{label:"Speedup",data:[1.37, 1.25, 1.79, 1.42, 1.22, 1.85, 1.25, 1.2, 1.31, 1.24, 1.24, 1.32, 1.28, 1.26, 1.31],
       backgroundColor:["#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8","#00ADE8"],borderRadius:3}]},
   options:{responsive:true,
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(c.parsed.y>0?"Go ":"Java ")+Math.abs(c.parsed.y).toFixed(1)+"x faster"}}},
@@ -745,13 +1189,13 @@ new Chart(document.getElementById("c2"),{type:"bar",
 new Chart(document.getElementById("c3"),{type:"bar",
   data:{labels:["RSA-2048", "RSA-4096", "Curve25519"],
     datasets:[
-      {label:"Go",  data:[26.299, 29.517, 25.807],  backgroundColor:B,borderRadius:4},
-      {label:"Java",data:[32.33, 38.175, 31.034],backgroundColor:O,borderRadius:4}
+      {label:"Go",  data:[8.354, 13.342, 10.599],  backgroundColor:B,borderRadius:4},
+      {label:"Java",data:[10.417, 16.318, 13.45],backgroundColor:O,borderRadius:4}
     ]},options:opts("Avg Latency (ms)")});
 
 new Chart(document.getElementById("c4"),{type:"doughnut",
-  data:{labels:["Go ชนะ (15)","Java ชนะ (0)","เสมอ (0)"],
-    datasets:[{data:[15,0,0],backgroundColor:[B,O,G],borderWidth:3,borderColor:"white"}]},
+  data:{labels:["Go ชนะ (26)","Java ชนะ (0)","เสมอ (0)"],
+    datasets:[{data:[26,0,0],backgroundColor:[B,O,G],borderWidth:3,borderColor:"white"}]},
   options:{responsive:true,plugins:{legend:{position:"bottom"}}}});
 </script></div></div><div class="page" id="page-method">
 <div class="card">
@@ -798,10 +1242,10 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
     </div>
   </div>
   <div class="hi" style="margin-top:14px">
-    <strong>ทำไมต้องแยก subprocess (กระบวนการแยกกัน)?</strong>
-    เพราะ memory (หน่วยความจำ), GC (garbage collection — การเก็บขยะหน่วยความจำ),
-    JIT (Just-In-Time compiler — ตัวแปลภาษา) ของแต่ละภาษาจะแยกกันสมบูรณ์
-    ไม่ปนกัน ผล benchmark จึงสะท้อนความสามารถจริงของแต่ละภาษา
+    <strong>ทำไมต้องแยกโปรแกรมออกจากกัน?</strong>
+    เหมือนการแข่งรถที่ต้องรันบนสนามแยก ไม่ใช่บนสนามเดียวกันพร้อมกัน
+    เพราะถ้ารันพร้อมกัน Go อาจแย่งหน่วยความจำกับ Java ทำให้ผลบิดเบือนได้
+    การแยก process ทำให้แต่ละภาษาได้ทรัพยากรเต็มที่ ผลที่ได้จึงยุติธรรมและเชื่อถือได้
   </div>
 </div>
 
@@ -864,8 +1308,8 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
         <li>การเรียก <strong>encrypt() function</strong> จริง — เข้ารหัส</li>
         <li>การเรียก <strong>decrypt() function</strong> จริง — ถอดรหัส</li>
         <li>เฉพาะ crypto transform เท่านั้น</li>
-        <li>Go: monotonic clock (นาฬิกาที่ไม่เดินถอยหลัง)</li>
-        <li>Java: System.nanoTime() (จับเวลาระดับ nanosecond)</li>
+        <li>Go: นาฬิกาที่แม่นยำระดับ nanosecond ไม่เดินถอยหลัง</li>
+        <li>Java: System.nanoTime() (เดียวกัน ความแม่นยำระดับ nanosecond)</li>
       </ul>
     </div>
     <div class="mbox red">
@@ -873,16 +1317,17 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
       <ul>
         <li>การโหลดกุญแจจาก disk (hard drive)</li>
         <li>การอ่าน/เขียนไฟล์ (disk I/O)</li>
-        <li>JVM startup time (เวลาเปิด Java)</li>
-        <li>JIT warm-up iterations (รอบอุ่นเครื่อง)</li>
+        <li>เวลาที่ Java ใช้เปิดตัวโปรแกรม (JVM startup)</li>
+        <li>เวลาที่ Java อุ่นเครื่องก่อนทำงานเต็มประสิทธิภาพ</li>
         <li>Warm_Up_Iteration rounds</li>
         <li>Harness overhead (เวลาตัวกลาง)</li>
       </ul>
     </div>
   </div>
   <div class="hi" style="margin-top:12px">
-    <strong>Cold_Start metric</strong> (เวลา process startup + JIT warm-up รวม) ถูกบันทึกแยกต่างหาก
-    เป็น "metric เสริม" ไม่ถูกนำไปรวมกับ core crypto-time ที่ใช้เปรียบเทียบ
+    <strong>Cold_Start</strong> (เวลาเปิดโปรแกรม + อุ่นเครื่องรวม) บันทึกแยกต่างหาก
+    เป็นข้อมูลเสริม ไม่ถูกนำไปรวมกับเวลาเข้ารหัสที่ใช้เปรียบเทียบหลัก —
+    สำคัญสำหรับ use case ที่โปรแกรมเปิด-ปิดบ่อย เช่น serverless หรือ batch ทีละไฟล์
   </div>
 </div>
 
@@ -906,177 +1351,234 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
          เท่ากันทั้งสองฝ่าย มี 1 ซอฟต์แวร์ active ต่อเวลา ไม่แย่งทรัพยากรกัน</p>
     </div>
     <div class="mbox">
-      <h4>📦 Isolated Process (แยก process)</h4>
-      <p>Go และ Java รันเป็น subprocess แยกกันสมบูรณ์
-         GC (garbage collection), memory heap, JIT (compiler) ของ Java
-         ไม่ส่งผลต่อ Go และในทางกลับกัน</p>
+      <h4>📦 แยกโปรแกรม (แต่ละภาษารันแยกกัน)</h4>
+      <p>Go และ Java รันเป็นโปรแกรมแยกกันสมบูรณ์
+         หน่วยความจำ, การจัดการ garbage, compiler ของ Java
+         ไม่ส่งผลต่อ Go และในทางกลับกัน — ไม่มีการแย่งทรัพยากรกัน</p>
     </div>
   </div>
 </div></div><div class="page" id="page-testdata">
+<!-- ══ ชุดข้อมูลทดสอบ ══ -->
 <div class="card">
   <h2><span class="sn">📁</span>ชุดข้อมูลทดสอบ (Test Corpus)</h2>
-  <p style="margin-bottom:14px">
-    ชุดไฟล์ทดสอบสร้างแบบ deterministic (ผลเหมือนกันทุกครั้งจาก seed เดิม — reproducible)
-    วางบน <strong>tmpfs (RAM disk — disk เสมือนในหน่วยความจำ)</strong>
-    เพื่อตัด disk I/O ออกจากการวัดทั้งหมด
+  <p style="margin-bottom:16px">
+    ไฟล์ทดสอบสร้างจากโปรแกรมอัตโนมัติ ผลเหมือนกันทุกครั้ง (reproducible)
+    วางบน <strong>RAM Disk</strong> — คือ disk เสมือนที่อยู่ใน RAM
+    ทำให้ไม่มี disk I/O มาทำให้ผลการวัดคลาดเคลื่อน
   </p>
   <table>
     <thead><tr>
-      <th>Scenario ID</th><th>จำนวนไฟล์</th><th>ขนาดต่อไฟล์</th>
-      <th>ชนิดข้อมูล</th><th>Compressibility (บีบอัดได้)</th><th>วัตถุประสงค์</th>
+      <th>กลุ่มทดสอบ</th><th>จำนวนไฟล์</th><th>ขนาดต่อไฟล์</th>
+      <th>ชนิดข้อมูล</th><th>บีบอัดได้?</th><th>วัตถุประสงค์</th>
     </tr></thead>
     <tbody>
       <tr><td><strong>small-comp</strong></td><td>20 ไฟล์</td><td>50 KB</td>
-          <td>.txt / .csv (ข้อความซ้ำ)</td><td>สูง (bzip2 &gt;80%)</td>
-          <td>ไฟล์เล็กบีบอัดได้ วัด per-file overhead + ZLIB benefit</td></tr>
+          <td>.txt / .csv (ข้อความที่มีรูปแบบซ้ำ)</td>
+          <td><span style="color:#27ae60">✅ บีบได้ดีมาก</span></td>
+          <td>ไฟล์เล็ก เนื้อหาบีบอัดได้ — เหมือนเอกสาร/รายงานทั่วไป</td></tr>
       <tr><td><strong>small-incomp</strong></td><td>20 ไฟล์</td><td>50 KB</td>
-          <td>Random binary (pseudo-PDF)</td><td>ต่ำ (&lt;5%)</td>
-          <td>ไฟล์เล็กบีบไม่ได้ วัดผล AES-only ไม่มี ZLIB benefit</td></tr>
+          <td>ข้อมูล binary สุ่ม (เหมือน PDF ที่มีรูป)</td>
+          <td><span style="color:#e74c3c">❌ บีบแทบไม่ได้</span></td>
+          <td>ไฟล์เล็ก เนื้อหาบีบไม่ได้ — เหมือนไฟล์ scan เอกสาร</td></tr>
       <tr><td><strong>medium-comp</strong></td><td>4 ไฟล์</td><td>5 MB</td>
-          <td>.csv (ตัวเลขซ้ำ)</td><td>สูงมาก</td>
-          <td>ไฟล์กลาง workload งาน batch processing ทั่วไป</td></tr>
+          <td>.csv (ตาราง 5 MB)</td>
+          <td><span style="color:#27ae60">✅ บีบได้ดีมาก</span></td>
+          <td>ไฟล์กลาง — เหมือน export ข้อมูล ERP/SAP ประจำวัน</td></tr>
       <tr><td><strong>medium-incomp</strong></td><td>4 ไฟล์</td><td>5 MB</td>
-          <td>Random binary</td><td>ต่ำมาก</td>
-          <td>ไฟล์กลาง binary เช่น PDF ที่มี embedded images</td></tr>
+          <td>ข้อมูล binary สุ่ม</td>
+          <td><span style="color:#e74c3c">❌ บีบแทบไม่ได้</span></td>
+          <td>ไฟล์กลาง binary — เหมือน PDF ที่มีรูปภาพความละเอียดสูง</td></tr>
       <tr><td><strong>manysmall</strong></td><td>100 ไฟล์</td><td>10 KB</td>
-          <td>.txt (ข้อความ)</td><td>สูง</td>
-          <td>วัด overhead ต่อไฟล์ — สำคัญสำหรับ batch encrypt หลายไฟล์พร้อมกัน</td></tr>
+          <td>.txt (ข้อความสั้น ๆ)</td>
+          <td><span style="color:#27ae60">✅ บีบได้ดี</span></td>
+          <td>ไฟล์เล็กจำนวนมาก — เหมือน encrypt ใบสลิปหรือ voucher ทีละใบ</td></tr>
     </tbody>
   </table>
+</div>
 
-  <h3 style="margin-top:16px">🔑 ชนิดกุญแจที่ทดสอบ</h3>
+<!-- ══ ชนิดกุญแจ ══ -->
+<div class="card">
+  <h2><span class="sn">🔑</span>ชนิดกุญแจที่ทดสอบ — PGP ใช้กุญแจ 2 ชั้น</h2>
+
+  <div class="info" style="margin-bottom:16px">
+    <strong>PGP ทำงานยังไง?</strong><br>
+    เหมือนการส่งของในกล่องล็อค 2 ชั้น:<br>
+    <strong>ชั้นนอก (กุญแจ RSA/ECC)</strong> — ล็อคกุญแจ AES ไว้ เปิดได้เฉพาะผู้รับจริง<br>
+    <strong>ชั้นใน (AES-256)</strong> — เข้ารหัสข้อมูลจริงอย่างรวดเร็วด้วย hardware
+  </div>
+
   <div class="grid3">
     <div class="mbox">
-      <h4>RSA-2048</h4>
+      <h4>🔵 RSA-2048 — มาตรฐานทั่วไป</h4>
+      <p style="margin-bottom:8px">
+        <strong>ใช้อยู่ในปัจจุบัน</strong> — ระบบส่วนใหญ่ใช้อันนี้
+      </p>
       <ul>
-        <li>มาตรฐานที่ใช้งานทั่วไปปัจจุบัน</li>
-        <li>กุญแจ 2,048 bit = 256 bytes</li>
-        <li>NIST แนะนำถึงปี 2030</li>
-        <li>Balance ระหว่างความเร็วและความปลอดภัย</li>
+        <li>ขนาดกุญแจ 2,048 bit (256 ไบต์)</li>
+        <li>NIST รับรองถึงปี 2030</li>
+        <li>เร็วพอสำหรับงานทั่วไป</li>
+        <li><strong>แนะนำสำหรับระบบปัจจุบัน</strong></li>
       </ul>
     </div>
     <div class="mbox orange">
-      <h4>RSA-4096</h4>
+      <h4>🟠 RSA-4096 — ความปลอดภัยสูง</h4>
+      <p style="margin-bottom:8px">
+        <strong>ใช้เมื่อข้อมูลต้องปลอดภัยนานหลายปี</strong>
+      </p>
       <ul>
-        <li>ความปลอดภัยสูงกว่าสำหรับข้อมูลสำคัญ</li>
-        <li>กุญแจ 4,096 bit = 512 bytes</li>
-        <li>งาน asymmetric ช้ากว่า 3–4× เมื่อเทียบ RSA-2048</li>
-        <li>แนะนำสำหรับ long-term data protection (ข้อมูลที่ต้องปลอดภัยหลายปี)</li>
+        <li>ขนาดกุญแจใหญ่กว่า 2 เท่า (512 ไบต์)</li>
+        <li>ปลอดภัยกว่า RSA-2048 มาก</li>
+        <li>ช้ากว่า RSA-2048 ประมาณ 3–4 เท่า</li>
+        <li><strong>แนะนำสำหรับข้อมูลลับสำคัญมาก</strong></li>
       </ul>
     </div>
     <div class="mbox purple">
-      <h4>Curve25519 ECC</h4>
+      <h4>🟣 Curve25519 ECC — ยุคใหม่</h4>
+      <p style="margin-bottom:8px">
+        <strong>เร็วที่สุด ปลอดภัยที่สุดในบรรดาสามชนิด</strong>
+      </p>
       <ul>
-        <li>Elliptic Curve algorithm (algorithm กราฟโค้ง) ยุคใหม่</li>
-        <li>กุญแจเล็กกว่า RSA มาก (32 bytes)</li>
-        <li>ปลอดภัยระดับ RSA-3072 ที่ความเร็วสูงกว่ามาก</li>
-        <li>แนะนำสำหรับระบบใหม่ที่ออกแบบจากศูนย์</li>
+        <li>กุญแจเล็กกว่า RSA มาก (32 ไบต์เท่านั้น)</li>
+        <li>ปลอดภัยเทียบเท่า RSA-3072</li>
+        <li>เร็วกว่า RSA อย่างชัดเจน</li>
+        <li><strong>แนะนำสำหรับระบบใหม่ทุกระบบ</strong></li>
       </ul>
     </div>
   </div>
 </div>
 
+<!-- ══ Implementation Variants ══ -->
 <div class="card">
-  <h2><span class="sn">⚙️</span>Implementation Variants คืออะไร?</h2>
-  <p style="margin-bottom:14px">
-    แต่ละภาษามีหลายรูปแบบการเขียนซอฟต์แวร์ (variants) เพื่อหา "ตัวเก่งที่สุด"
-    ของภาษานั้นก่อน แล้วจึงนำมาแข่ง head-to-head กัน — เพื่อความยุติธรรม
-  </p>
-  <div class="grid2">
-    <div>
-      <h3>Go Variants (3 รูปแบบ)</h3>
-      <table>
-        <thead><tr><th>Variant ID</th><th>วิธีจัดการหน่วยความจำ</th><th>Threading</th></tr></thead>
-        <tbody>
-          <tr><td><strong>go-inmem-single</strong></td>
-              <td>โหลดทั้งไฟล์เข้า RAM ก่อน encrypt</td>
-              <td>1 goroutine (1 งาน)</td></tr>
-          <tr><td><strong>go-stream-single</strong></td>
-              <td>io.Pipe + buffered — peak memory (หน่วยความจำสูงสุด) คงที่</td>
-              <td>1 goroutine</td></tr>
-          <tr><td><strong>go-stream-parallel</strong></td>
-              <td>Streaming + worker pool (กลุ่มงานรัน parallel)</td>
-              <td>N goroutines (= concurrency)</td></tr>
-        </tbody>
-      </table>
+  <h2><span class="sn">⚙️</span>วิธีเขียนซอฟต์แวร์ที่ทดสอบ (Variants) คืออะไร?</h2>
+
+  <div class="info" style="margin-bottom:16px">
+    <strong>ทำไมต้องมีหลาย Variant?</strong><br>
+    เหมือนการแข่งรถ — แต่ละทีมมีรถหลายคัน (สูตรต่างกัน) ก่อนเลือกคันที่เร็วที่สุดมาแข่งรอบสุดท้าย
+    เราทดสอบแต่ละภาษาหลายแบบ แล้วเอาแบบที่เร็วที่สุดมาแข่งกัน — เพื่อให้แต่ละภาษาได้แสดงศักยภาพสูงสุด
+  </div>
+
+  <h3>🔵 Go มี 3 วิธี:</h3>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="mbox">
+      <h4>1. go-inmem-single<br><small style="font-weight:400;color:#888">โหลดทั้งไฟล์ก่อน (1 งาน)</small></h4>
+      <p>
+        <strong>วิธี:</strong> โหลดไฟล์ทั้งหมดเข้า RAM ก่อน แล้วค่อยเข้ารหัสทีเดียว
+        ทำงาน 1 ไฟล์ต่อครั้ง
+      </p>
+      <p style="margin-top:8px;color:#27ae60"><strong>✅ เหมาะกับ:</strong> ไฟล์เล็กที่ RAM พอ</p>
+      <p style="color:#e74c3c"><strong>⚠️ ข้อจำกัด:</strong> ไฟล์ใหญ่กิน RAM มาก</p>
     </div>
-    <div>
-      <h3>Java Variants (4 รูปแบบ)</h3>
-      <table>
-        <thead><tr><th>Variant ID</th><th>วิธีจัดการหน่วยความจำ</th><th>Threading</th></tr></thead>
-        <tbody>
-          <tr><td><strong>java-inmem-single</strong></td>
-              <td>readAllBytes() โหลดทั้งไฟล์ก่อน encrypt</td>
-              <td>1 thread (1 งาน)</td></tr>
-          <tr><td><strong>java-stream-single</strong></td>
-              <td>Streaming 64 KB buffer</td>
-              <td>1 thread</td></tr>
-          <tr><td><strong>java-stream-parallel</strong></td>
-              <td>Streaming + ExecutorService (parallel pool)</td>
-              <td>N threads</td></tr>
-          <tr><td><strong>java-native-stream-parallel</strong></td>
-              <td>GraalVM Native Image (AOT — compile ไว้ล่วงหน้า)</td>
-              <td>N threads</td></tr>
-        </tbody>
-      </table>
+    <div class="mbox">
+      <h4>2. go-stream-single<br><small style="font-weight:400;color:#888">อ่านทีละนิด (1 งาน)</small></h4>
+      <p>
+        <strong>วิธี:</strong> อ่านและเข้ารหัสทีละชิ้นเล็ก ๆ (64KB ต่อครั้ง)
+        ไม่ต้องโหลดทั้งไฟล์เข้า RAM
+        RAM ที่ใช้คงที่ไม่โตตามขนาดไฟล์
+      </p>
+      <p style="margin-top:8px;color:#27ae60"><strong>✅ เหมาะกับ:</strong> ไฟล์ขนาดใดก็ได้ RAM ประหยัด</p>
+    </div>
+    <div class="mbox">
+      <h4>3. go-stream-parallel<br><small style="font-weight:400;color:#888">อ่านทีละนิด (หลายงานพร้อมกัน)</small></h4>
+      <p>
+        <strong>วิธี:</strong> เหมือน go-stream-single แต่รัน 4 งานพร้อมกัน
+        ใช้ CPU หลาย Core พร้อมกัน เพิ่ม throughput
+      </p>
+      <p style="margin-top:8px;color:#27ae60"><strong>✅ เหมาะกับ:</strong> หลายไฟล์พร้อมกัน ต้องการ throughput สูง</p>
     </div>
   </div>
-  <div class="info" style="margin-top:12px">
-    <strong>Best Variant Selection (เกณฑ์คัดเลือก):</strong>
-    เกณฑ์หลักคือ p50 round-trip (ค่ากลางของเวลาเข้า+ถอดรหัส) ต่ำที่สุด
-    tie-break (ตัดสิน) ด้วย p99 ต่ำสุด แล้ว peak RAM (หน่วยความจำสูงสุด) ต่ำสุด
-    — variant ที่ไม่ผ่าน correctness gate (ด่านความถูกต้อง) ถูกตัดออก
+
+  <h3>🟠 Java มี 4 วิธี:</h3>
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="mbox orange">
+      <h4>1. java-inmem-single<br><small style="font-weight:400;color:#888">โหลดทั้งไฟล์ก่อน (1 งาน)</small></h4>
+      <p>เหมือน go-inmem-single ฝั่ง Java — โหลดทั้งไฟล์เข้า RAM แล้วเข้ารหัสทีเดียว</p>
+      <p style="margin-top:6px;color:#27ae60"><strong>✅</strong> ไฟล์เล็ก</p>
+      <p style="color:#e74c3c"><strong>⚠️</strong> กิน RAM ตามขนาดไฟล์</p>
+    </div>
+    <div class="mbox orange">
+      <h4>2. java-stream-single<br><small style="font-weight:400;color:#888">อ่านทีละนิด (1 งาน)</small></h4>
+      <p>เหมือน go-stream-single ฝั่ง Java — อ่านทีละ 64KB ประหยัด RAM</p>
+      <p style="margin-top:6px;color:#27ae60"><strong>✅</strong> ไฟล์ขนาดใดก็ได้</p>
+    </div>
+    <div class="mbox orange">
+      <h4>3. java-stream-parallel<br><small style="font-weight:400;color:#888">อ่านทีละนิด (หลายงาน)</small></h4>
+      <p>อ่านทีละ 64KB + ทำงาน 4 งานพร้อมกัน ใช้ CPU หลาย Core</p>
+      <p style="margin-top:6px;color:#27ae60"><strong>✅</strong> throughput สูงสุดของ Java</p>
+    </div>
+    <div class="mbox orange">
+      <h4>4. java-native-stream-parallel<br><small style="font-weight:400;color:#888">compile เป็น native binary</small></h4>
+      <p>Compile Java ล่วงหน้าเป็น binary เหมือน Go — ไม่ต้องรอ JVM เปิด เริ่มเร็วกว่าปกติมาก</p>
+      <p style="margin-top:6px;color:#aaa"><strong>ℹ️</strong> ยังไม่ได้ทดสอบรอบนี้ (ต้องติดตั้ง GraalVM เพิ่ม)</p>
+    </div>
+  </div>
+
+  <div class="hi">
+    <strong>🏆 เกณฑ์คัดเลือก "ตัวแทน" ของแต่ละภาษา:</strong>
+    เลือก variant ที่มีเวลาเข้า+ถอดรหัสรวม (round-trip) น้อยที่สุด
+    ถ้าเท่ากัน เลือกตัวที่ใช้ RAM น้อยกว่า
+    variant ที่ให้ผลผิดพลาด (ข้อมูลหลังถอดรหัสไม่ตรง) ถูกตัดออกก่อนเลย
   </div>
 </div>
 
+<!-- ══ Crypto Profile ══ -->
 <div class="card">
-  <h2><span class="sn">🔒</span>Crypto Profile ที่ใช้</h2>
-  <p style="margin-bottom:12px">
-    ค่า algorithm (ชุดคำสั่งเข้ารหัส) คงที่ทุก runner ทุก variant ทุก scenario
-    เพื่อความยุติธรรมในการเปรียบเทียบ:
+  <h2><span class="sn">🔒</span>สูตรการเข้ารหัสที่ใช้ (Crypto Profile)</h2>
+  <p style="margin-bottom:14px">
+    ค่าคงที่เดียวกันทุก variant ทุกภาษา — เพื่อให้เปรียบเทียบได้อย่างยุติธรรม
+    เหมือนการแข่งขันที่ทุกคนใช้สนามเดียวกัน กติกาเดียวกัน
   </p>
-  <div class="grid2" style="margin-top:12px">
+
+  <div class="grid2">
     <div class="mbox">
-      <h4>AES-256 — ทำไมถึงเร็ว?</h4>
-      <p>CPU สมัยใหม่มี <strong>AES-NI</strong>
-         (Hardware Acceleration — การเร่งความเร็วด้วย hardware)
-         ซึ่งเป็นคำสั่ง CPU ระดับ hardware ที่ทำ AES โดยตรง
-         ไม่ต้องผ่าน software loop ช้า ๆ
-         VM ของเราเปิด cpu=host ทำให้ flag aes ส่งผ่านเข้า VM</p>
+      <h4>🔐 AES-256 — การเข้ารหัสข้อมูลจริง</h4>
+      <p>
+        AES คือ "ตัวล็อค" ที่เข้ารหัสข้อมูลจริง ใช้กุญแจขนาด 256 bit
+        เป็นมาตรฐานสากลที่รัฐบาลสหรัฐฯ และองค์กรทั่วโลกใช้<br><br>
+        <strong>ทำไมถึงเร็ว?</strong> CPU สมัยใหม่มีวงจรพิเศษ (AES-NI) ที่ทำ AES ได้โดยตรง
+        เหมือนคิดเลขด้วยเครื่องคิดเลขแทนการคิดในหัว — เร็วกว่ากันมาก
+        VM ของเราเปิดฟีเจอร์นี้ไว้แล้ว
+      </p>
     </div>
     <div class="mbox orange">
-      <h4>ZLIB Compression — ผลต่าง?</h4>
-      <p>ไฟล์ที่บีบอัดได้ (เช่น .txt, .csv) จะถูก ZLIB บีบก่อน encrypt
-         ทำให้ ciphertext (ข้อมูลที่เข้ารหัสแล้ว) เล็กลง และ AES ทำงานน้อยลง
-         ไฟล์ที่บีบไม่ได้ (random binary เช่น PDF ที่มีรูปภาพ)
-         ZLIB แทบไม่ช่วย แต่ก็ไม่ทำให้แย่ลงมาก</p>
+      <h4>🗜 ZLIB — การบีบอัดก่อนเข้ารหัส</h4>
+      <p>
+        ก่อนเข้ารหัส ระบบบีบไฟล์ให้เล็กลงก่อน ทำให้ AES ทำงานน้อยลง = เร็วขึ้น<br><br>
+        <strong>ไฟล์บีบได้ (.txt, .csv):</strong> ขนาดลดลง 60–80% ก่อนเข้ารหัส ประหยัดทั้งเวลาและพื้นที่<br>
+        <strong>ไฟล์บีบไม่ได้ (.pdf ที่มีรูป, .zip):</strong> ZLIB ลองบีบแล้วไม่ได้ผล
+        ข้ามไปเลย ไม่ทำให้ช้าลงมาก
+      </p>
     </div>
   </div>
+
   <table style="margin-top:16px">
     <thead><tr>
-      <th>Component</th><th>Algorithm ที่ใช้</th><th>หน้าที่</th><th>หมายเหตุ</th>
+      <th>ชั้นที่</th><th>ทำอะไร</th><th>เทคนิคที่ใช้</th><th>ความสำคัญ</th>
     </tr></thead>
     <tbody>
-      <tr><td>Public Key (กุญแจสาธารณะ)</td>
-          <td>RSA-2048 / RSA-4096 / Curve25519</td>
-          <td>แลกเปลี่ยนกุญแจ symmetric อย่างปลอดภัย</td>
-          <td>ทดสอบแยกทั้ง 3 แบบ</td></tr>
-      <tr><td>Symmetric Cipher (การเข้ารหัสจริง)</td>
-          <td>AES-256</td>
-          <td>เข้ารหัส payload จริง — เร็วด้วย hardware</td>
-          <td>AES-NI accelerated</td></tr>
-      <tr><td>Compression (การบีบอัด)</td>
-          <td>ZLIB</td>
-          <td>บีบข้อมูลก่อน encrypt ลด ciphertext size</td>
-          <td>ช่วยไฟล์ที่มีข้อความซ้ำ</td></tr>
-      <tr><td>Hash (ลายนิ้วมือ)</td>
-          <td>SHA-256</td>
-          <td>ตรวจความสมบูรณ์ของข้อมูล</td>
-          <td>detect tampering (การแก้ไข)</td></tr>
-      <tr><td>Output Encoding</td>
-          <td>Binary</td>
-          <td>ขนาดไฟล์เล็กที่สุด ไม่มี overhead ของ ASCII</td>
-          <td>ไม่ใช่ ASCII-armored</td></tr>
+      <tr>
+        <td><strong>1. กุญแจสาธารณะ</strong></td>
+        <td>ล็อคกุญแจ AES ให้เฉพาะผู้รับเปิดได้</td>
+        <td>RSA-2048 / RSA-4096 / Curve25519</td>
+        <td>ความปลอดภัย — เฉพาะผู้รับอ่านได้</td>
+      </tr>
+      <tr>
+        <td><strong>2. บีบอัดข้อมูล</strong></td>
+        <td>ย่อไฟล์ให้เล็กก่อนเข้ารหัส</td>
+        <td>ZLIB</td>
+        <td>ประหยัดเวลา + พื้นที่จัดเก็บ</td>
+      </tr>
+      <tr>
+        <td><strong>3. เข้ารหัสข้อมูลจริง</strong></td>
+        <td>ล็อคเนื้อหาไฟล์ด้วย AES</td>
+        <td>AES-256 (เร็วด้วย CPU hardware)</td>
+        <td>งานหลัก — เร็วที่สุดในทุกชั้น</td>
+      </tr>
+      <tr>
+        <td><strong>4. ลายนิ้วมือ</strong></td>
+        <td>ตรวจว่าข้อมูลไม่ถูกแก้ไขระหว่างทาง</td>
+        <td>SHA-256</td>
+        <td>ตรวจจับการปลอมแปลง</td>
+      </tr>
     </tbody>
   </table>
 </div></div><div class="page" id="page-tests">
@@ -1280,10 +1782,10 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
     <div class="mbox orange">
       <h4>EngineRegistryVariantTest</h4>
       <ul>
-        <li>ServiceLoader discovers ทุก 3 JVM variants</li>
-        <li>java-native ไม่ควรอยู่ใน ServiceLoader</li>
-        <li>Direct registration ทำงานได้</li>
-        <li>VARIANT_ID constants ถูกต้อง</li>
+        <li>ระบบ auto-discover ทุก 3 JVM variants ได้ถูกต้อง</li>
+        <li>java-native ไม่ถูกโหลดโดยอัตโนมัติ (ต้องเรียกเฉพาะ)</li>
+        <li>ลงทะเบียน variant โดยตรงทำงานได้</li>
+        <li>ชื่อ variant ถูกต้องตามสัญญา</li>
       </ul>
     </div>
     <div class="mbox orange">
@@ -1590,18 +2092,18 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
     <div class="mbox">
       <h4>📅 ข้อมูล</h4>
       <ul>
-        <li>เริ่ม: 2026-06-29 06:22:14</li>
-        <li>สิ้นสุด: 2026-06-29 06:35:14</li>
-        <li>VM: Ubuntu 24.04, 8 vCPU, 8 GB</li>
-        <li>Corpus: RAM disk (tmpfs 2 GB)</li>
-        <li>10 files × 512 KB ต่อ file-type scenario</li>
+        <li>เริ่ม: 2026-06-29 07:48:29</li>
+        <li>สิ้นสุด: 2026-06-29 08:00:51</li>
+        <li>VM: Ubuntu 24.04, 8 vCPU, <strong>14 GB RAM (อัพเกรดใหม่)</strong></li>
+        <li>Corpus: RAM disk (tmpfs 4 GB)</li>
+        <li>15 files × 512 KB ต่อ file-type scenario</li>
       </ul>
     </div>
     <div class="mbox">
       <h4>🏆 ผลรวม</h4>
       <div class="stats" style="margin:0">
-        <div class="sbox go-b" style="padding:10px"><div class="val" style="font-size:22px">20</div><div class="lbl">Go ชนะ (/26)</div></div>
-        <div class="sbox" style="border-color:#F89820;padding:10px"><div class="val" style="font-size:22px;color:#F89820">6</div><div class="lbl">Java ชนะ (/26)</div></div>
+        <div class="sbox go-b" style="padding:10px"><div class="val" style="font-size:22px">26</div><div class="lbl">Go ชนะ (/26)</div></div>
+        <div class="sbox" style="border-color:#F89820;padding:10px"><div class="val" style="font-size:22px;color:#F89820">0</div><div class="lbl">Java ชนะ (/26)</div></div>
         <div class="sbox" style="padding:10px"><div class="val" style="font-size:22px;color:#6c757d">0</div><div class="lbl">เสมอ</div></div>
       </div>
     </div>
@@ -1621,16 +2123,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:90.9%;background:#93c5fd;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">26.7 ms</span>
+              <div style="width:15.7%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">2.5 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:53.4%;background:#F89820;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.7 ms</span>
+              <div style="width:21.6%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">3.4 ms</span>
               </div>
             </div>
           </div>
@@ -1640,16 +2142,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:87.8%;background:#93c5fd;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">25.8 ms</span>
+              <div style="width:15.1%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">2.4 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:69.1%;background:#F89820;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">20.3 ms</span>
+              <div style="width:21.5%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">3.4 ms</span>
               </div>
             </div>
           </div>
@@ -1659,16 +2161,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:43.5%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">12.8 ms</span>
+              <div style="width:71.9%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.5 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:53.1%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.6 ms</span>
+              <div style="width:89.6%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.3 ms</span>
               </div>
             </div>
           </div>
@@ -1678,16 +2180,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:42.8%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">12.6 ms</span>
+              <div style="width:73.2%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.7 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:53.1%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.6 ms</span>
+              <div style="width:90.8%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.5 ms</span>
               </div>
             </div>
           </div>
@@ -1697,16 +2199,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:42.8%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">12.6 ms</span>
+              <div style="width:70.9%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.3 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:53.4%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.7 ms</span>
+              <div style="width:90.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.5 ms</span>
               </div>
             </div>
           </div>
@@ -1716,16 +2218,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:40.5%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.9 ms</span>
+              <div style="width:71.3%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.4 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:52.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.6 ms</span>
+              <div style="width:90.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.5 ms</span>
               </div>
             </div>
           </div>
@@ -1740,16 +2242,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:90.9%;background:#93c5fd;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">26.4 ms</span>
+              <div style="width:11.2%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">1.8 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:53.8%;background:#F89820;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.6 ms</span>
+              <div style="width:20.1%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">3.2 ms</span>
               </div>
             </div>
           </div>
@@ -1759,16 +2261,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:87.6%;background:#93c5fd;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">25.4 ms</span>
+              <div style="width:11.2%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">1.8 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:69.2%;background:#F89820;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">20.1 ms</span>
+              <div style="width:20.7%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">3.2 ms</span>
               </div>
             </div>
           </div>
@@ -1778,16 +2280,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:38.8%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.3 ms</span>
+              <div style="width:68.6%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">10.8 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:51.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.1 ms</span>
+              <div style="width:89.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.1 ms</span>
               </div>
             </div>
           </div>
@@ -1797,16 +2299,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:39.9%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.6 ms</span>
+              <div style="width:69.0%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">10.8 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:51.3%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.9 ms</span>
+              <div style="width:90.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.3 ms</span>
               </div>
             </div>
           </div>
@@ -1816,16 +2318,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:39.1%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.3 ms</span>
+              <div style="width:69.0%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">10.8 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:51.5%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.0 ms</span>
+              <div style="width:90.4%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.2 ms</span>
               </div>
             </div>
           </div>
@@ -1835,16 +2337,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:38.8%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">11.3 ms</span>
+              <div style="width:69.2%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">10.9 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:52.4%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.2 ms</span>
+              <div style="width:89.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">14.1 ms</span>
               </div>
             </div>
           </div>
@@ -1859,16 +2361,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:37.3%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">4.3 ms</span>
+              <div style="width:64.4%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">16.4 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:59.5%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">6.8 ms</span>
+              <div style="width:73.7%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">18.8 ms</span>
               </div>
             </div>
           </div>
@@ -1878,8 +2380,8 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:79.1%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">9.1 ms</span>
+              <div style="width:75.8%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">19.3 ms</span>
               </div>
             </div>
           </div>
@@ -1887,7 +2389,7 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
               <div style="width:90.9%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">10.5 ms</span>
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">23.2 ms</span>
               </div>
             </div>
           </div>
@@ -1897,16 +2399,16 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <span style="width:40px;font-size:11px;color:#00ADE8">Go</span>
             <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px;position:relative">
-              <div style="width:35.0%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">4.0 ms</span>
+              <div style="width:62.3%;background:#00ADE8;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">15.9 ms</span>
               </div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="width:40px;font-size:11px;color:#F89820">Java</span>
             <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px;position:relative">
-              <div style="width:48.0%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
-                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">5.5 ms</span>
+              <div style="width:70.3%;background:#fcd34d;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px">
+                <span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">17.9 ms</span>
               </div>
             </div>
           </div>
@@ -1920,11 +2422,11 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="font-size:12px;font-weight:600;color:#444;margin-bottom:4px">
             📄 TXT — 3 key types ทดสอบ</div>
           <div style="display:flex;height:24px;border-radius:4px;overflow:hidden">
-            <div style="width:0%;background:#00ADE8;display:flex;align-items:center;justify-content:center">
-              
+            <div style="width:100%;background:#00ADE8;display:flex;align-items:center;justify-content:center">
+              <span style='font-size:11px;color:white;font-weight:700'>Go×3</span>
             </div>
-            <div style="width:100%;background:#F89820;display:flex;align-items:center;justify-content:center">
-              <span style='font-size:11px;color:white;font-weight:700'>Java×3</span>
+            <div style="width:0%;background:#F89820;display:flex;align-items:center;justify-content:center">
+              
             </div>
             <div style="flex:1;background:#e5e7eb;display:flex;align-items:center;justify-content:center">
               
@@ -1935,11 +2437,11 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
           <div style="font-size:12px;font-weight:600;color:#444;margin-bottom:4px">
             📊 CSV — 3 key types ทดสอบ</div>
           <div style="display:flex;height:24px;border-radius:4px;overflow:hidden">
-            <div style="width:0%;background:#00ADE8;display:flex;align-items:center;justify-content:center">
-              
+            <div style="width:100%;background:#00ADE8;display:flex;align-items:center;justify-content:center">
+              <span style='font-size:11px;color:white;font-weight:700'>Go×3</span>
             </div>
-            <div style="width:100%;background:#F89820;display:flex;align-items:center;justify-content:center">
-              <span style='font-size:11px;color:white;font-weight:700'>Java×3</span>
+            <div style="width:0%;background:#F89820;display:flex;align-items:center;justify-content:center">
+              
             </div>
             <div style="flex:1;background:#e5e7eb;display:flex;align-items:center;justify-content:center">
               
@@ -2028,7 +2530,7 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
     <th style="text-align:center;min-width:150px">Curve25519<br><small>ยุคใหม่</small></th>
   </tr>
 </thead>
-<tbody><tr><td><strong>📄 .txt — ข้อความ (บีบอัดได้สูง ~80%)</strong></td><td style="text-align:center;background:#fef3c7;padding:8px">🟠 Java<br>26.7 vs <strong>15.7</strong> ms<br><small style="color:#666">+1.7×</small></td><td style="text-align:center;background:#fef3c7;padding:8px">🟠 Java<br>31.0 vs <strong>20.2</strong> ms<br><small style="color:#666">+1.5×</small></td><td style="text-align:center;background:#fef3c7;padding:8px">🟠 Java<br>26.4 vs <strong>15.6</strong> ms<br><small style="color:#666">+1.7×</small></td></tr><tr><td><strong>📊 .csv — ตาราง CSV (บีบอัดได้สูง)</strong></td><td style="text-align:center;background:#fef3c7;padding:8px">🟠 Java<br>25.8 vs <strong>20.3</strong> ms<br><small style="color:#666">+1.3×</small></td><td style="text-align:center;background:#fef3c7;padding:8px">🟠 Java<br>30.4 vs <strong>24.4</strong> ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#fef3c7;padding:8px">🟠 Java<br>25.4 vs <strong>20.1</strong> ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>📕 .pdf — PDF binary (บีบอัดได้ต่ำ ~5%)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>12.8</strong> vs 15.6 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>16.2</strong> vs 20.0 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.3</strong> vs 15.1 ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>📗 .xlsx — Excel ZIP-based (binary)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>12.6</strong> vs 15.6 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>16.6</strong> vs 20.4 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.6</strong> vs 14.9 ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>🗜 .gz — ไฟล์บีบอัดแล้ว (บีบไม่ได้เพิ่ม)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>12.6</strong> vs 15.7 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>15.8</strong> vs 20.7 ms<br><small style="color:#666">+1.3×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.3</strong> vs 15.0 ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>💾 .dat — Random binary (บีบไม่ได้เลย)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.9</strong> vs 15.6 ms<br><small style="color:#666">+1.3×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>15.8</strong> vs 19.8 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.3</strong> vs 15.2 ms<br><small style="color:#666">+1.4×</small></td></tr></tbody></table></div>
+<tbody><tr><td><strong>📄 .txt — ข้อความ (บีบอัดได้สูง ~80%)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>2.5</strong> vs 3.4 ms<br><small style="color:#666">+1.4×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>6.3</strong> vs 7.9 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>1.8</strong> vs 3.2 ms<br><small style="color:#666">+1.8×</small></td></tr><tr><td><strong>📊 .csv — ตาราง CSV (บีบอัดได้สูง)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>2.4</strong> vs 3.4 ms<br><small style="color:#666">+1.4×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>6.4</strong> vs 7.9 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>1.8</strong> vs 3.2 ms<br><small style="color:#666">+1.9×</small></td></tr><tr><td><strong>📕 .pdf — PDF binary (บีบอัดได้ต่ำ ~5%)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.5</strong> vs 14.3 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>15.3</strong> vs 18.4 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>10.8</strong> vs 14.1 ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>📗 .xlsx — Excel ZIP-based (binary)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.7</strong> vs 14.5 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>15.3</strong> vs 18.9 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>10.8</strong> vs 14.3 ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>🗜 .gz — ไฟล์บีบอัดแล้ว (บีบไม่ได้เพิ่ม)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.3</strong> vs 14.5 ms<br><small style="color:#666">+1.3×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>15.3</strong> vs 19.2 ms<br><small style="color:#666">+1.3×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>10.8</strong> vs 14.2 ms<br><small style="color:#666">+1.3×</small></td></tr><tr><td><strong>💾 .dat — Random binary (บีบไม่ได้เลย)</strong></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>11.4</strong> vs 14.5 ms<br><small style="color:#666">+1.3×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>15.4</strong> vs 18.7 ms<br><small style="color:#666">+1.2×</small></td><td style="text-align:center;background:#dbeafe;padding:8px">🔵 Go<br><strong>10.9</strong> vs 14.1 ms<br><small style="color:#666">+1.3×</small></td></tr></tbody></table></div>
   <div class="hi" style="margin-top:14px">
     <strong>Key Insights จาก Matrix:</strong><br>
     • <strong>Binary files (.pdf, .xlsx, .gz, .dat)</strong>: Go ชนะทุก key algorithm — AES hardware path ของ Go runtime มีประสิทธิภาพสูงกว่า<br>
@@ -2042,7 +2544,7 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
   <p style="font-size:12px;color:#888;margin-bottom:12px">
     วัดเวลารวมของ corpus (1KB → 20MB ใน 1 run) — p50 round-trip ms
   </p>
-  <table><thead><tr><th>Key Algorithm</th><th>Best Go Variant</th><th style='text-align:center'>Go p50 ms</th><th>Best Java Variant</th><th style='text-align:center'>Java p50 ms</th><th>Winner</th><th>Throughput Go</th><th>Throughput Java</th></tr></thead><tbody><tr style="background:#dbeafe"><td><strong>RSA-2048</strong></td><td style="color:#00ADE8">stream</td><td style="text-align:center;font-weight:600">4.291</td><td style="color:#F89820">stream</td><td style="text-align:center;font-weight:600">6.850</td><td><span class="badge bg">🔵 Go +1.6×</span></td><td>57.2 MB/s</td><td>90.1 MB/s</td></tr><tr style="background:#dbeafe"><td><strong>RSA-4096</strong></td><td style="color:#00ADE8">inmem</td><td style="text-align:center;font-weight:600">9.095</td><td style="color:#F89820">stream</td><td style="text-align:center;font-weight:600">10.458</td><td><span class="badge bg">🔵 Go +1.1×</span></td><td>52.5 MB/s</td><td>85.3 MB/s</td></tr><tr style="background:#dbeafe"><td><strong>Curve25519</strong></td><td style="color:#00ADE8">stream</td><td style="text-align:center;font-weight:600">4.024</td><td style="color:#F89820">stream</td><td style="text-align:center;font-weight:600">5.522</td><td><span class="badge bg">🔵 Go +1.4×</span></td><td>57.1 MB/s</td><td>89.4 MB/s</td></tr></tbody></table>
+  <table><thead><tr><th>Key Algorithm</th><th>Best Go Variant</th><th style='text-align:center'>Go p50 ms</th><th>Best Java Variant</th><th style='text-align:center'>Java p50 ms</th><th>Winner</th><th>Throughput Go</th><th>Throughput Java</th></tr></thead><tbody><tr style="background:#dbeafe"><td><strong>RSA-2048</strong></td><td style="color:#00ADE8">stream⚡</td><td style="text-align:center;font-weight:600">16.415</td><td style="color:#F89820">stream⚡</td><td style="text-align:center;font-weight:600">18.785</td><td><span class="badge bg">🔵 Go +1.1×</span></td><td>335.8 MB/s</td><td>277.8 MB/s</td></tr><tr style="background:#dbeafe"><td><strong>RSA-4096</strong></td><td style="color:#00ADE8">stream⚡</td><td style="text-align:center;font-weight:600">19.334</td><td style="color:#F89820">stream⚡</td><td style="text-align:center;font-weight:600">23.183</td><td><span class="badge bg">🔵 Go +1.2×</span></td><td>310.1 MB/s</td><td>247.1 MB/s</td></tr><tr style="background:#dbeafe"><td><strong>Curve25519</strong></td><td style="color:#00ADE8">stream</td><td style="text-align:center;font-weight:600">15.888</td><td style="color:#F89820">stream⚡</td><td style="text-align:center;font-weight:600">17.925</td><td><span class="badge bg">🔵 Go +1.1×</span></td><td>320.9 MB/s</td><td>289.5 MB/s</td></tr></tbody></table>
   <div class="info" style="margin-top:12px">
     <strong>Key Insight:</strong> Curve25519 Go เร็วที่สุดอย่างชัดเจน (เร็วกว่า RSA-2048 เพราะ ECC key exchange เร็วกว่า RSA มาก)
     ส่วน Java กับทุก key type ให้ค่าใกล้เคียงกัน — Java overhead ต่อ operation คงที่กว่า
@@ -2059,23 +2561,23 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
       <th>Scenario</th><th>🔵 Go Best</th><th>🟠 Java Best</th><th>Winner</th>
     </tr></thead>
     <tbody><tr style="background:#dbeafe">
-              <td><strong>many-1kb-rsa2048</strong><br><small style="color:#aaa">RSA-2048</small></td>
-              <td style="color:#00ADE8;font-weight:600">0.961 ms<br>
+              <td><strong>many-1kb</strong><br><small style="color:#aaa">RSA-2048</small></td>
+              <td style="color:#00ADE8;font-weight:600">0.763 ms<br>
+                  <small style="color:#aaa">inmem · 1.2 MB/s</small></td>
+              <td style="color:#F89820;font-weight:600">1.017 ms<br>
                   <small style="color:#aaa">inmem · 0.9 MB/s</small></td>
-              <td style="color:#F89820;font-weight:600">1.168 ms<br>
-                  <small style="color:#aaa">stream · 0.8 MB/s</small></td>
-              <td><span class="badge bg">🔵 Go +1.2×</span></td></tr><tr style="background:#dbeafe">
-              <td><strong>many-10kb-rsa2048</strong><br><small style="color:#aaa">RSA-2048</small></td>
-              <td style="color:#00ADE8;font-weight:600">0.890 ms<br>
-                  <small style="color:#aaa">inmem · 9.7 MB/s</small></td>
-              <td style="color:#F89820;font-weight:600">1.261 ms<br>
-                  <small style="color:#aaa">stream · 7.1 MB/s</small></td>
-              <td><span class="badge bg">🔵 Go +1.4×</span></td></tr><tr style="background:#dbeafe">
-              <td><strong>many-50kb-rsa2048</strong><br><small style="color:#aaa">RSA-2048</small></td>
-              <td style="color:#00ADE8;font-weight:600">1.125 ms<br>
-                  <small style="color:#aaa">inmem · 43.3 MB/s</small></td>
-              <td style="color:#F89820;font-weight:600">1.505 ms<br>
-                  <small style="color:#aaa">stream · 30.5 MB/s</small></td>
+              <td><span class="badge bg">🔵 Go +1.3×</span></td></tr><tr style="background:#dbeafe">
+              <td><strong>many-10kb</strong><br><small style="color:#aaa">RSA-2048</small></td>
+              <td style="color:#00ADE8;font-weight:600">0.794 ms<br>
+                  <small style="color:#aaa">inmem · 11.3 MB/s</small></td>
+              <td style="color:#F89820;font-weight:600">1.162 ms<br>
+                  <small style="color:#aaa">inmem · 7.9 MB/s</small></td>
+              <td><span class="badge bg">🔵 Go +1.5×</span></td></tr><tr style="background:#dbeafe">
+              <td><strong>many-100kb</strong><br><small style="color:#aaa">RSA-2048</small></td>
+              <td style="color:#00ADE8;font-weight:600">1.201 ms<br>
+                  <small style="color:#aaa">inmem · 80.8 MB/s</small></td>
+              <td style="color:#F89820;font-weight:600">1.587 ms<br>
+                  <small style="color:#aaa">stream⚡ · 56.4 MB/s</small></td>
               <td><span class="badge bg">🔵 Go +1.3×</span></td></tr></tbody>
   </table>
   <div class="info" style="margin-top:12px">
@@ -2083,9 +2585,113 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
     JVM overhead ต่อ PGP operation (key wrap, packet structure) สูงกว่า Go runtime
     สำคัญสำหรับ batch processing หลายพัน-หมื่นไฟล์ต่อวัน
   </div>
+</div>
+
+
+<div class="card">
+  <h2><span class="sn">⚡</span>Concurrent Load Test — ส่งไฟล์พร้อมกันหลาย client</h2>
+  <p style="margin-bottom:14px">
+    วัด throughput รวม (MB/วินาที) เมื่อมีการส่งไฟล์พร้อมกันหลาย client
+    ใช้ไฟล์ 1MB × 100 ไฟล์ · RSA-2048 · parallel variant ของแต่ละภาษา
+  </p>
+  <div class="grid2">
+    <div class="chart-box"><div style="margin-bottom:16px">
+              <div style="font-size:13px;font-weight:700;color:#444;margin-bottom:6px">
+                1 client พร้อมกัน</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="width:45px;font-size:12px;color:#00ADE8">Go</span>
+                <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px">
+                  <div style="width:91%;background:#00ADE8;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">263 MB/s</span></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:45px;font-size:12px;color:#F89820">Java</span>
+                <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px">
+                  <div style="width:72%;background:#F89820;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">207 MB/s</span></div>
+                </div>
+              </div>
+            </div><div style="margin-bottom:16px">
+              <div style="font-size:13px;font-weight:700;color:#444;margin-bottom:6px">
+                2 clients พร้อมกัน</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="width:45px;font-size:12px;color:#00ADE8">Go</span>
+                <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px">
+                  <div style="width:68%;background:#00ADE8;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">198 MB/s</span></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:45px;font-size:12px;color:#F89820">Java</span>
+                <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px">
+                  <div style="width:58%;background:#F89820;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">167 MB/s</span></div>
+                </div>
+              </div>
+            </div><div style="margin-bottom:16px">
+              <div style="font-size:13px;font-weight:700;color:#444;margin-bottom:6px">
+                4 clients พร้อมกัน</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="width:45px;font-size:12px;color:#00ADE8">Go</span>
+                <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px">
+                  <div style="width:62%;background:#00ADE8;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">178 MB/s</span></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:45px;font-size:12px;color:#F89820">Java</span>
+                <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px">
+                  <div style="width:55%;background:#F89820;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">159 MB/s</span></div>
+                </div>
+              </div>
+            </div><div style="margin-bottom:16px">
+              <div style="font-size:13px;font-weight:700;color:#444;margin-bottom:6px">
+                8 clients พร้อมกัน</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="width:45px;font-size:12px;color:#00ADE8">Go</span>
+                <div style="flex:1;background:#e8f4fd;border-radius:4px;height:22px">
+                  <div style="width:56%;background:#00ADE8;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">163 MB/s</span></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:45px;font-size:12px;color:#F89820">Java</span>
+                <div style="flex:1;background:#fef3e2;border-radius:4px;height:22px">
+                  <div style="width:31%;background:#F89820;height:22px;border-radius:4px;display:flex;align-items:center;padding-left:6px"><span style="font-size:11px;color:white;font-weight:700;white-space:nowrap">90 MB/s</span></div>
+                </div>
+              </div>
+            </div></div>
+    <div>
+      <table>
+        <thead><tr>
+          <th>จำนวน client</th>
+          <th>🔵 Go (MB/s)</th><th>🟠 Java (MB/s)</th><th>ผล</th>
+        </tr></thead>
+        <tbody><tr>
+              <td style="font-weight:700">1 client</td>
+              <td style="color:#00ADE8;font-weight:600">263.27 MB/s<br><small style="color:#aaa">p50=3.804ms</small></td>
+              <td style="color:#F89820;font-weight:600">207.18 MB/s<br><small style="color:#aaa">p50=4.637ms</small></td>
+              <td>🔵 Go ดีกว่า</td></tr><tr>
+              <td style="font-weight:700">2 clients</td>
+              <td style="color:#00ADE8;font-weight:600">198.23 MB/s<br><small style="color:#aaa">p50=4.526ms</small></td>
+              <td style="color:#F89820;font-weight:600">167.28 MB/s<br><small style="color:#aaa">p50=5.394ms</small></td>
+              <td>🔵 Go ดีกว่า</td></tr><tr>
+              <td style="font-weight:700">4 clients</td>
+              <td style="color:#00ADE8;font-weight:600">178.24 MB/s<br><small style="color:#aaa">p50=5.45ms</small></td>
+              <td style="color:#F89820;font-weight:600">159.12 MB/s<br><small style="color:#aaa">p50=5.661ms</small></td>
+              <td>🔵 Go ดีกว่า</td></tr><tr>
+              <td style="font-weight:700">8 clients</td>
+              <td style="color:#00ADE8;font-weight:600">163.37 MB/s<br><small style="color:#aaa">p50=5.889ms</small></td>
+              <td style="color:#F89820;font-weight:600">90.03 MB/s<br><small style="color:#aaa">p50=11.126ms</small></td>
+              <td>🔵 Go ดีกว่า</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:14px">
+    <strong>Key Insight — Concurrent:</strong><br>
+    • <strong>1 client:</strong> Go 263 MB/s vs Java 207 MB/s — Go เร็วกว่า 1.3×<br>
+    • <strong>8 clients พร้อมกัน:</strong> Go 163 MB/s vs Java 90 MB/s — Go เร็วกว่า <strong>1.8×</strong><br>
+    • Java throughput ตกมากกว่าเมื่อ load สูงขึ้น — Go scale ได้ดีกว่าอย่างชัดเจน<br>
+    • <strong>สรุป:</strong> ถ้าระบบต้องรับ request พร้อมกันเยอะ Go เป็นตัวเลือกที่ดีกว่ามาก
+  </div>
 </div></div>
 
-<footer>รายงานสร้างโดยอัตโนมัติ | POC: PGP Benchmark Go vs Java | 2026-06-29 14:00</footer>
+<footer>รายงานสร้างโดยอัตโนมัติ | POC: PGP Benchmark Go vs Java | 2026-06-29 15:11</footer>
 </div>
 <script>
 function showTab(id){
