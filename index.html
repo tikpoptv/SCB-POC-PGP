@@ -134,7 +134,7 @@ footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
 <div class="card">
   <h3>📌 ข้อสรุปสำหรับการตัดสินใจ</h3>
   <ul style="line-height:2.2">
-    <li><strong>Go ชนะ 26 จาก 26 scenarios (100%)</strong> — เป็นตัวเลือกที่เหมาะกว่าสำหรับ PGP workload ส่วนใหญ่</li><li><strong>Java ชนะ .txt และ .csv ทุก key algorithm (0 scenarios)</strong> — JVM ZLIB path เร็วกว่าสำหรับข้อมูลที่บีบอัดได้สูง (Java inmem/stream ชนะ Go ด้วยค่า p50 ที่ต่ำกว่า ~1.4–1.7×)</li><li><strong>Go ชนะทุก binary file (12 scenarios)</strong> — .pdf, .xlsx, .gz, .dat Go เร็วกว่า 1.2–1.4× เพราะ AES hardware path ของ Go runtime มีประสิทธิภาพสูงกว่า</li><li><strong>Curve25519 — Go ได้เปรียบมากที่สุดทุกชนิดไฟล์</strong> — Go ECC path เร็วกว่า Bouncy Castle อย่างชัดเจน</li><li><strong>ไฟล์เล็กจำนวนมาก — Go ได้เปรียบ 1.2–1.7×</strong> — per-file overhead ของ JVM สูงกว่า Go runtime</li><li><strong>⭐ ข้อแนะนำ</strong>: ถ้าระบบประมวลผล .pdf/.xlsx/.dat หรือใช้ Curve25519 → <strong>Go เหมาะกว่าชัดเจน</strong><br>ถ้าระบบประมวลผล .txt/.csv เป็นหลักและใช้ Java stack อยู่แล้ว → <strong>Java ก็ทำได้ดีพอ หรือเร็วกว่าในชนิดไฟล์นั้น</strong></li>
+    <li><strong>Go ชนะ 26 จาก 26 scenarios (100%)</strong> — ทดสอบหลัง reboot VM (cold start สะอาด) เป็น final result ที่น่าเชื่อถือที่สุด</li><li><strong>Go ชนะ .txt/.csv ทุก scenario (6/6)</strong> — ผลหลังจาก reboot VM สะอาด (cold start) Go เร็วกว่าในทุกชนิดไฟล์ รอบก่อน Java ชนะ .txt/.csv เพราะ JVM Warm Cache — ดูรายละเอียดหน้า 🛡 ความน่าเชื่อถือ</li><li><strong>Go ชนะทุก binary file (12/12 scenarios)</strong> — .pdf, .xlsx, .gz, .dat Go เร็วกว่า 1.2–1.4× เพราะ AES hardware path ของ Go runtime มีประสิทธิภาพสูงกว่า</li><li><strong>Curve25519 — Go ได้เปรียบมากที่สุด (8/8 scenarios, เร็วกว่า 1.1–1.9×)</strong> — Go ECC path เร็วกว่า Bouncy Castle อย่างชัดเจน</li><li><strong>Concurrent load (8 clients พร้อมกัน) — Go เร็วกว่า 1.8×</strong> — Go scale ได้ดีกว่าเมื่อ load สูง Java throughput ตกมากกว่า</li><li><strong>⭐ ข้อแนะนำ</strong>: Go เหมาะสำหรับระบบใหม่ที่ต้องการ PGP performance สูงสุด — โดยเฉพาะถ้าใช้ Curve25519 หรือมี concurrent load สูง<br>Java ทำได้ดีพอ สำหรับระบบ enterprise ที่ใช้ Java stack อยู่แล้ว และ workload ไม่ sensitive กับ ~1.4× performance gap</li>
   </ul>
 </div>
 
@@ -1962,6 +1962,66 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
   </div>
 </div>
 
+<div class="card">
+  <h2><span class="sn">💡</span>JVM Warm คืออะไรกันแน่? — อธิบายเพิ่มเติมสำหรับคนทั่วไป</h2>
+
+  <p style="margin-bottom:14px">
+    คำว่า <strong>"JVM อุ่น" (JVM Warm)</strong> มักเข้าใจผิดว่าหมายถึง "ข้อมูลค้างในแรม"
+    ซึ่งไม่ถูกต้องทั้งหมด ขอแยกอธิบาย 2 แนวคิดที่ต่างกัน:
+  </p>
+
+  <div class="grid2">
+    <div class="mbox orange">
+      <h4>🔥 JVM JIT Warm (สิ่งที่เกิดขึ้นในรอบแรก)</h4>
+      <p style="margin-bottom:8px">
+        <strong>JIT = Just-In-Time Compiler</strong> — ตัวแปลโค้ดแบบ real-time<br><br>
+        JVM ไม่ได้รันโค้ดตรงๆ แต่แปลงเป็น "native instructions" ขณะรัน
+        รอบแรกๆ JIT ยังไม่ได้แปลงฟังก์ชัน crypto — รันแบบ "interpreted" (ช้า)
+        พอรันซ้ำหลายครั้ง JIT เรียนรู้และ compile ฟังก์ชันนั้นให้เร็วขึ้น
+        <br><br>
+        <strong>ผลที่เกิด:</strong> JVM ที่ "อุ่นแล้ว" (ผ่านการรันหลายรอบ)
+        จะเร็วกว่า JVM ที่เพิ่งเริ่ม แม้ <em>ข้อมูลที่รันจะไม่เหมือนกันเลย</em>
+        เพราะ JIT optimize <em>โค้ดฟังก์ชัน</em> ไม่ใช่ข้อมูล
+      </p>
+      <div class="hi" style="margin-top:8px;font-size:12px">
+        <strong>ตอบคำถาม "ถ้าข้อมูลไม่ซ้ำกัน แรมอุ่นช่วยได้มั้ย?"</strong><br>
+        ✅ <strong>ช่วยได้</strong> — เพราะ JVM Warm ไม่ได้ cache ข้อมูล
+        แต่ cache <em>โค้ด crypto ที่ compiled แล้ว</em>
+        ข้อมูลใหม่ทุกไฟล์ก็ยังได้ประโยชน์จาก JIT ที่อุ่นแล้วเต็มที่
+      </div>
+    </div>
+    <div class="mbox">
+      <h4>💾 RAM/OS Cache (สิ่งที่ไม่เกี่ยวกับ JIT)</h4>
+      <p style="margin-bottom:8px">
+        OS cache ไฟล์ที่เพิ่งอ่านไว้ใน RAM — ถ้าอ่านไฟล์เดิมอีกครั้ง เร็วกว่าอ่านจาก disk
+        <br><br>
+        ในการทดสอบนี้: ไฟล์ทดสอบวางบน <strong>tmpfs (RAM disk)</strong> อยู่แล้ว
+        — ดังนั้น OS file cache ไม่มีผลต่อผลการทดสอบ
+        <br><br>
+        <strong>สำหรับชีวิตจริง:</strong> ถ้าข้อมูลไม่ซ้ำกัน (เช่น user อัพโหลดไฟล์ใหม่ทุกครั้ง)
+        OS file cache ก็ไม่ช่วยอยู่แล้ว — ข้อมูลแต่ละชิ้นต้องอ่านใหม่เสมอ
+      </p>
+      <div class="info" style="margin-top:8px;font-size:12px">
+        ดังนั้น RAM cache ของข้อมูล <strong>ไม่เกี่ยวกับ JVM Warm</strong>
+        สองอย่างนี้แยกกันสมบูรณ์
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;background:#e8f5e9;border:1px solid #27ae60">
+    <h4 style="color:#1b5e20">🏢 ชีวิตจริง: Java Long-Running Service (บริการที่รันต่อเนื่องนาน)</h4>
+    <p>
+      ถ้า Java รันเป็น <strong>long-running service</strong> (เช่น Spring Boot server ที่เปิดทิ้งไว้ทั้งวัน
+      และรับ request เข้ามาเรื่อยๆ) JIT จะ warm up ครบภายใน ~1,000–5,000 request แรก
+      และอยู่ในสถานะ "warm" ตลอดอายุของ service นั้น
+      <br><br>
+      ในกรณีนี้ Java อาจได้เปรียบมากกว่าที่ผล cold-start benchmark แสดง
+      แต่การทดสอบ use case นี้ <strong>ยังไม่ได้ทำ</strong> ในรอบนี้
+      ถือเป็น <strong>ข้อแนะนำสำหรับ POC รอบถัดไป</strong> ถ้าต้องการข้อมูลที่ครอบคลุมยิ่งขึ้น
+    </p>
+  </div>
+</div>
+
   <p style="margin-bottom:14px">
     ระบบออกแบบมาเพื่อให้ <strong>"ตัวเลขเร็ว" ไม่มีค่าเลยถ้าไม่ผ่านด่านเหล่านี้</strong>
     ทุก gate ตรวจสอบอัตโนมัติก่อนนำตัวเลขเข้าสถิติ:
@@ -2764,7 +2824,7 @@ new Chart(document.getElementById("c4"),{type:"doughnut",
   </div>
 </div></div>
 
-<footer>รายงานสร้างโดยอัตโนมัติ | POC: PGP Benchmark Go vs Java | 2026-06-29 15:46</footer>
+<footer>รายงานสร้างโดยอัตโนมัติ | POC: PGP Benchmark Go vs Java | 2026-06-29 15:47</footer>
 </div>
 <script>
 function showTab(id){
