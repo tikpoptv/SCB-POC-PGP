@@ -228,7 +228,39 @@ replace github.com/ProtonMail/go-crypto => ./third_party/go-crypto-fork
 - **ไฟล์เล็ก 1KB**: เกือบเท่ากัน (csv-1KB klauspost ช้ากว่านิดเดียว 0.83x) — setup ครอบงำ
 - **ไม่ต้องใช้ cgo เลย** → แก้คำแนะนำเดิมของผม: pure-Go klauspost แรงพอ ไม่จำเป็นต้องพึ่ง libdeflate/cgo เพื่อปิดช่องว่าง
 - **ข้อแลกเปลี่ยน**: ratio ของ klauspost ที่ level 6 ต่ำกว่า stdlib เล็กน้อย (txt 6.26x → 5.64x) = ไฟล์ผลลัพธ์ใหญ่ขึ้นราว ~10% แลกกับความเร็วหลายเท่า
-- ⚠️ ตัวเลขนี้คือ stage บีบอัดล้วน **ยังไม่ผ่าน pipeline PGP จริง** — ผลรวมจริงต้องฝัง klauspost เข้า go-crypto (fork) แล้ววัดซ้ำ
+- ⚠️ ตัวเลขข้างบนคือ stage บีบอัดล้วน — ผล **end-to-end ผ่าน PGP จริง** ดูสไลด์ถัดไป
+
+---
+
+## ✅✅ ผล end-to-end ผ่าน PGP pipeline จริง (A/B บนเครื่องเดียว)
+
+วัด `inmemSingleEngine.Encrypt` เต็ม (RSA-2048 + AES-256 + ZLIB + literal + IO)
+สลับเฉพาะ zlib ผ่าน go.mod `replace` — stdlib vs fork(klauspost), level เดิม
+
+| payload | stdlib ns/op | klauspost ns/op | **speedup** |
+|---------|-----:|-----:|:---:|
+| txt-10KB | 371,061 | 268,097 | 1.38x |
+| csv-10KB | 405,558 | 318,425 | 1.27x |
+| **txt-100KB** | 4,158,658 | 822,519 | **5.06x** |
+| **csv-100KB** | 5,132,020 | 1,656,196 | **3.10x** |
+| pdf-100KB | 2,097,526 | 752,664 | 2.79x |
+
+→ กำจัดคอขวดบีบอัดออกไป งานเข้ารหัสรวมบน txt-100KB **เร็วขึ้น 5 เท่า** (4.16ms → 0.82ms)
+
+---
+
+## ✅ ยืนยัน Interop (สำคัญที่สุด)
+
+`Go (fork + klauspost)` เข้ารหัส → `gpg` (reference implementation) ถอดได้ **byte-for-byte**
+
+```
+interop OK: gpg decrypted 32768-byte klauspost-ZLIB message byte-for-byte
+--- PASS: TestInteropKlauspostCiphertextDecryptsWithGPG
+```
+
+- พิสูจน์ว่า compressed stream ยังเป็น zlib/RFC 1950 มาตรฐาน
+- ถ้า gpg ถอดได้ → **Java BouncyCastle และทุก consumer ตาม RFC 4880 ก็ถอดได้**
+- test เดิมทั้งหมด (round-trip byte-for-byte) ผ่านครบกับ fork
 
 ---
 
