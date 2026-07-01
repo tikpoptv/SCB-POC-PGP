@@ -4,6 +4,7 @@ go 1.24
 
 require (
 	github.com/ProtonMail/go-crypto v1.4.1
+	github.com/klauspost/compress v1.19.0
 	golang.org/x/sys v0.35.0
 	pgregory.net/rapid v1.3.0
 )
