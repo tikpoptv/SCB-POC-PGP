@@ -36,6 +36,11 @@ func BenchmarkEngineEncrypt(b *testing.B) {
 		{"txt-100KB", makeCompressibleText(100 << 10)},
 		{"csv-100KB", makeCompressibleCSV(100 << 10)},
 		{"pdf-100KB", makeIncompressible(100 << 10)},
+		{"txt-500KB", makeCompressibleText(500 << 10)},
+		{"csv-500KB", makeCompressibleCSV(500 << 10)},
+		{"txt-1MB", makeCompressibleText(1 << 20)},
+		{"csv-1MB", makeCompressibleCSV(1 << 20)},
+		{"pdf-1MB", makeIncompressible(1 << 20)},
 	}
 
 	for _, c := range cases {

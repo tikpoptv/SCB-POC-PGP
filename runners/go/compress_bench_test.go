@@ -90,6 +90,8 @@ func corpusPayloads() []payload {
 		{"1KB", 1 << 10},
 		{"10KB", 10 << 10},
 		{"100KB", 100 << 10},
+		{"500KB", 500 << 10},
+		{"1MB", 1 << 20},
 	}
 	var out []payload
 	for _, s := range sizes {
@@ -201,4 +203,54 @@ func timeCompress(t *testing.T, iters int, fn func()) int64 {
 		fn()
 	}
 	return time.Since(start).Nanoseconds() / int64(iters)
+}
+
+// --- level tradeoff (BestSpeed=1 vs default=6) -------------------------------
+
+func compressStdLevel(dst *bytes.Buffer, src []byte, level int) {
+	dst.Reset()
+	w, _ := stdzlib.NewWriterLevel(dst, level)
+	_, _ = w.Write(src)
+	_ = w.Close()
+}
+
+func compressKpLevel(dst *bytes.Buffer, src []byte, level int) {
+	dst.Reset()
+	w, _ := kpzlib.NewWriterLevel(dst, level)
+	_, _ = w.Write(src)
+	_ = w.Close()
+}
+
+// TestCompressionCompareLevels shows the speed/ratio tradeoff of level 1 vs 6
+// for both libraries on the medium/large compressible payloads — useful when
+// deciding whether to trade a little ratio for even more speed.
+func TestCompressionCompareLevels(t *testing.T) {
+	const iters = 100
+	var buf bytes.Buffer
+	levels := []int{1, 6}
+
+	t.Logf("%-12s | %5s | %10s %9s | %10s %9s",
+		"payload", "level", "std ns/op", "ratio", "kp ns/op", "ratio")
+	t.Logf("%s", "-------------+-------+----------------------+---------------------")
+
+	for _, p := range corpusPayloads() {
+		// Only the compressible medium/large cases are interesting here.
+		if len(p.data) < (100 << 10) || p.name[:3] == "pdf" {
+			continue
+		}
+		for _, lvl := range levels {
+			compressStdLevel(&buf, p.data, lvl)
+			stdSize := buf.Len()
+			compressKpLevel(&buf, p.data, lvl)
+			kpSize := buf.Len()
+
+			stdNs := timeCompress(t, iters, func() { compressStdLevel(&buf, p.data, lvl) })
+			kpNs := timeCompress(t, iters, func() { compressKpLevel(&buf, p.data, lvl) })
+
+			t.Logf("%-12s | %5d | %10d %8.2fx | %10d %8.2fx",
+				p.name, lvl,
+				stdNs, float64(len(p.data))/float64(stdSize),
+				kpNs, float64(len(p.data))/float64(kpSize))
+		}
+	}
 }
