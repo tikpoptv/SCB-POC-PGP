@@ -269,7 +269,9 @@ def run_one(binary_cmd, variant, corpus_path, out_dir, pub_alg="RSA-2048", concu
         if r.returncode not in (0, 2):
             return None
         out = json.loads(r.stdout)
-        ops = [o for o in out.get("operations", []) if not o.get("skipped")]
+        ops_all = out.get("operations", [])
+        ops = [o for o in ops_all if not o.get("skipped")]
+        n_skipped = sum(1 for o in ops_all if o.get("skipped"))
         enc = [o.get("encryptMs") or 0 for o in ops]
         dec = [o.get("decryptMs") or 0 for o in ops]
         tot = [e + d for e, d in zip(enc, dec)]
@@ -289,6 +291,7 @@ def run_one(binary_cmd, variant, corpus_path, out_dir, pub_alg="RSA-2048", concu
             "ratio": round(orig / ct, 3) if ct > 0 else 0.0,
             "ok_ratio": round(ok / len(ops), 4) if ops else 0.0,
             "n": len(ops),
+            "skipped": n_skipped,
         }
     except Exception as e:
         sys.stderr.write(f"    ERR {variant}: {e}\n")
@@ -327,6 +330,9 @@ def bench(label, corpus_path, out_root, runners_map=RUNNERS, pub_alg="RSA-2048",
                    for k in ("p50", "p95", "enc_p50", "dec_p50", "mbps", "ratio", "ok_ratio")}
             agg["n"] = rounds[0]["n"]
             agg["rounds"] = len(rounds)
+            # correctness guard (anti-v2): worst-case ข้ามรอบ
+            agg["ok_ratio_min"] = min(r["ok_ratio"] for r in rounds)
+            agg["skipped_max"] = max(r.get("skipped", 0) for r in rounds)
             best[v] = agg
     return best
 
@@ -544,6 +550,24 @@ def main():
 
     print(f"\n✅ ผลบันทึกที่: {OUT_JSON}")
     print("   (kp vs std = go-stdlib/go-klauspost ; kp vs java = java/go-klauspost ; >1 = klauspost เร็วกว่า)")
+
+    # ── correctness guard (กันวัดผลผิดแบบ v2) ────────────────────────────
+    problems = []
+    for sc_name, sc in results["scenarios"].items():
+        for label, res in sc.items():
+            for vname, d in (res or {}).items():
+                if d.get("ok_ratio_min", 1.0) < 1.0:
+                    problems.append(f"{sc_name}/{label}/{vname}: roundTripOk<100% (min={d['ok_ratio_min']})")
+                if d.get("skipped_max", 0) > 0:
+                    problems.append(f"{sc_name}/{label}/{vname}: มีไฟล์ถูก skip ({d['skipped_max']})")
+    if problems:
+        print("\n" + "!" * 72)
+        print("❌❌ พบปัญหา correctness — ผลลัพธ์อาจไม่น่าเชื่อถือ (อย่าใช้ตัดสินใจ):")
+        for p in problems[:50]:
+            print("   - " + p)
+        print("!" * 72)
+    else:
+        print("🔒 correctness: roundTripOk 100% และไม่มีไฟล์ถูก skip ทุก scenario/variant")
 
 if __name__ == "__main__":
     main()
