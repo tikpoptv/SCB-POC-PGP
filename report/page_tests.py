@@ -201,10 +201,10 @@ def build() -> str:
     <div class="mbox orange">
       <h4>EngineRegistryVariantTest</h4>
       <ul>
-        <li>ServiceLoader discovers ทุก 3 JVM variants</li>
-        <li>java-native ไม่ควรอยู่ใน ServiceLoader</li>
-        <li>Direct registration ทำงานได้</li>
-        <li>VARIANT_ID constants ถูกต้อง</li>
+        <li>ระบบ auto-discover ทุก 3 JVM variants ได้ถูกต้อง</li>
+        <li>java-native ไม่ถูกโหลดโดยอัตโนมัติ (ต้องเรียกเฉพาะ)</li>
+        <li>ลงทะเบียน variant โดยตรงทำงานได้</li>
+        <li>ชื่อ variant ถูกต้องตามสัญญา</li>
       </ul>
     </div>
     <div class="mbox orange">

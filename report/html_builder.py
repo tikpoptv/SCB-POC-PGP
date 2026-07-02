@@ -1,10 +1,13 @@
 """html_builder.py — CSS, shared JS, และ build() ที่ประกอบทุก page เข้าด้วยกัน"""
 from datetime import datetime
+import pathlib, json
 import page_summary
 import page_methodology
 import page_testdata
 import page_tests
 import page_integrity
+import page_extended
+import page_insights
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -109,7 +112,20 @@ function showTab(id){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
-  document.getElementById('page-'+id).classList.add('active');
+  var pg = document.getElementById('page-'+id);
+  pg.classList.add('active');
+  // Extended charts: init on first open
+  if(id === 'extended' && typeof initExtCharts === 'function'){
+    setTimeout(initExtCharts, 80);
+  }
+  // Force Chart.js resize for already-created charts
+  setTimeout(function(){
+    if(window.Chart){
+      Object.values(Chart.instances).forEach(function(c){
+        try{ c.resize(); c.update(); }catch(e){}
+      });
+    }
+  }, 60);
 }
 </script>"""
 
@@ -119,13 +135,27 @@ def build(data: dict, rows: list, chart_html: str, out_path: str):
     started  = data.get("startedAt", "—")[:19].replace("T", " ")
     finished = data.get("finishedAt", "—")[:19].replace("T", " ")
 
+    # โหลด extended results ถ้ามี
+    ext_path = pathlib.Path(__file__).parent / "results_extended.json"
+    ext_rows = []
+    if ext_path.exists():
+        import data_loader as _dl
+        with open(ext_path, encoding="utf-8") as f:
+            ext_data = json.load(f)
+        ext_rows = _dl.extract_extended_rows(ext_data)
+
+    # ถ้ามี extended rows ให้ summary ใช้ข้อมูล extended (26 scenarios) แทน original
+    summary_rows = ext_rows if ext_rows else rows
+
     pages = [
-        ("summary",   "📊 สรุปผล",              page_summary.build(data, rows)),
-        ("charts",    "📈 กราฟ",                 f'<div class="card"><h2><span class="sn">📈</span>กราฟเปรียบเทียบ (Interactive)</h2>{chart_html}</div>'),
-        ("method",    "🔬 วิธีการทดสอบ",        page_methodology.build()),
-        ("testdata",  "📁 ข้อมูลและ Variants",   page_testdata.build()),
-        ("tests",     "🧪 721 Tests",             page_tests.build()),
-        ("integrity", "🛡 ความน่าเชื่อถือ",     page_integrity.build()),
+        ("summary",   "📊 สรุปผล",               page_summary.build(data, summary_rows, ext_rows=ext_rows)),
+        ("insights",  "🎯 Key Insights",           page_insights.build()),
+        ("charts",    "📈 กราฟ",                  f'<div class="card"><h2><span class="sn">📈</span>กราฟเปรียบเทียบ (Interactive)</h2>{chart_html}</div>'),
+        ("method",    "🔬 วิธีการทดสอบ",          page_methodology.build()),
+        ("testdata",  "📁 ข้อมูลและ Variants",      page_testdata.build()),
+        ("tests",     "🧪 721 Tests",               page_tests.build()),
+        ("integrity", "🛡 ความน่าเชื่อถือ",         page_integrity.build()),
+        ("extended",  "🔬 Full Coverage (26 scenarios)", page_extended.build()),
     ]
 
     tabs_html = "".join(
@@ -142,6 +172,7 @@ def build(data: dict, rows: list, chart_html: str, out_path: str):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>POC Report — PGP Benchmark: Go vs Java</title>
 {CSS}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -149,11 +180,11 @@ def build(data: dict, rows: list, chart_html: str, out_path: str):
 <div class="hdr">
   <h1>📊 รายงาน POC: เปรียบเทียบประสิทธิภาพการเข้ารหัส PGP</h1>
   <div class="sub">Go (ProtonMail/go-crypto) เทียบกับ Java (Spring Boot + Bouncy Castle)
-    — ผลการทดสอบจริงบน VM Ubuntu 24.04 LTS, 8 vCPU, 8 GB RAM</div>
+    — ผลการทดสอบจริงบน VM Ubuntu 24.04 LTS, 8 vCPU, 14 GB RAM</div>
   <div class="meta">
     <span>📅 เริ่มทดสอบ: {started}</span>
     <span>✅ สิ้นสุด: {finished}</span>
-    <span>🖥 VM: Ubuntu 24.04, 8 vCPU, 8 GB RAM</span>
+    <span>🖥 VM: Ubuntu 24.04, 8 vCPU, 14 GB RAM (อัพเกรดก่อนรอบ Final)</span>
     <span>🔒 AES-256 + ZLIB + SHA-256</span>
     <span>🧪 721 tests ผ่านทั้งหมด</span>
   </div>

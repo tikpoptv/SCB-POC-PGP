@@ -1,0 +1,2360 @@
+{
+  "startedAt": "2026-06-29T12:53:24.423555+00:00",
+  "vm_ram_gb": 14,
+  "rounds": 3,
+  "note": "v5: cold start, size+count gradient added",
+  "scenarios": {
+    "ft-txt-rsa2048": {
+      "pub_alg": "RSA-2048",
+      "corpus": "filetypes/txt",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 30.904,
+          "p50_min": 30.645,
+          "p50_max": 31.429,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 30.839,
+          "p50_min": 30.527,
+          "p50_max": 30.921,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 30.712,
+          "p50_min": 30.544,
+          "p50_max": 30.746,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 17.163,
+          "p50_min": 17.038,
+          "p50_max": 17.289,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 17.214,
+          "p50_min": 17.016,
+          "p50_max": 17.296,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 17.502,
+          "p50_min": 17.137,
+          "p50_max": 17.886,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-txt-rsa4096": {
+      "pub_alg": "RSA-4096",
+      "corpus": "filetypes/txt",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 34.212,
+          "p50_min": 33.821,
+          "p50_max": 35.126,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 34.51,
+          "p50_min": 34.332,
+          "p50_max": 34.545,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 34.39,
+          "p50_min": 34.226,
+          "p50_max": 36.05,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 21.72,
+          "p50_min": 21.217,
+          "p50_max": 22.177,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 21.514,
+          "p50_min": 21.417,
+          "p50_max": 21.581,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 21.289,
+          "p50_min": 21.054,
+          "p50_max": 22.127,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-txt-curve25519": {
+      "pub_alg": "Curve25519",
+      "corpus": "filetypes/txt",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 30.252,
+          "p50_min": 29.934,
+          "p50_max": 30.372,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 29.956,
+          "p50_min": 29.896,
+          "p50_max": 30.012,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 29.815,
+          "p50_min": 29.746,
+          "p50_max": 30.324,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 17.14,
+          "p50_min": 16.765,
+          "p50_max": 17.185,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 16.965,
+          "p50_min": 16.908,
+          "p50_max": 17.475,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 16.957,
+          "p50_min": 16.588,
+          "p50_max": 17.764,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-csv-rsa2048": {
+      "pub_alg": "RSA-2048",
+      "corpus": "filetypes/csv",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 30.804,
+          "p50_min": 30.436,
+          "p50_max": 32.086,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 30.666,
+          "p50_min": 30.383,
+          "p50_max": 30.807,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 30.578,
+          "p50_min": 30.258,
+          "p50_max": 30.885,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 17.437,
+          "p50_min": 17.281,
+          "p50_max": 17.725,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 17.131,
+          "p50_min": 16.877,
+          "p50_max": 18.48,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 17.752,
+          "p50_min": 17.242,
+          "p50_max": 17.757,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-csv-rsa4096": {
+      "pub_alg": "RSA-4096",
+      "corpus": "filetypes/csv",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 34.565,
+          "p50_min": 34.285,
+          "p50_max": 35.128,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 34.674,
+          "p50_min": 34.511,
+          "p50_max": 35.017,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 34.051,
+          "p50_min": 33.937,
+          "p50_max": 34.489,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 21.667,
+          "p50_min": 21.408,
+          "p50_max": 23.278,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 21.415,
+          "p50_min": 21.367,
+          "p50_max": 21.673,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 21.592,
+          "p50_min": 21.234,
+          "p50_max": 21.759,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-csv-curve25519": {
+      "pub_alg": "Curve25519",
+      "corpus": "filetypes/csv",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 30.213,
+          "p50_min": 30.048,
+          "p50_max": 31.26,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 30.38,
+          "p50_min": 29.974,
+          "p50_max": 30.718,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 30.194,
+          "p50_min": 29.857,
+          "p50_max": 31.077,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 17.184,
+          "p50_min": 16.718,
+          "p50_max": 17.502,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 16.881,
+          "p50_min": 16.578,
+          "p50_max": 17.651,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 16.716,
+          "p50_min": 16.635,
+          "p50_max": 16.762,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-pdf-rsa2048": {
+      "pub_alg": "RSA-2048",
+      "corpus": "filetypes/pdf",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 11.329,
+          "p50_min": 11.25,
+          "p50_max": 11.458,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 12.059,
+          "p50_min": 12.034,
+          "p50_max": 12.097,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 11.492,
+          "p50_min": 11.31,
+          "p50_max": 12.363,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.653,
+          "p50_min": 14.482,
+          "p50_max": 15.472,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.162,
+          "p50_min": 14.153,
+          "p50_max": 14.224,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.254,
+          "p50_min": 14.169,
+          "p50_max": 14.265,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-pdf-rsa4096": {
+      "pub_alg": "RSA-4096",
+      "corpus": "filetypes/pdf",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 15.315,
+          "p50_min": 15.242,
+          "p50_max": 15.576,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 16.313,
+          "p50_min": 16.075,
+          "p50_max": 16.595,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 15.953,
+          "p50_min": 15.521,
+          "p50_max": 17.017,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 19.068,
+          "p50_min": 18.957,
+          "p50_max": 20.733,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 18.389,
+          "p50_min": 18.365,
+          "p50_max": 18.528,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 18.59,
+          "p50_min": 18.426,
+          "p50_max": 18.603,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-pdf-curve25519": {
+      "pub_alg": "Curve25519",
+      "corpus": "filetypes/pdf",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 10.656,
+          "p50_min": 10.61,
+          "p50_max": 10.69,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 11.401,
+          "p50_min": 11.395,
+          "p50_max": 11.563,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 10.743,
+          "p50_min": 10.723,
+          "p50_max": 10.79,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.123,
+          "p50_min": 14.036,
+          "p50_max": 14.787,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.197,
+          "p50_min": 14.107,
+          "p50_max": 15.508,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 13.817,
+          "p50_min": 13.708,
+          "p50_max": 15.256,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-xlsx-rsa2048": {
+      "pub_alg": "RSA-2048",
+      "corpus": "filetypes/xlsx",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 11.264,
+          "p50_min": 11.249,
+          "p50_max": 11.562,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 12.072,
+          "p50_min": 12.028,
+          "p50_max": 12.073,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 11.381,
+          "p50_min": 11.361,
+          "p50_max": 12.334,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.595,
+          "p50_min": 14.334,
+          "p50_max": 15.373,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.231,
+          "p50_min": 14.191,
+          "p50_max": 14.414,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.353,
+          "p50_min": 13.964,
+          "p50_max": 14.439,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-xlsx-rsa4096": {
+      "pub_alg": "RSA-4096",
+      "corpus": "filetypes/xlsx",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 15.234,
+          "p50_min": 15.143,
+          "p50_max": 16.058,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 16.342,
+          "p50_min": 16.033,
+          "p50_max": 17.967,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 15.291,
+          "p50_min": 15.261,
+          "p50_max": 15.319,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 19.122,
+          "p50_min": 18.669,
+          "p50_max": 19.275,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 18.421,
+          "p50_min": 18.406,
+          "p50_max": 20.576,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 18.51,
+          "p50_min": 18.37,
+          "p50_max": 19.734,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-xlsx-curve25519": {
+      "pub_alg": "Curve25519",
+      "corpus": "filetypes/xlsx",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 10.743,
+          "p50_min": 10.724,
+          "p50_max": 11.08,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 11.505,
+          "p50_min": 11.413,
+          "p50_max": 12.15,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 10.881,
+          "p50_min": 10.768,
+          "p50_max": 10.892,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 13.915,
+          "p50_min": 13.747,
+          "p50_max": 14.605,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.98,
+          "p50_min": 14.102,
+          "p50_max": 15.021,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.229,
+          "p50_min": 13.91,
+          "p50_max": 14.81,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-zip-rsa2048": {
+      "pub_alg": "RSA-2048",
+      "corpus": "filetypes/zip",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 11.836,
+          "p50_min": 11.25,
+          "p50_max": 12.401,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 12.454,
+          "p50_min": 12.186,
+          "p50_max": 14.999,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 11.511,
+          "p50_min": 11.314,
+          "p50_max": 12.198,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.512,
+          "p50_min": 14.362,
+          "p50_max": 15.176,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.191,
+          "p50_min": 14.144,
+          "p50_max": 14.494,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.248,
+          "p50_min": 14.049,
+          "p50_max": 14.253,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-zip-rsa4096": {
+      "pub_alg": "RSA-4096",
+      "corpus": "filetypes/zip",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 15.295,
+          "p50_min": 15.247,
+          "p50_max": 15.379,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 16.025,
+          "p50_min": 15.912,
+          "p50_max": 16.204,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 15.35,
+          "p50_min": 15.307,
+          "p50_max": 16.033,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 18.605,
+          "p50_min": 18.578,
+          "p50_max": 18.803,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 19.043,
+          "p50_min": 18.187,
+          "p50_max": 19.346,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 18.507,
+          "p50_min": 18.303,
+          "p50_max": 22.052,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-zip-curve25519": {
+      "pub_alg": "Curve25519",
+      "corpus": "filetypes/zip",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 10.795,
+          "p50_min": 10.606,
+          "p50_max": 11.054,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 11.459,
+          "p50_min": 11.34,
+          "p50_max": 11.681,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 10.812,
+          "p50_min": 10.743,
+          "p50_max": 10.868,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.505,
+          "p50_min": 14.054,
+          "p50_max": 14.522,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 13.849,
+          "p50_min": 13.775,
+          "p50_max": 14.081,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.027,
+          "p50_min": 13.705,
+          "p50_max": 14.317,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-dat-rsa2048": {
+      "pub_alg": "RSA-2048",
+      "corpus": "filetypes/dat",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 11.25,
+          "p50_min": 11.191,
+          "p50_max": 11.538,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 12.187,
+          "p50_min": 12.068,
+          "p50_max": 12.261,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 11.468,
+          "p50_min": 11.348,
+          "p50_max": 11.711,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.97,
+          "p50_min": 14.808,
+          "p50_max": 15.732,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.2,
+          "p50_min": 14.0,
+          "p50_max": 14.547,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.053,
+          "p50_min": 14.016,
+          "p50_max": 15.225,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-dat-rsa4096": {
+      "pub_alg": "RSA-4096",
+      "corpus": "filetypes/dat",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 15.407,
+          "p50_min": 15.118,
+          "p50_max": 16.053,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 16.605,
+          "p50_min": 15.979,
+          "p50_max": 17.886,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 15.614,
+          "p50_min": 15.349,
+          "p50_max": 15.654,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 18.615,
+          "p50_min": 18.571,
+          "p50_max": 19.02,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 18.284,
+          "p50_min": 18.284,
+          "p50_max": 19.328,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 18.434,
+          "p50_min": 18.344,
+          "p50_max": 19.407,
+          "rounds": 3
+        }
+      }
+    },
+    "ft-dat-curve25519": {
+      "pub_alg": "Curve25519",
+      "corpus": "filetypes/dat",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 10.709,
+          "p50_min": 10.546,
+          "p50_max": 10.975,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 11.375,
+          "p50_min": 11.368,
+          "p50_max": 11.399,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 10.756,
+          "p50_min": 10.648,
+          "p50_max": 10.803,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.148,
+          "p50_min": 13.981,
+          "p50_max": 14.407,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 13.719,
+          "p50_min": 13.678,
+          "p50_max": 13.729,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 13.814,
+          "p50_min": 13.727,
+          "p50_max": 14.718,
+          "rounds": 3
+        }
+      }
+    },
+    "many-1kb": {
+      "pub_alg": "RSA-2048",
+      "corpus": "manysmall/1kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 0.787,
+          "p50_min": 0.78,
+          "p50_max": 0.796,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 0.977,
+          "p50_min": 0.965,
+          "p50_max": 0.99,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 0.871,
+          "p50_min": 0.854,
+          "p50_max": 0.927,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 1.126,
+          "p50_min": 1.117,
+          "p50_max": 1.149,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 1.129,
+          "p50_min": 1.127,
+          "p50_max": 1.313,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 1.147,
+          "p50_min": 1.093,
+          "p50_max": 1.159,
+          "rounds": 3
+        }
+      }
+    },
+    "many-10kb": {
+      "pub_alg": "RSA-2048",
+      "corpus": "manysmall/10kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.153,
+          "p50_min": 1.134,
+          "p50_max": 1.171,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 1.311,
+          "p50_min": 1.274,
+          "p50_max": 1.433,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.246,
+          "p50_min": 1.227,
+          "p50_max": 1.408,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 1.337,
+          "p50_min": 1.327,
+          "p50_max": 1.347,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 1.352,
+          "p50_min": 1.332,
+          "p50_max": 1.447,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 1.327,
+          "p50_min": 1.32,
+          "p50_max": 1.421,
+          "rounds": 3
+        }
+      }
+    },
+    "many-100kb": {
+      "pub_alg": "RSA-2048",
+      "corpus": "manysmall/100kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 6.556,
+          "p50_min": 6.461,
+          "p50_max": 6.727,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 6.71,
+          "p50_min": 6.545,
+          "p50_max": 6.917,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 6.509,
+          "p50_min": 6.496,
+          "p50_max": 6.734,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 4.192,
+          "p50_min": 4.138,
+          "p50_max": 4.559,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 4.168,
+          "p50_min": 4.147,
+          "p50_max": 4.348,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 4.194,
+          "p50_min": 4.101,
+          "p50_max": 4.25,
+          "rounds": 3
+        }
+      }
+    }
+  },
+  "size_gradient": {
+    "1kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-1kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.013,
+          "p50_min": 1.0,
+          "p50_max": 1.029,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 1.55,
+          "p50_min": 1.472,
+          "p50_max": 1.551,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.434,
+          "p50_min": 1.402,
+          "p50_max": 1.485,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 7.795,
+          "p50_min": 6.421,
+          "p50_max": 9.595,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 7.012,
+          "p50_min": 5.644,
+          "p50_max": 8.216,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 6.044,
+          "p50_min": 5.959,
+          "p50_max": 6.967,
+          "rounds": 3
+        }
+      }
+    },
+    "4kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-4kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.093,
+          "p50_min": 1.081,
+          "p50_max": 1.107,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 1.604,
+          "p50_min": 1.552,
+          "p50_max": 1.626,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.391,
+          "p50_min": 1.376,
+          "p50_max": 1.601,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 5.747,
+          "p50_min": 5.563,
+          "p50_max": 6.157,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 6.387,
+          "p50_min": 6.172,
+          "p50_max": 7.863,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 6.254,
+          "p50_min": 5.734,
+          "p50_max": 9.625,
+          "rounds": 3
+        }
+      }
+    },
+    "16kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-16kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.7,
+          "p50_min": 1.424,
+          "p50_max": 1.747,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 2.198,
+          "p50_min": 1.754,
+          "p50_max": 2.244,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.758,
+          "p50_min": 1.747,
+          "p50_max": 1.782,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 7.321,
+          "p50_min": 7.051,
+          "p50_max": 11.044,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 8.586,
+          "p50_min": 7.566,
+          "p50_max": 9.065,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 7.783,
+          "p50_min": 7.115,
+          "p50_max": 10.346,
+          "rounds": 3
+        }
+      }
+    },
+    "64kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-64kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.206,
+          "p50_min": 2.062,
+          "p50_max": 2.336,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 2.81,
+          "p50_min": 2.734,
+          "p50_max": 2.872,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 2.723,
+          "p50_min": 2.639,
+          "p50_max": 2.799,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 13.145,
+          "p50_min": 9.446,
+          "p50_max": 13.736,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 12.102,
+          "p50_min": 9.923,
+          "p50_max": 15.734,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 12.96,
+          "p50_min": 12.764,
+          "p50_max": 14.003,
+          "rounds": 3
+        }
+      }
+    },
+    "128kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-128kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 3.807,
+          "p50_min": 3.741,
+          "p50_max": 3.811,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 4.671,
+          "p50_min": 4.247,
+          "p50_max": 5.349,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 4.144,
+          "p50_min": 4.107,
+          "p50_max": 4.36,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 19.861,
+          "p50_min": 19.455,
+          "p50_max": 21.722,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 16.03,
+          "p50_min": 11.128,
+          "p50_max": 16.642,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 15.069,
+          "p50_min": 11.449,
+          "p50_max": 18.726,
+          "rounds": 3
+        }
+      }
+    },
+    "256kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-256kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 6.541,
+          "p50_min": 5.984,
+          "p50_max": 6.635,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 7.073,
+          "p50_min": 6.915,
+          "p50_max": 7.492,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 6.976,
+          "p50_min": 6.744,
+          "p50_max": 7.362,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 17.038,
+          "p50_min": 15.189,
+          "p50_max": 17.239,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 16.556,
+          "p50_min": 16.496,
+          "p50_max": 20.148,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 17.494,
+          "p50_min": 14.063,
+          "p50_max": 19.248,
+          "rounds": 3
+        }
+      }
+    },
+    "512kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-512kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 11.703,
+          "p50_min": 11.224,
+          "p50_max": 11.899,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 12.186,
+          "p50_min": 12.065,
+          "p50_max": 13.483,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 11.938,
+          "p50_min": 11.807,
+          "p50_max": 13.913,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 19.758,
+          "p50_min": 19.622,
+          "p50_max": 20.336,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 29.842,
+          "p50_min": 27.318,
+          "p50_max": 31.553,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 27.231,
+          "p50_min": 26.802,
+          "p50_max": 30.398,
+          "rounds": 3
+        }
+      }
+    },
+    "1024kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-1024kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 22.08,
+          "p50_min": 21.626,
+          "p50_max": 22.242,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 23.426,
+          "p50_min": 23.392,
+          "p50_max": 23.486,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 22.115,
+          "p50_min": 21.934,
+          "p50_max": 22.277,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 36.142,
+          "p50_min": 34.63,
+          "p50_max": 41.055,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 34.129,
+          "p50_min": 33.863,
+          "p50_max": 38.306,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 35.837,
+          "p50_min": 35.504,
+          "p50_max": 36.772,
+          "rounds": 3
+        }
+      }
+    },
+    "2048kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-2048kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 42.692,
+          "p50_min": 42.349,
+          "p50_max": 43.232,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 46.285,
+          "p50_min": 45.821,
+          "p50_max": 48.168,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 42.334,
+          "p50_min": 41.81,
+          "p50_max": 43.6,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 76.677,
+          "p50_min": 71.344,
+          "p50_max": 77.935,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 58.382,
+          "p50_min": 58.202,
+          "p50_max": 62.0,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 59.034,
+          "p50_min": 58.4,
+          "p50_max": 62.73,
+          "rounds": 3
+        }
+      }
+    },
+    "5120kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-5120kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 104.675,
+          "p50_min": 103.727,
+          "p50_max": 106.497,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 112.758,
+          "p50_min": 111.807,
+          "p50_max": 113.388,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 106.603,
+          "p50_min": 105.219,
+          "p50_max": 108.385,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 148.373,
+          "p50_min": 141.958,
+          "p50_max": 153.665,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 139.137,
+          "p50_min": 137.363,
+          "p50_max": 147.325,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 145.38,
+          "p50_min": 143.641,
+          "p50_max": 153.825,
+          "rounds": 3
+        }
+      }
+    },
+    "10240kb_binary": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-binary-10240kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 206.951,
+          "p50_min": 201.964,
+          "p50_max": 208.542,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 219.828,
+          "p50_min": 217.684,
+          "p50_max": 220.848,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 209.624,
+          "p50_min": 206.01,
+          "p50_max": 211.425,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 269.771,
+          "p50_min": 269.478,
+          "p50_max": 276.254,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 285.651,
+          "p50_min": 270.935,
+          "p50_max": 285.851,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 272.512,
+          "p50_min": 262.63,
+          "p50_max": 302.413,
+          "rounds": 3
+        }
+      }
+    },
+    "1kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-1kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.009,
+          "p50_min": 0.978,
+          "p50_max": 1.149,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 1.512,
+          "p50_min": 1.399,
+          "p50_max": 1.759,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.418,
+          "p50_min": 1.341,
+          "p50_max": 1.523,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 5.399,
+          "p50_min": 5.355,
+          "p50_max": 7.87,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 6.451,
+          "p50_min": 5.472,
+          "p50_max": 6.588,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 5.548,
+          "p50_min": 5.518,
+          "p50_max": 12.149,
+          "rounds": 3
+        }
+      }
+    },
+    "4kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-4kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.138,
+          "p50_min": 1.099,
+          "p50_max": 1.866,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 1.597,
+          "p50_min": 1.59,
+          "p50_max": 2.357,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.365,
+          "p50_min": 1.346,
+          "p50_max": 2.196,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 6.79,
+          "p50_min": 5.877,
+          "p50_max": 7.676,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 6.323,
+          "p50_min": 5.728,
+          "p50_max": 8.054,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 6.029,
+          "p50_min": 5.546,
+          "p50_max": 7.152,
+          "rounds": 3
+        }
+      }
+    },
+    "16kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-16kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 1.712,
+          "p50_min": 1.659,
+          "p50_max": 3.259,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 2.006,
+          "p50_min": 1.899,
+          "p50_max": 2.277,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 1.882,
+          "p50_min": 1.839,
+          "p50_max": 2.107,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 6.373,
+          "p50_min": 6.329,
+          "p50_max": 7.462,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 6.142,
+          "p50_min": 6.098,
+          "p50_max": 6.202,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 6.659,
+          "p50_min": 6.511,
+          "p50_max": 8.459,
+          "rounds": 3
+        }
+      }
+    },
+    "64kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-64kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 3.995,
+          "p50_min": 3.891,
+          "p50_max": 5.186,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 4.118,
+          "p50_min": 4.06,
+          "p50_max": 4.727,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 4.137,
+          "p50_min": 4.083,
+          "p50_max": 4.315,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 7.902,
+          "p50_min": 7.851,
+          "p50_max": 12.071,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 8.622,
+          "p50_min": 7.754,
+          "p50_max": 8.698,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 7.975,
+          "p50_min": 7.894,
+          "p50_max": 9.29,
+          "rounds": 3
+        }
+      }
+    },
+    "128kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-128kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 6.182,
+          "p50_min": 6.012,
+          "p50_max": 6.351,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 6.85,
+          "p50_min": 6.799,
+          "p50_max": 7.997,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 6.744,
+          "p50_min": 6.596,
+          "p50_max": 6.889,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 12.497,
+          "p50_min": 10.441,
+          "p50_max": 13.998,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 12.943,
+          "p50_min": 10.075,
+          "p50_max": 14.91,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 9.92,
+          "p50_min": 9.791,
+          "p50_max": 14.114,
+          "rounds": 3
+        }
+      }
+    },
+    "256kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-256kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 11.434,
+          "p50_min": 11.372,
+          "p50_max": 11.519,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 12.427,
+          "p50_min": 12.281,
+          "p50_max": 15.015,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 12.057,
+          "p50_min": 11.963,
+          "p50_max": 12.136,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 21.072,
+          "p50_min": 18.925,
+          "p50_max": 21.086,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 18.358,
+          "p50_min": 17.04,
+          "p50_max": 18.661,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 14.326,
+          "p50_min": 14.112,
+          "p50_max": 18.064,
+          "rounds": 3
+        }
+      }
+    },
+    "512kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-512kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 22.57,
+          "p50_min": 22.492,
+          "p50_max": 23.146,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 23.803,
+          "p50_min": 23.154,
+          "p50_max": 24.723,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 22.781,
+          "p50_min": 22.767,
+          "p50_max": 22.995,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 25.699,
+          "p50_min": 22.66,
+          "p50_max": 26.346,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 22.983,
+          "p50_min": 19.49,
+          "p50_max": 23.174,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 23.724,
+          "p50_min": 20.311,
+          "p50_max": 24.478,
+          "rounds": 3
+        }
+      }
+    },
+    "1024kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-1024kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 43.63,
+          "p50_min": 43.377,
+          "p50_max": 43.81,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 44.782,
+          "p50_min": 44.515,
+          "p50_max": 51.527,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 44.015,
+          "p50_min": 42.464,
+          "p50_max": 50.2,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 31.87,
+          "p50_min": 30.472,
+          "p50_max": 35.371,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 32.231,
+          "p50_min": 31.908,
+          "p50_max": 32.496,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 33.909,
+          "p50_min": 32.798,
+          "p50_max": 39.42,
+          "rounds": 3
+        }
+      }
+    },
+    "2048kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-2048kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 87.777,
+          "p50_min": 87.332,
+          "p50_max": 88.728,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 87.59,
+          "p50_min": 86.094,
+          "p50_max": 88.013,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 85.644,
+          "p50_min": 85.547,
+          "p50_max": 86.943,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 57.049,
+          "p50_min": 56.367,
+          "p50_max": 61.033,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 55.051,
+          "p50_min": 52.693,
+          "p50_max": 55.277,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 54.447,
+          "p50_min": 53.115,
+          "p50_max": 60.767,
+          "rounds": 3
+        }
+      }
+    },
+    "5120kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-5120kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 214.02,
+          "p50_min": 212.137,
+          "p50_max": 219.27,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 219.978,
+          "p50_min": 212.3,
+          "p50_max": 226.098,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 227.115,
+          "p50_min": 208.938,
+          "p50_max": 240.317,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 139.882,
+          "p50_min": 138.078,
+          "p50_max": 148.197,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 134.092,
+          "p50_min": 131.974,
+          "p50_max": 135.455,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 133.961,
+          "p50_min": 133.881,
+          "p50_max": 153.209,
+          "rounds": 3
+        }
+      }
+    },
+    "10240kb_text": {
+      "pub_alg": "RSA-2048",
+      "corpus": "single-text-10240kb",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 447.162,
+          "p50_min": 437.573,
+          "p50_max": 449.462,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 426.803,
+          "p50_min": 426.095,
+          "p50_max": 447.47,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 427.933,
+          "p50_min": 423.554,
+          "p50_max": 440.892,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 266.97,
+          "p50_min": 256.377,
+          "p50_max": 271.399,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 260.878,
+          "p50_min": 248.584,
+          "p50_max": 276.083,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 252.942,
+          "p50_min": 247.403,
+          "p50_max": 276.611,
+          "rounds": 3
+        }
+      }
+    }
+  },
+  "count_gradient": {
+    "1files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/1files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.84,
+          "p50_min": 2.816,
+          "p50_max": 3.959,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.747,
+          "p50_min": 3.739,
+          "p50_max": 4.231,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 3.627,
+          "p50_min": 3.549,
+          "p50_max": 3.739,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 14.599,
+          "p50_min": 10.653,
+          "p50_max": 20.337,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 14.674,
+          "p50_min": 11.073,
+          "p50_max": 16.11,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 13.333,
+          "p50_min": 11.36,
+          "p50_max": 17.626,
+          "rounds": 3
+        }
+      }
+    },
+    "5files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/5files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.947,
+          "p50_min": 2.874,
+          "p50_max": 3.011,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.032,
+          "p50_min": 2.969,
+          "p50_max": 3.132,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 3.076,
+          "p50_min": 3.051,
+          "p50_max": 3.089,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 4.961,
+          "p50_min": 4.847,
+          "p50_max": 5.865,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 5.048,
+          "p50_min": 4.911,
+          "p50_max": 6.144,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 5.39,
+          "p50_min": 4.933,
+          "p50_max": 5.774,
+          "rounds": 3
+        }
+      }
+    },
+    "10files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/10files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.908,
+          "p50_min": 2.881,
+          "p50_max": 2.948,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.129,
+          "p50_min": 2.938,
+          "p50_max": 3.193,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 2.893,
+          "p50_min": 2.854,
+          "p50_max": 2.954,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 4.509,
+          "p50_min": 4.444,
+          "p50_max": 5.761,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 4.416,
+          "p50_min": 4.353,
+          "p50_max": 4.504,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 4.869,
+          "p50_min": 4.803,
+          "p50_max": 5.128,
+          "rounds": 3
+        }
+      }
+    },
+    "25files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/25files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 3.146,
+          "p50_min": 2.883,
+          "p50_max": 3.554,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.416,
+          "p50_min": 3.196,
+          "p50_max": 3.529,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 3.159,
+          "p50_min": 3.036,
+          "p50_max": 3.325,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 3.896,
+          "p50_min": 3.841,
+          "p50_max": 4.153,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 3.896,
+          "p50_min": 3.88,
+          "p50_max": 4.782,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 3.967,
+          "p50_min": 3.841,
+          "p50_max": 3.977,
+          "rounds": 3
+        }
+      }
+    },
+    "50files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/50files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.888,
+          "p50_min": 2.88,
+          "p50_max": 2.89,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.158,
+          "p50_min": 3.097,
+          "p50_max": 3.188,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 2.974,
+          "p50_min": 2.962,
+          "p50_max": 3.136,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 3.777,
+          "p50_min": 3.669,
+          "p50_max": 3.807,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 3.727,
+          "p50_min": 3.661,
+          "p50_max": 3.989,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 3.667,
+          "p50_min": 3.625,
+          "p50_max": 4.066,
+          "rounds": 3
+        }
+      }
+    },
+    "100files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/100files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.939,
+          "p50_min": 2.91,
+          "p50_max": 3.032,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.085,
+          "p50_min": 3.075,
+          "p50_max": 3.118,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 3.052,
+          "p50_min": 2.982,
+          "p50_max": 3.134,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 3.652,
+          "p50_min": 3.521,
+          "p50_max": 3.995,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 3.531,
+          "p50_min": 3.47,
+          "p50_max": 3.539,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 3.506,
+          "p50_min": 3.465,
+          "p50_max": 3.666,
+          "rounds": 3
+        }
+      }
+    },
+    "200files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/200files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.928,
+          "p50_min": 2.913,
+          "p50_max": 2.929,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.142,
+          "p50_min": 3.092,
+          "p50_max": 3.514,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 3.054,
+          "p50_min": 3.038,
+          "p50_max": 3.094,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 3.532,
+          "p50_min": 3.43,
+          "p50_max": 3.85,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 3.44,
+          "p50_min": 3.428,
+          "p50_max": 3.554,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 3.453,
+          "p50_min": 3.448,
+          "p50_max": 3.475,
+          "rounds": 3
+        }
+      }
+    },
+    "500files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/500files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 2.968,
+          "p50_min": 2.947,
+          "p50_max": 2.975,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.211,
+          "p50_min": 3.156,
+          "p50_max": 3.437,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 2.987,
+          "p50_min": 2.96,
+          "p50_max": 3.008,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 3.316,
+          "p50_min": 3.314,
+          "p50_max": 3.327,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 3.345,
+          "p50_min": 3.314,
+          "p50_max": 3.511,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 3.332,
+          "p50_min": 3.308,
+          "p50_max": 3.404,
+          "rounds": 3
+        }
+      }
+    },
+    "1000files": {
+      "pub_alg": "RSA-2048",
+      "corpus": "count-gradient/1000files",
+      "go": {
+        "go-inmem-single": {
+          "p50_mean": 3.02,
+          "p50_min": 2.967,
+          "p50_max": 3.072,
+          "rounds": 3
+        },
+        "go-stream-single": {
+          "p50_mean": 3.171,
+          "p50_min": 3.17,
+          "p50_max": 3.399,
+          "rounds": 3
+        },
+        "go-stream-parallel": {
+          "p50_mean": 3.01,
+          "p50_min": 2.948,
+          "p50_max": 3.029,
+          "rounds": 3
+        }
+      },
+      "java": {
+        "java-inmem-single": {
+          "p50_mean": 3.245,
+          "p50_min": 3.233,
+          "p50_max": 3.262,
+          "rounds": 3
+        },
+        "java-stream-single": {
+          "p50_mean": 3.266,
+          "p50_min": 3.244,
+          "p50_max": 3.331,
+          "rounds": 3
+        },
+        "java-stream-parallel": {
+          "p50_mean": 3.28,
+          "p50_min": 3.24,
+          "p50_max": 3.332,
+          "rounds": 3
+        }
+      }
+    }
+  },
+  "concurrent": {
+    "1": {
+      "go-stream-parallel": {
+        "throughput_mean_mbs": 41.5,
+        "roundTrip": {
+          "p50": 23.1
+        }
+      },
+      "java-stream-parallel": {
+        "throughput_mean_mbs": 38.2,
+        "roundTrip": {
+          "p50": 26.14
+        }
+      }
+    },
+    "2": {
+      "go-stream-parallel": {
+        "throughput_mean_mbs": 42.7,
+        "roundTrip": {
+          "p50": 22.79
+        }
+      },
+      "java-stream-parallel": {
+        "throughput_mean_mbs": 35.5,
+        "roundTrip": {
+          "p50": 27.05
+        }
+      }
+    },
+    "4": {
+      "go-stream-parallel": {
+        "throughput_mean_mbs": 38.5,
+        "roundTrip": {
+          "p50": 25.48
+        }
+      },
+      "java-stream-parallel": {
+        "throughput_mean_mbs": 36.0,
+        "roundTrip": {
+          "p50": 26.92
+        }
+      }
+    },
+    "8": {
+      "go-stream-parallel": {
+        "throughput_mean_mbs": 32.1,
+        "roundTrip": {
+          "p50": 31.1
+        }
+      },
+      "java-stream-parallel": {
+        "throughput_mean_mbs": 22.9,
+        "roundTrip": {
+          "p50": 40.25
+        }
+      }
+    }
+  },
+  "finishedAt": "2026-06-29T13:13:37.444740+00:00",
+  "totalScenarios": 21
+}
