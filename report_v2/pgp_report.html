@@ -1,0 +1,1641 @@
+<!DOCTYPE html><html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POC Report — PGP Benchmark: Go vs Java (v5 cold start)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#2c3e50;font-size:14px}
+.wrap{max-width:1200px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:32px;
+  border-radius:12px;margin-bottom:20px}
+.hdr h1{font-size:22px;font-weight:800;margin-bottom:6px}
+.hdr .sub{font-size:13px;opacity:.8;margin-bottom:10px}
+.hdr .meta{font-size:11px;opacity:.6;display:flex;gap:18px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;margin-bottom:0;flex-wrap:wrap}
+.tab{padding:9px 18px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600;
+  font-size:13px;border:none;background:#dde1e7;color:#555;transition:.15s}
+.tab.active{background:#fff;color:#0f3460}
+.tab:hover{background:#e8eaed}
+.page{display:none;background:#fff;border-radius:0 12px 12px 12px;padding:24px;
+  margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.page.active{display:block}
+.card{background:#f8f9fa;border-radius:10px;padding:20px;margin-bottom:16px;border:1px solid #e9ecef}
+h2{font-size:17px;font-weight:700;color:#1a1a2e;border-left:4px solid #00ADE8;padding-left:10px;margin-bottom:14px}
+h3{font-size:14px;font-weight:700;color:#2c3e50;margin:14px 0 8px}
+p,li{line-height:1.8;color:#444}
+ul{padding-left:20px}
+.verdict{background:linear-gradient(135deg,#00ADE8,#0078a8);color:#fff;
+  padding:20px;border-radius:10px;text-align:center;margin-bottom:16px}
+.verdict .big{font-size:32px;font-weight:900}
+.verdict .sub{font-size:13px;opacity:.9;margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.sbox{background:#fff;border-radius:10px;padding:14px;text-align:center;border:2px solid #e9ecef}
+.sbox .val{font-size:26px;font-weight:800}
+.sbox .lbl{font-size:11px;color:#6c757d;margin-top:2px}
+.go-c{border-color:#00ADE8;color:#00ADE8}
+.java-c{border-color:#F89820;color:#F89820}
+.green-c{border-color:#27ae60;color:#27ae60}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#1a1a2e;color:#fff;padding:9px 8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #e9ecef;vertical-align:middle}
+tr:hover td{background:#f5f7fa}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700}
+.bg{background:#cce9f6;color:#0078a8}
+.bj{background:#fde9c8;color:#b96800}
+.bt{background:#e9ecef;color:#6c757d}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mbox{background:#fff;border-radius:10px;padding:16px;border-left:4px solid #00ADE8}
+.mbox.go{border-left-color:#00ADE8}
+.mbox.java{border-left-color:#F89820}
+.mbox.green{border-left-color:#27ae60}
+.mbox.red{border-left-color:#e74c3c}
+.hi{background:#fff3cd;border-left:4px solid #ffc107;padding:10px 14px;
+  border-radius:0 8px 8px 0;margin:10px 0;font-size:13px}
+.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:10px 14px;
+  border-radius:0 8px 8px 0;margin:10px 0;font-size:13px}
+.bar-row{margin-bottom:12px}
+.bar-lbl{font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:4px}
+.bar-wrap{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.bar-name{width:40px;font-size:11px;font-weight:700}
+.bar-bg{flex:1;border-radius:4px;height:24px}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:7px;min-width:40px}
+.bar-fill span{font-size:11px;color:#fff;font-weight:700;white-space:nowrap}
+.bar-note{text-align:right;font-size:11px;font-weight:700;margin-top:2px}
+footer{text-align:center;padding:16px;color:#aaa;font-size:11px}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <h1>📊 รายงาน POC: เปรียบเทียบประสิทธิภาพการเข้ารหัส PGP</h1>
+    <div class="sub">Go (ProtonMail/go-crypto) vs Java (Bouncy Castle)
+      — Ubuntu 24.04 · 8 vCPU · 14 GB RAM · <strong>Cold Start (post-reboot)</strong></div>
+    <div class="meta">
+      <span>📅 2026-06-29 12:53:24</span>
+      <span>✅ 2026-06-29 13:13:37</span>
+      <span>🔒 AES-256 + ZLIB</span>
+      <span>🧪 21 scenarios + size/count gradient</span>
+      <span>🔄 3 rounds · warmup=1</span>
+    </div>
+  </div>
+  <div class="tabs"><button class="tab active" onclick="showTab('summary')" id="tab-summary">📊 สรุปผล</button><button class="tab" onclick="showTab('results')" id="tab-results">📈 ผลทดสอบ</button><button class="tab" onclick="showTab('insights')" id="tab-insights">🎯 Key Insights</button><button class="tab" onclick="showTab('method')" id="tab-method">🔬 วิธีการทดสอบ</button></div>
+  <div class="page active" id="page-summary">
+<div class="verdict" style="background:linear-gradient(135deg,#00ADE8cc,#00ADE8)">
+  <div class="big">🏆 Go ชนะโดยรวม</div>
+  <div class="sub">ชนะ 14/21 scenarios · ทดสอบ 2026-06-29 12:53:24</div>
+</div>
+
+<div class="stats">
+  <div class="sbox"><div class="val go-c">16.5</div><div class="lbl">Go avg p50 (ms)</div></div>
+  <div class="sbox"><div class="val java-c">14.4</div><div class="lbl">Java avg p50 (ms)</div></div>
+  <div class="sbox"><div class="val go-c">14</div><div class="lbl">Go ชนะ (/21)</div></div>
+  <div class="sbox"><div class="val java-c">7</div><div class="lbl">Java ชนะ (/21)</div></div>
+  <div class="sbox"><div class="val" style="color:#6c757d">0</div><div class="lbl">เสมอ ±5%</div></div>
+  <div class="sbox"><div class="val green-c">100%</div><div class="lbl">Correctness</div></div>
+</div>
+
+<div class="info" style="margin-bottom:16px">
+  <strong>📖 อ่านตัวเลข avg latency อย่างไร:</strong>
+  ค่า avg p50 ของ Go (16.5 ms) สูงกว่า Java (14.4 ms) เล็กน้อย
+  <strong>ไม่ได้แปลว่า Java เร็วกว่าโดยรวม</strong> — เป็นเพราะค่าเฉลี่ยถูกถ่วงด้วยไฟล์ text ขนาดใหญ่
+  (.txt/.csv ที่ p50 30 ms) ที่ Java ชนะ ซึ่งมีค่าสูงมากจนดึง average ขึ้น
+  ส่วน scenarios ที่ Go ชนะส่วนใหญ่เป็นไฟล์ binary/ขนาดเล็ก (1–15 ms) ค่าน้อยจึงไม่ดึง average
+  <br><strong>ตัวชี้วัดที่ถูกต้องคือจำนวน scenario ที่ชนะ (Go 14 : Java 7) และผลแยกตามประเภทไฟล์</strong>
+  ดูตารางด้านล่าง
+</div>
+
+<div class="card">
+  <h2>📌 ข้อสรุปสำหรับตัดสินใจ</h2>
+  <ul style="line-height:2.2">
+    <li><strong>Go ชนะ 14/21 scenarios (66%)</strong>
+        — ได้เปรียบในทุก binary file และไฟล์ขนาดเล็ก</li>
+    <li><strong>Go ชนะ binary files (.pdf/.xlsx/.zip/.dat) ทั้งหมด 12/12 scenarios</strong>
+        — AES hardware path ของ Go เร็วกว่า Java 1.2–1.3×</li>
+    <li><strong>Java ชนะ text files (.txt/.csv) 6/6 scenarios</strong>
+        — JVM ZLIB compress path เร็วกว่า Go สำหรับข้อมูลที่บีบอัดได้สูง</li>
+    <li><strong>Go ชนะไฟล์เล็ก 2/3 (1KB, 10KB)</strong>
+        — per-file overhead ของ JVM สูงกว่า Go runtime
+        แต่ที่ 100KB Java เริ่มชนะเพราะ ZLIB compress คุ้มขึ้น</li>
+    <li><strong>Go ชนะ concurrent load</strong>
+        — 1 client: Go 42 MB/s vs Java 38 MB/s (1.1× faster) |
+          8 clients: Go 32 MB/s vs Java 23 MB/s (1.4× faster)</li>
+    <li><strong>⭐ ข้อแนะนำ</strong>: Go เหมาะสำหรับระบบใหม่ที่ process binary files หรือต้องการ concurrent สูง
+        Java ทำได้ดีถ้าระบบเป็น long-running service และ workload เป็น text/CSV เป็นหลัก</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>📊 ผลทดสอบทุก Scenario</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:10px">
+    p50 round-trip ms (encrypt+decrypt รวม) · best variant ของแต่ละภาษา · 3 rounds
+  </p>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th>Scenario</th><th>Key Algorithm</th>
+      <th>🔵 Go p50</th><th>🟠 Java p50</th>
+      <th>ผู้ชนะ</th><th>ห่างกัน</th>
+    </tr></thead>
+    <tbody><tr style="background:#fef3c7">
+          <td>ft-txt-rsa2048</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">30.71 ms</td>
+          <td style="color:#F89820;font-weight:600">17.16 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.79×</td>
+        </tr><tr style="background:#fef3c7">
+          <td>ft-txt-rsa4096</td>
+          <td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">34.21 ms</td>
+          <td style="color:#F89820;font-weight:600">21.29 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.61×</td>
+        </tr><tr style="background:#fef3c7">
+          <td>ft-txt-curve25519</td>
+          <td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">29.82 ms</td>
+          <td style="color:#F89820;font-weight:600">16.96 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.76×</td>
+        </tr><tr style="background:#fef3c7">
+          <td>ft-csv-rsa2048</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">30.58 ms</td>
+          <td style="color:#F89820;font-weight:600">17.13 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.78×</td>
+        </tr><tr style="background:#fef3c7">
+          <td>ft-csv-rsa4096</td>
+          <td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">34.05 ms</td>
+          <td style="color:#F89820;font-weight:600">21.41 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.59×</td>
+        </tr><tr style="background:#fef3c7">
+          <td>ft-csv-curve25519</td>
+          <td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">30.19 ms</td>
+          <td style="color:#F89820;font-weight:600">16.72 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.81×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-pdf-rsa2048</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.33 ms</td>
+          <td style="color:#F89820;font-weight:600">14.16 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.25×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-pdf-rsa4096</td>
+          <td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.31 ms</td>
+          <td style="color:#F89820;font-weight:600">18.39 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.20×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-pdf-curve25519</td>
+          <td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.66 ms</td>
+          <td style="color:#F89820;font-weight:600">13.82 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.30×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-xlsx-rsa2048</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.26 ms</td>
+          <td style="color:#F89820;font-weight:600">14.23 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.26×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-xlsx-rsa4096</td>
+          <td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.23 ms</td>
+          <td style="color:#F89820;font-weight:600">18.42 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.21×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-xlsx-curve25519</td>
+          <td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.74 ms</td>
+          <td style="color:#F89820;font-weight:600">13.91 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.30×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-zip-rsa2048</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.51 ms</td>
+          <td style="color:#F89820;font-weight:600">14.19 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.23×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-zip-rsa4096</td>
+          <td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.29 ms</td>
+          <td style="color:#F89820;font-weight:600">18.51 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.21×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-zip-curve25519</td>
+          <td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.79 ms</td>
+          <td style="color:#F89820;font-weight:600">13.85 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.28×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-dat-rsa2048</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">11.25 ms</td>
+          <td style="color:#F89820;font-weight:600">14.05 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.25×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-dat-rsa4096</td>
+          <td>RSA-4096</td>
+          <td style="color:#00ADE8;font-weight:600">15.41 ms</td>
+          <td style="color:#F89820;font-weight:600">18.28 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.19×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>ft-dat-curve25519</td>
+          <td>Curve25519</td>
+          <td style="color:#00ADE8;font-weight:600">10.71 ms</td>
+          <td style="color:#F89820;font-weight:600">13.72 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.28×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>many-1kb</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">0.79 ms</td>
+          <td style="color:#F89820;font-weight:600">1.13 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.43×</td>
+        </tr><tr style="background:#dbeafe">
+          <td>many-10kb</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">1.15 ms</td>
+          <td style="color:#F89820;font-weight:600">1.33 ms</td>
+          <td><span class="badge bg">🔵 Go</span></td>
+          <td style="font-weight:600">1.15×</td>
+        </tr><tr style="background:#fef3c7">
+          <td>many-100kb</td>
+          <td>RSA-2048</td>
+          <td style="color:#00ADE8;font-weight:600">6.51 ms</td>
+          <td style="color:#F89820;font-weight:600">4.17 ms</td>
+          <td><span class="badge bj">🟠 Java</span></td>
+          <td style="font-weight:600">1.56×</td>
+        </tr></tbody>
+  </table>
+  </div>
+</div></div><div class="page" id="page-results">
+<div class="grid2">
+  <div class="card">
+    <h2>📄 ชนิดไฟล์ vs RSA-2048</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">
+      p50 round-trip ms · 15 files × 512KB · ยิ่งน้อยยิ่งดี</p>
+    
+<div class="bar-row">
+  <div class="bar-lbl">TXT</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:87.0%;background:#93c5fd">
+        <span>30.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:48.6%;background:#F89820">
+        <span>17.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.79×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">CSV</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:86.6%;background:#93c5fd">
+        <span>30.6 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:48.5%;background:#F89820">
+        <span>17.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.78×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">PDF</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:32.1%;background:#00ADE8">
+        <span>11.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:40.1%;background:#fcd34d">
+        <span>14.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.25×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">XLSX</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:31.9%;background:#00ADE8">
+        <span>11.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:40.3%;background:#fcd34d">
+        <span>14.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.26×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">ZIP</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:32.6%;background:#00ADE8">
+        <span>11.5 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:40.2%;background:#fcd34d">
+        <span>14.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.23×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">DAT</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:31.9%;background:#00ADE8">
+        <span>11.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:39.8%;background:#fcd34d">
+        <span>14.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.25×</div>
+</div>
+    <div class="info" style="font-size:12px;margin-top:10px">
+      Go ชนะ binary (.pdf/.xlsx/.zip/.dat) · Java ชนะ text (.txt/.csv)
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔑 ชนิดไฟล์ vs Curve25519</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">
+      p50 round-trip ms · 15 files × 512KB · ยิ่งน้อยยิ่งดี</p>
+    
+<div class="bar-row">
+  <div class="bar-lbl">TXT</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:85.9%;background:#93c5fd">
+        <span>29.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:48.8%;background:#F89820">
+        <span>17.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.76×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">CSV</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:87.0%;background:#93c5fd">
+        <span>30.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:48.1%;background:#F89820">
+        <span>16.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.81×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">PDF</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:30.7%;background:#00ADE8">
+        <span>10.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:39.8%;background:#fcd34d">
+        <span>13.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.30×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">XLSX</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:30.9%;background:#00ADE8">
+        <span>10.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:40.1%;background:#fcd34d">
+        <span>13.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.30×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">ZIP</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:31.1%;background:#00ADE8">
+        <span>10.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:39.9%;background:#fcd34d">
+        <span>13.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.28×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">DAT</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:30.8%;background:#00ADE8">
+        <span>10.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:39.5%;background:#fcd34d">
+        <span>13.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.28×</div>
+</div>
+    <div class="info" style="font-size:12px;margin-top:10px">
+      Pattern เดิม: Go ชนะ binary · Java ชนะ text
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📝 Key Algorithm Effect (.txt)</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">
+      p50 ms ต่อไฟล์ · Java ชนะ .txt ทุก key type (ZLIB path เร็วกว่า)</p>
+    
+<div class="bar-row">
+  <div class="bar-lbl">RSA-2048</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:78.1%;background:#93c5fd">
+        <span>30.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:43.6%;background:#F89820">
+        <span>17.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.79×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">RSA-4096</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:87.0%;background:#93c5fd">
+        <span>34.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:54.1%;background:#F89820">
+        <span>21.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.61×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">Curve25519</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:75.8%;background:#93c5fd">
+        <span>29.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:43.1%;background:#F89820">
+        <span>17.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.76×</div>
+</div>
+  </div>
+
+  <div class="card">
+    <h2>📦 Many-Small Files</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px">
+      p50 ms ต่อ operation · Go ชนะไฟล์เล็กมาก (1KB,10KB) · 100KB Java ชนะ (ZLIB คุ้มขึ้น)</p>
+    
+<div class="bar-row">
+  <div class="bar-lbl">1kb</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:10.5%;background:#00ADE8">
+        <span>0.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:15.0%;background:#fcd34d">
+        <span>1.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.43×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">10kb</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:15.4%;background:#00ADE8">
+        <span>1.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:17.7%;background:#fcd34d">
+        <span>1.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.15×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">100kb</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:87.0%;background:#93c5fd">
+        <span>6.5 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:55.7%;background:#F89820">
+        <span>4.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.56×</div>
+</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚡ Concurrent Load — ยิ่งเยอะ clients Go ยิ่งได้เปรียบ</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px">
+    Throughput MB/s รวม (ยิ่งมากยิ่งดี) · RSA-2048 · parallel variant</p>
+  
+<div class="bar-row">
+  <div class="bar-lbl">1 client พร้อมกัน</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:84.5%;background:#00ADE8">
+        <span>42 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:77.8%;background:#F89820">
+        <span>38 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.1×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">2 clients พร้อมกัน</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:87.0%;background:#00ADE8">
+        <span>43 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:72.3%;background:#F89820">
+        <span>36 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.2×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">4 clients พร้อมกัน</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:78.4%;background:#00ADE8">
+        <span>38 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:73.3%;background:#F89820">
+        <span>36 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.1×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">8 clients พร้อมกัน</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:65.4%;background:#00ADE8">
+        <span>32 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:46.6%;background:#F89820">
+        <span>23 MB/s</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.4×</div>
+</div>
+  <div class="hi" style="margin-top:12px;font-size:12px">
+    Go scale ได้ดีกว่าเมื่อ load สูงขึ้น
+    Java throughput ตกมากกว่าเมื่อ concurrent เพิ่ม
+  </div>
+</div></div><div class="page" id="page-insights">
+<div class="card">
+  <h2>🔍 สรุปปัจจัยสำคัญ</h2>
+  <div class="grid2">
+    <div class="mbox go">
+      <h3>� Go ได้เปรียบเมื่อ...</h3>
+      <ul style="line-height:2.2;margin-top:8px">
+        <li>ไฟล์ binary ทุกขนาด (.pdf/.xlsx/.zip/.dat) — 12/12 scenarios</li>
+        <li>ไฟล์ขนาดเล็ก &lt;512KB — Go เร็วกว่า <strong>1.7–6×</strong></li>
+        <li>ไฟล์ 1 ใบ (JVM startup overhead หาร 1 ไฟล์ = สูงมาก)</li>
+        <li>Concurrent load สูง — Go 42 MB/s vs Java 38 MB/s</li>
+      </ul>
+    </div>
+    <div class="mbox java">
+      <h3>🟠 Java ได้เปรียบเมื่อ...</h3>
+      <ul style="line-height:2.2;margin-top:8px">
+        <li>ไฟล์ text (.txt/.csv) ที่บีบอัดได้สูง — 6/6 scenarios</li>
+        <li>ไฟล์ขนาดใหญ่ &gt;1MB text — Java เร็วกว่า <strong>1.4–1.7×</strong></li>
+        <li>ไฟล์หลายพันใบ (JVM overhead เฉลี่ยลงต่อไฟล์)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>� ขนาดไฟล์ส่งผลยังไง? — Binary Files</h2>
+  <div class="grid2">
+    <div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px">p50 ms ต่อไฟล์ (binary · RSA-2048) — ยิ่งน้อยยิ่งดี</p>
+<div class="bar-row">
+  <div class="bar-lbl">1KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.3%;background:#00ADE8">
+        <span>1.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:1.9%;background:#fcd34d">
+        <span>6.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 5.97×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">4KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.4%;background:#00ADE8">
+        <span>1.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:1.9%;background:#fcd34d">
+        <span>5.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 5.26×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">16KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.5%;background:#00ADE8">
+        <span>1.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:2.4%;background:#fcd34d">
+        <span>7.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 4.31×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">64KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.7%;background:#00ADE8">
+        <span>2.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:3.9%;background:#fcd34d">
+        <span>12.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 5.49×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">128KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:1.2%;background:#00ADE8">
+        <span>3.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:4.9%;background:#fcd34d">
+        <span>15.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 3.96×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">256KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:2.1%;background:#00ADE8">
+        <span>6.5 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:5.3%;background:#fcd34d">
+        <span>16.6 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 2.53×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">512KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:3.8%;background:#00ADE8">
+        <span>11.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:6.4%;background:#fcd34d">
+        <span>19.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.69×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">1MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:7.1%;background:#00ADE8">
+        <span>22.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:11.0%;background:#fcd34d">
+        <span>34.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.55×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">2MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:13.6%;background:#00ADE8">
+        <span>42.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:18.8%;background:#fcd34d">
+        <span>58.4 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.38×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">5MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:33.7%;background:#00ADE8">
+        <span>104.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:44.8%;background:#fcd34d">
+        <span>139.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.33×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">10MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:66.7%;background:#00ADE8">
+        <span>207.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:87.0%;background:#fcd34d">
+        <span>269.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.30×</div>
+</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>ขนาด</th><th>Go ms</th><th>Java ms</th><th>Winner</th></tr></thead>
+        <tbody><tr style="background:#dbeafe"><td>1KB</td><td style="color:#00ADE8">1.01</td><td style="color:#F89820">6.04</td><td><strong>Go 5.97×</strong></td></tr><tr style="background:#dbeafe"><td>4KB</td><td style="color:#00ADE8">1.09</td><td style="color:#F89820">5.75</td><td><strong>Go 5.26×</strong></td></tr><tr style="background:#dbeafe"><td>16KB</td><td style="color:#00ADE8">1.70</td><td style="color:#F89820">7.32</td><td><strong>Go 4.31×</strong></td></tr><tr style="background:#dbeafe"><td>64KB</td><td style="color:#00ADE8">2.21</td><td style="color:#F89820">12.10</td><td><strong>Go 5.49×</strong></td></tr><tr style="background:#dbeafe"><td>128KB</td><td style="color:#00ADE8">3.81</td><td style="color:#F89820">15.07</td><td><strong>Go 3.96×</strong></td></tr><tr style="background:#dbeafe"><td>256KB</td><td style="color:#00ADE8">6.54</td><td style="color:#F89820">16.56</td><td><strong>Go 2.53×</strong></td></tr><tr style="background:#dbeafe"><td>512KB</td><td style="color:#00ADE8">11.70</td><td style="color:#F89820">19.76</td><td><strong>Go 1.69×</strong></td></tr><tr style="background:#dbeafe"><td>1MB</td><td style="color:#00ADE8">22.08</td><td style="color:#F89820">34.13</td><td><strong>Go 1.55×</strong></td></tr><tr style="background:#dbeafe"><td>2MB</td><td style="color:#00ADE8">42.33</td><td style="color:#F89820">58.38</td><td><strong>Go 1.38×</strong></td></tr><tr style="background:#dbeafe"><td>5MB</td><td style="color:#00ADE8">104.67</td><td style="color:#F89820">139.14</td><td><strong>Go 1.33×</strong></td></tr><tr style="background:#dbeafe"><td>10MB</td><td style="color:#00ADE8">206.95</td><td style="color:#F89820">269.77</td><td><strong>Go 1.30×</strong></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:12px;font-size:12px">
+    <strong>📌 นัยยะ (Binary):</strong>
+    ไฟล์ขนาดเล็ก &lt;512KB → Go เร็วกว่า <strong>2–6×</strong> ชัดเจน
+    ไฟล์ใหญ่ขึ้น ช่องว่างแคบลงแต่ Go ยังชนะตลอด
+    เพราะ AES hardware path ของ Go runtime เร็วกว่า Java ทุกขนาด
+  </div>
+</div>
+
+<div class="card">
+  <h2>📄 ขนาดไฟล์ส่งผลยังไง? — Text Files (Compressible)</h2>
+  <div class="grid2">
+    <div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px">p50 ms ต่อไฟล์ (text compressible · RSA-2048) — ยิ่งน้อยยิ่งดี</p>
+<div class="bar-row">
+  <div class="bar-lbl">1KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.2%;background:#00ADE8">
+        <span>1.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:1.1%;background:#fcd34d">
+        <span>5.4 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 5.35×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">4KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.2%;background:#00ADE8">
+        <span>1.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:1.2%;background:#fcd34d">
+        <span>6.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 5.30×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">16KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.3%;background:#00ADE8">
+        <span>1.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:1.3%;background:#fcd34d">
+        <span>6.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 3.59×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">64KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:0.8%;background:#00ADE8">
+        <span>4.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:1.6%;background:#fcd34d">
+        <span>7.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.98×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">128KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:1.3%;background:#00ADE8">
+        <span>6.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:2.0%;background:#fcd34d">
+        <span>9.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.60×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">256KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:2.3%;background:#00ADE8">
+        <span>11.4 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:2.9%;background:#fcd34d">
+        <span>14.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.25×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">512KB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:4.6%;background:#00ADE8">
+        <span>22.6 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:4.7%;background:#fcd34d">
+        <span>23.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.02×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">1MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:8.9%;background:#93c5fd">
+        <span>43.6 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:6.5%;background:#F89820">
+        <span>31.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.37×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">2MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:17.4%;background:#93c5fd">
+        <span>85.6 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:11.1%;background:#F89820">
+        <span>54.4 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.57×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">5MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:43.6%;background:#93c5fd">
+        <span>214.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:27.3%;background:#F89820">
+        <span>134.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.60×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">10MB</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:87.0%;background:#93c5fd">
+        <span>426.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:51.5%;background:#F89820">
+        <span>252.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#F89820">Java เร็วกว่า 1.69×</div>
+</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>ขนาด</th><th>Go ms</th><th>Java ms</th><th>Winner</th></tr></thead>
+        <tbody><tr style="background:#dbeafe"><td>1KB</td><td style="color:#00ADE8">1.01</td><td style="color:#F89820">5.40</td><td><strong>Go 5.35×</strong></td></tr><tr style="background:#dbeafe"><td>4KB</td><td style="color:#00ADE8">1.14</td><td style="color:#F89820">6.03</td><td><strong>Go 5.30×</strong></td></tr><tr style="background:#dbeafe"><td>16KB</td><td style="color:#00ADE8">1.71</td><td style="color:#F89820">6.14</td><td><strong>Go 3.59×</strong></td></tr><tr style="background:#dbeafe"><td>64KB</td><td style="color:#00ADE8">4.00</td><td style="color:#F89820">7.90</td><td><strong>Go 1.98×</strong></td></tr><tr style="background:#dbeafe"><td>128KB</td><td style="color:#00ADE8">6.18</td><td style="color:#F89820">9.92</td><td><strong>Go 1.60×</strong></td></tr><tr style="background:#dbeafe"><td>256KB</td><td style="color:#00ADE8">11.43</td><td style="color:#F89820">14.33</td><td><strong>Go 1.25×</strong></td></tr><tr style="background:#dbeafe"><td>512KB</td><td style="color:#00ADE8">22.57</td><td style="color:#F89820">22.98</td><td><strong>Go 1.02×</strong></td></tr><tr style="background:#fef3c7"><td>1MB</td><td style="color:#00ADE8">43.63</td><td style="color:#F89820">31.87</td><td><strong>Java 1.37×</strong></td></tr><tr style="background:#fef3c7"><td>2MB</td><td style="color:#00ADE8">85.64</td><td style="color:#F89820">54.45</td><td><strong>Java 1.57×</strong></td></tr><tr style="background:#fef3c7"><td>5MB</td><td style="color:#00ADE8">214.02</td><td style="color:#F89820">133.96</td><td><strong>Java 1.60×</strong></td></tr><tr style="background:#fef3c7"><td>10MB</td><td style="color:#00ADE8">426.80</td><td style="color:#F89820">252.94</td><td><strong>Java 1.69×</strong></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:12px;font-size:12px">
+    <strong>📌 นัยยะ (Text):</strong>
+    ไฟล์ขนาดเล็ก &lt;256KB → Go เร็วกว่า (compression step เล็ก)<br>
+    <strong>Breakpoint ~512KB</strong> — แทบเท่ากัน<br>
+    ไฟล์ใหญ่ &gt;1MB → <strong>Java ชนะกลับ</strong> เพราะ JVM ZLIB native เร็วกว่า Go pure-Go ZLIB มาก
+  </div>
+</div>
+
+<div class="card">
+  <h2>� จำนวนไฟล์ส่งผลยังไง?</h2>
+  <div class="grid2">
+    <div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px">p50 ms ต่อไฟล์ (100KB binary · RSA-2048) — ยิ่งน้อยยิ่งดี</p>
+<div class="bar-row">
+  <div class="bar-lbl">1 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:18.5%;background:#00ADE8">
+        <span>2.8 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:87.0%;background:#fcd34d">
+        <span>13.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 4.69×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">5 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:19.2%;background:#00ADE8">
+        <span>2.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:32.4%;background:#fcd34d">
+        <span>5.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.68×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">10 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:18.9%;background:#00ADE8">
+        <span>2.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:28.8%;background:#fcd34d">
+        <span>4.4 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.53×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">25 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:20.5%;background:#00ADE8">
+        <span>3.1 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:25.4%;background:#fcd34d">
+        <span>3.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.24×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">50 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:18.8%;background:#00ADE8">
+        <span>2.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:23.9%;background:#fcd34d">
+        <span>3.7 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.27×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">100 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:19.2%;background:#00ADE8">
+        <span>2.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:22.9%;background:#fcd34d">
+        <span>3.5 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.19×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">200 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:19.1%;background:#00ADE8">
+        <span>2.9 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:22.4%;background:#fcd34d">
+        <span>3.4 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.17×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">500 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:19.4%;background:#00ADE8">
+        <span>3.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:21.6%;background:#fcd34d">
+        <span>3.3 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.12×</div>
+</div>
+<div class="bar-row">
+  <div class="bar-lbl">1000 ไฟล์</div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#00ADE8">Go</span>
+    <div class="bar-bg" style="background:#e8f4fd">
+      <div class="bar-fill" style="width:19.6%;background:#00ADE8">
+        <span>3.0 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-wrap">
+    <span class="bar-name" style="color:#F89820">Java</span>
+    <div class="bar-bg" style="background:#fef3e2">
+      <div class="bar-fill" style="width:21.2%;background:#fcd34d">
+        <span>3.2 ms</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-note" style="color:#00ADE8">Go เร็วกว่า 1.08×</div>
+</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>จำนวนไฟล์</th><th>Go ms/file</th><th>Java ms/file</th><th>Go เร็วกว่า</th></tr></thead>
+        <tbody><tr style="background:#dbeafe"><td><strong>1 ไฟล์</strong></td><td style="color:#00ADE8">2.84</td><td style="color:#F89820">13.33</td><td><strong>Go เร็วกว่า 4.69×</strong></td></tr><tr style="background:#dbeafe"><td><strong>5 ไฟล์</strong></td><td style="color:#00ADE8">2.95</td><td style="color:#F89820">4.96</td><td><strong>Go เร็วกว่า 1.68×</strong></td></tr><tr style="background:#dbeafe"><td><strong>10 ไฟล์</strong></td><td style="color:#00ADE8">2.89</td><td style="color:#F89820">4.42</td><td><strong>Go เร็วกว่า 1.53×</strong></td></tr><tr style="background:#dbeafe"><td><strong>25 ไฟล์</strong></td><td style="color:#00ADE8">3.15</td><td style="color:#F89820">3.90</td><td><strong>Go เร็วกว่า 1.24×</strong></td></tr><tr style="background:#dbeafe"><td><strong>50 ไฟล์</strong></td><td style="color:#00ADE8">2.89</td><td style="color:#F89820">3.67</td><td><strong>Go เร็วกว่า 1.27×</strong></td></tr><tr style="background:#dbeafe"><td><strong>100 ไฟล์</strong></td><td style="color:#00ADE8">2.94</td><td style="color:#F89820">3.51</td><td><strong>Go เร็วกว่า 1.19×</strong></td></tr><tr style="background:#dbeafe"><td><strong>200 ไฟล์</strong></td><td style="color:#00ADE8">2.93</td><td style="color:#F89820">3.44</td><td><strong>Go เร็วกว่า 1.17×</strong></td></tr><tr style="background:#dbeafe"><td><strong>500 ไฟล์</strong></td><td style="color:#00ADE8">2.97</td><td style="color:#F89820">3.32</td><td><strong>Go เร็วกว่า 1.12×</strong></td></tr><tr style="background:#dbeafe"><td><strong>1,000 ไฟล์</strong></td><td style="color:#00ADE8">3.01</td><td style="color:#F89820">3.25</td><td><strong>Go เร็วกว่า 1.08×</strong></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="hi" style="margin-top:12px;font-size:12px">
+    <strong>📌 นัยยะ (Count):</strong>
+    1 ไฟล์ → Go เร็วกว่า <strong>4.7×</strong> (JVM startup overhead ทั้งหมดตกที่ 1 ไฟล์)<br>
+    ยิ่งไฟล์เยอะขึ้น JVM overhead เฉลี่ยลง ช่องว่างแคบลงเรื่อยๆ<br>
+    1,000 ไฟล์ → เหลือแค่ <strong>1.08×</strong> แทบไม่ต่างกัน
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚡ Concurrent Load</h2>
+  <div class="grid2">
+    <div class="mbox go">
+      <h3>1 client</h3>
+      <p>Go <strong>42 MB/s</strong> vs Java 38 MB/s</p>
+      <p style="color:#00ADE8;font-weight:700">Go เร็วกว่า 1.1×</p>
+    </div>
+    <div class="mbox go">
+      <h3>8 clients พร้อมกัน</h3>
+      <p>Go <strong>32 MB/s</strong> vs Java 23 MB/s</p>
+      <p style="color:#00ADE8;font-weight:700">Go เร็วกว่า 1.4×</p>
+    </div>
+  </div>
+  <div class="info" style="margin-top:10px;font-size:12px">
+    เมื่อ clients เพิ่มขึ้น ช่องว่าง Go vs Java ถ่างออก —
+    Go Goroutine scale ได้ดีกว่า JVM thread pool เมื่อ load สูง
+  </div>
+</div>
+
+<div class="card" style="background:linear-gradient(135deg,#0f3460,#1a1a2e)">
+  <h2 style="color:#fff;border-left-color:#00ADE8">🏆 สรุปสำหรับตัดสินใจ</h2>
+  <div class="grid2" style="margin-top:14px">
+    <div style="background:#1e4d7b;border-radius:10px;padding:16px;border:2px solid #00ADE8">
+      <h3 style="color:#00ADE8;margin-bottom:10px">✅ เลือก Go เมื่อ...</h3>
+      <ul style="color:#ffffff;line-height:2.2;list-style:disc;padding-left:20px">
+        <li style="color:#ffffff">ระบบ process binary files (.pdf, .xlsx, .zip)</li>
+        <li style="color:#ffffff">ไฟล์ขนาดเล็ก &lt;512KB จำนวนน้อย (&lt;100 ไฟล์)</li>
+        <li style="color:#ffffff">ต้องการ concurrent request สูง (8+ clients)</li>
+        <li style="color:#ffffff">ระบบใหม่ที่ต้องการ performance สูงสุด</li>
+      </ul>
+    </div>
+    <div style="background:#4d2e00;border-radius:10px;padding:16px;border:2px solid #F89820">
+      <h3 style="color:#F89820;margin-bottom:10px">⚖️ Java ทำได้ดีเมื่อ...</h3>
+      <ul style="color:#ffffff;line-height:2.2;list-style:disc;padding-left:20px">
+        <li style="color:#ffffff">ระบบ enterprise ที่ใช้ Java stack อยู่แล้ว</li>
+        <li style="color:#ffffff">Workload เป็น .txt/.csv ขนาดใหญ่ &gt;1MB เป็นหลัก</li>
+        <li style="color:#ffffff">Batch หลายพันไฟล์ (per-file overhead เฉลี่ยออก)</li>
+        <li style="color:#ffffff">Long-running service (JIT warm เต็มที่)</li>
+      </ul>
+    </div>
+  </div>
+</div></div><div class="page" id="page-method">
+<div class="card">
+  <h2>🎯 วัตถุประสงค์</h2>
+  <p>เปรียบเทียบประสิทธิภาพการเข้ารหัส PGP ระหว่าง Go และ Java
+  ภายใต้เงื่อนไขที่ยุติธรรมและทำซ้ำได้ เพื่อช่วยตัดสินใจเลือกภาษาสำหรับระบบใหม่</p>
+  <div class="info" style="margin-top:10px">
+    <strong>ขอบเขต:</strong> วัดเฉพาะ PGP encrypt และ decrypt —
+    ไม่รวม I/O, network, database, JVM startup
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚙️ สภาพแวดล้อมการทดสอบ</h2>
+  <div class="grid3">
+    <div class="mbox">
+      <h3>🖥 VM</h3>
+      <ul>
+        <li>Ubuntu 24.04 LTS</li>
+        <li>8 vCPU</li>
+        <li>14 GB RAM</li>
+        <li>Corpus บน tmpfs (RAM disk)</li>
+      </ul>
+    </div>
+    <div class="mbox go">
+      <h3>🔵 Go Runner</h3>
+      <ul>
+        <li>Go 1.24.4</li>
+        <li>ProtonMail/go-crypto</li>
+        <li>3 variants: inmem-single, stream-single, stream-parallel</li>
+      </ul>
+    </div>
+    <div class="mbox java">
+      <h3>🟠 Java Runner</h3>
+      <ul>
+        <li>JDK 25 + Spring Boot 4.x</li>
+        <li>Bouncy Castle (bcpg + bcprov)</li>
+        <li>3 variants: inmem-single, stream-single, stream-parallel</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📐 วิธีวัด</h2>
+  <div class="grid2">
+    <div class="mbox green">
+      <h3>✅ สิ่งที่วัด</h3>
+      <ul>
+        <li>เวลา encrypt() จริง (นาฬิกา monotonic)</li>
+        <li>เวลา decrypt() จริง</li>
+        <li>Round-trip = encrypt + decrypt รวมกัน</li>
+      </ul>
+    </div>
+    <div class="mbox red">
+      <h3>❌ สิ่งที่ไม่วัด</h3>
+      <ul>
+        <li>การโหลดกุญแจจาก disk</li>
+        <li>JVM startup time</li>
+        <li>Warmup iterations (รันก่อนวัดจริง)</li>
+        <li>Disk I/O (corpus อยู่บน RAM disk)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚖️ มาตรการความยุติธรรม</h2>
+  <div class="grid2">
+    <div class="mbox">
+      <h3>🔄 Alternating Order</h3>
+      <p>สลับลำดับ Go/Java ทุกรอบ — round 1: Go→Java, round 2: Java→Go
+      ป้องกัน CPU cache bias ที่ฝ่ายใดฝ่ายหนึ่งได้เปรียบ</p>
+    </div>
+    <div class="mbox">
+      <h3>📦 แยก Process</h3>
+      <p>Go และ Java รันแยก process สมบูรณ์ ไม่แย่งทรัพยากรกัน
+      corpus บน tmpfs เหมือนกัน 100%</p>
+    </div>
+    <div class="mbox">
+      <h3>✅ Verification Gate</h3>
+      <p>ทุก operation ต้องผ่าน: decrypt(encrypt(x)) = x byte-for-byte
+      operation ที่ผิดพลาดถูก skip ออกจากสถิติ</p>
+    </div>
+    <div class="mbox">
+      <h3>📊 ชุดข้อมูลเดียวกัน</h3>
+      <p>corpus plaintext เดียวกัน ทั้ง 6 ชนิดไฟล์ (txt/csv/pdf/xlsx/zip/dat)
+      ขนาด 512KB ต่อไฟล์ × 15 ไฟล์ต่อ scenario</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📋 Coverage — สิ่งที่ทดสอบ</h2>
+  <table>
+    <thead><tr><th>หมวด</th><th>รายละเอียด</th><th>จำนวน</th></tr></thead>
+    <tbody>
+      <tr><td>File types</td><td>txt, csv, pdf, xlsx, zip, dat × 3 key algorithms</td><td>18 scenarios</td></tr>
+      <tr><td>Many-small files</td><td>100–200 files × 1KB, 10KB, 100KB</td><td>3 scenarios</td></tr>
+      <tr><td>Size gradient</td><td>ไฟล์เดียว ขนาด 1KB→10MB (binary + text) เพื่อดู size effect</td><td>22 จุด</td></tr>
+      <tr><td>Count gradient</td><td>100KB binary × 1→1000 ไฟล์ เพื่อดู file-count effect</td><td>9 จุด</td></tr>
+      <tr><td>Concurrent load</td><td>1, 2, 4, 8 clients พร้อมกัน</td><td>4 levels</td></tr>
+      <tr style="background:#f8f9fa"><td><strong>รวม</strong></td><td>3 key algorithms (RSA-2048, RSA-4096, Curve25519) × 3 rounds · cold start</td><td><strong>21 scenarios + gradient</strong></td></tr>
+    </tbody>
+  </table>
+</div></div>
+  <footer>สร้างอัตโนมัติ 2026-06-29 21:33 · v5 cold start</footer>
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab,.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
+}
+</script>
+</body></html>
