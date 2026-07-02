@@ -270,39 +270,148 @@ def run_one(binary_cmd, variant, corpus_path, out_dir, pub_alg="RSA-2048", concu
             return None
         out = json.loads(r.stdout)
         ops = [o for o in out.get("operations", []) if not o.get("skipped")]
-        times = [(o.get("encryptMs", 0) or 0) + (o.get("decryptMs", 0) or 0) for o in ops]
-        times = [t for t in times if t > 0]
-        if not times:
+        enc = [o.get("encryptMs") or 0 for o in ops]
+        dec = [o.get("decryptMs") or 0 for o in ops]
+        tot = [e + d for e, d in zip(enc, dec)]
+        tot_nz = [t for t in tot if t > 0]
+        if not tot_nz:
             return None
-        return round(statistics.median(times), 3)
+        orig = sum(o.get("originalBytes", 0) or 0 for o in ops)
+        ct = sum((o.get("ciphertextBytes") or 0) for o in ops)
+        ok = sum(1 for o in ops if o.get("roundTripOk"))
+        total_s = sum(tot) / 1000.0
+        return {
+            "p50": round(_pct(tot_nz, 50), 3),
+            "p95": round(_pct(tot_nz, 95), 3),
+            "enc_p50": round(_pct([e for e in enc if e > 0] or [0], 50), 3),
+            "dec_p50": round(_pct([d for d in dec if d > 0] or [0], 50), 3),
+            "mbps": round((orig / 1048576) / total_s, 2) if total_s > 0 else 0.0,
+            "ratio": round(orig / ct, 3) if ct > 0 else 0.0,
+            "ok_ratio": round(ok / len(ops), 4) if ops else 0.0,
+            "n": len(ops),
+        }
     except Exception as e:
         sys.stderr.write(f"    ERR {variant}: {e}\n")
         return None
+
+def _pct(xs, q):
+    """quantile แบบง่าย (nearest-rank) — q เป็นเปอร์เซ็นต์ 0..100"""
+    if not xs:
+        return 0.0
+    s = sorted(xs)
+    idx = max(0, min(len(s) - 1, int(round(q / 100.0 * (len(s) - 1)))))
+    return s[idx]
+
+def _median(xs):
+    return round(statistics.median(xs), 3) if xs else 0.0
 
 def bench(label, corpus_path, out_root, runners_map=RUNNERS, pub_alg="RSA-2048", concurrency=1):
     binary_cmd, variants = runners_map[label]
     best = {}
     for v in variants:
-        samples = []
+        rounds = []
         for rnd in range(ROUNDS):
             od = out_root / label / v / f"r{rnd}"; od.mkdir(parents=True, exist_ok=True)
-            p50 = run_one(binary_cmd, v, corpus_path, od, pub_alg=pub_alg, concurrency=concurrency)
-            if p50 is not None:
-                samples.append(p50); sys.stdout.write(".")
+            m = run_one(binary_cmd, v, corpus_path, od, pub_alg=pub_alg, concurrency=concurrency)
+            if m is not None:
+                rounds.append(m); sys.stdout.write(".")
             else:
                 sys.stdout.write("x")
             sys.stdout.flush()
-        if samples:
-            best[v] = {"p50_median": round(statistics.median(samples), 3),
-                       "p50_min": round(min(samples), 3),
-                       "p50_max": round(max(samples), 3),
-                       "rounds": len(samples)}
+        if rounds:
+            # aggregate = median ข้ามรอบ ของแต่ละ metric
+            agg = {k: _median([r[k] for r in rounds])
+                   for k in ("p50", "p95", "enc_p50", "dec_p50", "mbps", "ratio", "ok_ratio")}
+            agg["n"] = rounds[0]["n"]
+            agg["rounds"] = len(rounds)
+            best[v] = agg
+    return best
+
+def scenario_best_variant(res):
+    """คืน (ชื่อ variant, metrics) ของ variant ที่ p50 ต่ำสุดใน label นั้น"""
+    best = None
+    for vname, d in res.items():
+        if not d:
+            continue
+        if best is None or d["p50"] < best[1]["p50"]:
+            best = (vname, d)
     return best
 
 def scenario_best_ms(res):
-    """เอา variant ที่เร็วสุดของ label นั้นมาเป็นตัวแทน (p50_median ต่ำสุด)"""
-    vals = [d["p50_median"] for d in res.values() if d]
-    return min(vals) if vals else None
+    """p50 ของ variant เร็วสุดใน 1 label"""
+    bv = scenario_best_variant(res)
+    return bv[1]["p50"] if bv else None
+
+# ── Prometheus textfile export (ให้ node_exporter textfile collector หยิบไป) ──
+# node_exporter ที่รันบน VM 122:9100 อ่านไฟล์ .prom ในโฟลเดอร์ textfile collector
+# แล้ว expose ให้ Prometheus (CT200:9090) scrape → โชว์บน Grafana ได้เลย
+NODE_TEXTFILE_DIR = os.getenv("NODE_EXPORTER_TEXTFILE_DIR", "/var/lib/node_exporter/textfile_collector")
+
+def _esc(v):
+    return str(v).replace("\\", "\\\\").replace('"', '\\"')
+
+def write_prometheus(results):
+    """เขียน metrics เป็น .prom (atomic) ให้ node_exporter textfile collector"""
+    metrics = {
+        "pgp_bench_roundtrip_p50_ms": ("gauge", "median encrypt+decrypt time per file (ms)"),
+        "pgp_bench_roundtrip_p95_ms": ("gauge", "p95 encrypt+decrypt time per file (ms)"),
+        "pgp_bench_encrypt_p50_ms":   ("gauge", "median encrypt-only time per file (ms)"),
+        "pgp_bench_decrypt_p50_ms":   ("gauge", "median decrypt-only time per file (ms)"),
+        "pgp_bench_throughput_mbps":  ("gauge", "throughput MB/s (orig bytes / crypto time)"),
+        "pgp_bench_compression_ratio":("gauge", "orig/ciphertext size ratio"),
+        "pgp_bench_roundtrip_ok_ratio":("gauge", "fraction of files with byte-for-byte roundtrip ok"),
+        "pgp_bench_files":            ("gauge", "number of files measured"),
+    }
+    field = {
+        "pgp_bench_roundtrip_p50_ms": "p50", "pgp_bench_roundtrip_p95_ms": "p95",
+        "pgp_bench_encrypt_p50_ms": "enc_p50", "pgp_bench_decrypt_p50_ms": "dec_p50",
+        "pgp_bench_throughput_mbps": "mbps", "pgp_bench_compression_ratio": "ratio",
+        "pgp_bench_roundtrip_ok_ratio": "ok_ratio", "pgp_bench_files": "n",
+    }
+    branch = results.get("branch", "")
+    samples = {m: [] for m in metrics}
+    speedup = []  # (labels, value)
+
+    for sc_name, sc in results["scenarios"].items():
+        for label, res in sc.items():         # label = go-stdlib/go-klauspost/java
+            for vname, d in (res or {}).items():
+                lbl = f'impl="{_esc(label)}",variant="{_esc(vname)}",scenario="{_esc(sc_name)}",branch="{_esc(branch)}"'
+                for m, f in field.items():
+                    if f in d:
+                        samples[m].append((lbl, d[f]))
+        # speedup: go-klauspost เทียบ stdlib / java (ใช้ variant เร็วสุดของแต่ละ label)
+        kp = scenario_best_ms(sc.get("go-klauspost", {}))
+        std = scenario_best_ms(sc.get("go-stdlib", {}))
+        jv = scenario_best_ms(sc.get("java", {}))
+        if kp and std:
+            speedup.append((f'scenario="{_esc(sc_name)}",baseline="stdlib",branch="{_esc(branch)}"', round(std / kp, 3)))
+        if kp and jv:
+            speedup.append((f'scenario="{_esc(sc_name)}",baseline="java",branch="{_esc(branch)}"', round(jv / kp, 3)))
+
+    lines = []
+    for m, (mtype, help_) in metrics.items():
+        lines.append(f"# HELP {m} {help_}")
+        lines.append(f"# TYPE {m} {mtype}")
+        for lbl, val in samples[m]:
+            lines.append(f"{m}{{{lbl}}} {val}")
+    lines.append("# HELP pgp_bench_speedup_ratio klauspost speedup vs baseline (>1 = faster)")
+    lines.append("# TYPE pgp_bench_speedup_ratio gauge")
+    for lbl, val in speedup:
+        lines.append(f"pgp_bench_speedup_ratio{{{lbl}}} {val}")
+    lines.append("")
+
+    dest_dir = pathlib.Path(NODE_TEXTFILE_DIR)
+    try:
+        dest_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        print(f"⚠ เขียน Prometheus textfile ไม่ได้ ({dest_dir}: {e})")
+        print(f"  → ตั้ง env NODE_EXPORTER_TEXTFILE_DIR ให้ตรงกับ --collector.textfile.directory ของ node_exporter")
+        return None
+    dest = dest_dir / "pgp_bench.prom"
+    tmp = dest_dir / "pgp_bench.prom.tmp"
+    tmp.write_text("\n".join(lines))
+    tmp.replace(dest)   # atomic rename (node_exporter อ่านไฟล์ครบเสมอ)
+    return dest
 
 def main():
     for b in (GO_KP, GO_STD):
@@ -409,6 +518,11 @@ def main():
     results["finishedAt"] = datetime.now(timezone.utc).isoformat()
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps(results, indent=2))
+
+    # export ให้ Grafana ผ่าน node_exporter textfile collector
+    prom = write_prometheus(results)
+    if prom:
+        print(f"📈 Prometheus textfile: {prom}  (node_exporter จะ expose ให้ Prometheus scrape)")
 
     # ── ตารางสรุป (ms ต่ำสุดต่อ label + speedup) ──────────────────────────
     print("\n" + "=" * 72)

@@ -94,6 +94,51 @@ FULL=1 BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
 - โฟกัสที่ scenario **txt / csv** (compressible) — จุดที่ Go เดิมแพ้ Java
 - `dat` (incompressible) ใช้เช็คว่าไม่ทำให้เคสที่ Go ชนะอยู่แล้วแย่ลง
 
+## 📈 ดูผลบน Grafana (Prometheus)
+
+สคริปต์เขียนไฟล์ `.prom` ให้ **node_exporter textfile collector** อัตโนมัติ →
+node_exporter (VM 122:9100) expose → Prometheus (CT200:9090) scrape → Grafana
+
+### ตั้งค่าครั้งเดียวบน VM
+1. node_exporter ต้องเปิด textfile collector:
+   ```bash
+   # เช็คว่าเปิดหรือยัง
+   ps aux | grep node_exporter | grep -o 'collector.textfile.directory=[^ ]*'
+   ```
+   ถ้ายังไม่เปิด ให้เพิ่ม flag ตอนสตาร์ท (แล้ว restart service):
+   ```
+   --collector.textfile.directory=/var/lib/node_exporter/textfile_collector
+   ```
+2. ชี้ให้สคริปต์เขียนตรง dir นั้น (ดีฟอลต์ตรงกับข้างบนแล้ว):
+   ```bash
+   export NODE_EXPORTER_TEXTFILE_DIR=/var/lib/node_exporter/textfile_collector
+   ```
+   ถ้า dir ต้องใช้ sudo เขียน ให้ `sudo chown $USER` dir นั้น หรือรันสคริปต์ด้วย sudo
+
+### metric ที่ export (prefix `pgp_bench_`)
+| metric | ความหมาย | labels |
+|--------|----------|--------|
+| `pgp_bench_roundtrip_p50_ms` / `_p95_ms` | เวลา encrypt+decrypt/ไฟล์ | impl, variant, scenario, branch |
+| `pgp_bench_encrypt_p50_ms` / `pgp_bench_decrypt_p50_ms` | แยก encrypt/decrypt | " |
+| `pgp_bench_throughput_mbps` | throughput MB/s | " |
+| `pgp_bench_compression_ratio` | orig/ciphertext | " |
+| `pgp_bench_roundtrip_ok_ratio` | สัดส่วน byte-for-byte ผ่าน | " |
+| `pgp_bench_files` | จำนวนไฟล์ที่วัด | " |
+| `pgp_bench_speedup_ratio` | klauspost เร็วกว่า baseline กี่เท่า | scenario, baseline(stdlib/java), branch |
+
+### ตัวอย่าง PromQL สำหรับ panel
+```promql
+# เทียบ p50 3 ทาง ต่อ scenario
+pgp_bench_roundtrip_p50_ms
+
+# speedup klauspost เทียบ java
+pgp_bench_speedup_ratio{baseline="java"}
+
+# compression ratio เทียบ impl
+pgp_bench_compression_ratio
+```
+> textfile collector รายงานค่าเดิมทุก scrape จนกว่าจะรันใหม่ (เหมาะกับ benchmark แบบ batch — ดู "ค่าล่าสุด")
+
 ## หมายเหตุ / gotchas
 - **ต้องมี WARMUP ≥ 3** ไม่งั้นตัวเลข Java จะสูงผิดปกติ (JIT ยังไม่ร้อน) — เคสไฟล์เดียวยิ่งชัด
 - `build_klauspost_ab.sh` ใช้ GNU sed (Linux) — ออกแบบมาสำหรับ VM ไม่ใช่ macOS
