@@ -15,7 +15,9 @@ Checklist บน VM (ทำตาม `scripts/vm/README.md`):
       (ถ้ายังไม่ push ให้ push ก่อน — ดู Step 2 ด้านล่าง)
 - [ ] จูน VM: `sudo cpupower frequency-set -g performance || true`
 - [ ] `bash scripts/vm/build_klauspost_ab.sh` → ได้ go-runner-klauspost + go-runner-stdlib + java jar
-- [ ] `ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`
+- [ ] รอบเร็ว: `ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`
+- [ ] รอบ production-scale (~300MB, txt 1300/csv 450/pdf 350/zip 30):
+      `BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`
 - [ ] เอา `report/results_klauspost_ab.json` + ตารางสรุป กลับมาให้ Kiro อัปเดต report/สไลด์
 - [ ] (ทางเลือก) interop: `cd runners/go && go test -run TestInteropKlauspostCiphertextDecryptsWithGPG -v`
 

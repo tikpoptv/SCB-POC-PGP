@@ -32,6 +32,22 @@ GO_STD = GO_DIR / "go-runner-stdlib"
 ROUNDS = int(os.getenv("ROUNDS", "5"))
 WARMUP = int(os.getenv("WARMUP", "3"))
 
+# BIG = โหมด production-scale (จำนวนไฟล์จริงของระบบเดิม + เผื่อเล็กน้อย, รวม ~300MB)
+#   ระบบเดิม: txt 1200 / pdf 300 / csv 400 / zip 20  → เทสสูงกว่าเล็กน้อยเพื่อความปลอดภัย
+#   เปิดด้วย: BIG=1 python3 scripts/vm/run_klauspost_ab.py
+BIG = os.getenv("BIG", "0") not in ("0", "", "false", "no")
+# จำนวนไฟล์ (ปรับได้ผ่าน env) — ดีฟอลต์สูงกว่าระบบเดิมเล็กน้อย
+PROD_TXT_N = int(os.getenv("PROD_TXT_N", "1300"))   # เดิม 1200
+PROD_CSV_N = int(os.getenv("PROD_CSV_N", "450"))    # เดิม 400
+PROD_PDF_N = int(os.getenv("PROD_PDF_N", "350"))    # เดิม 300
+PROD_ZIP_N = int(os.getenv("PROD_ZIP_N", "30"))     # เดิม 20
+# ขนาดต่อไฟล์ (KB) — เลือกให้รวมทุกสกุล ≈ 300MB
+PROD_TXT_KB = int(os.getenv("PROD_TXT_KB", "128"))  # 1300×128KB ≈ 166MB
+PROD_CSV_KB = int(os.getenv("PROD_CSV_KB", "128"))  # 450×128KB  ≈ 58MB
+PROD_PDF_KB = int(os.getenv("PROD_PDF_KB", "192"))  # 350×192KB  ≈ 70MB
+PROD_ZIP_KB = int(os.getenv("PROD_ZIP_KB", "256"))  # 30×256KB   ≈ 8MB
+# รวม ≈ 302MB
+
 # corpus: ใช้ tmpfs ถ้าเขียนได้ ไม่งั้น fallback ในบ้าน
 def pick_corpus_dir():
     env = os.getenv("POC_CORPUS")
@@ -67,7 +83,13 @@ def key_cs():
     lines.sort()
     return "sha256:" + hashlib.sha256("\n".join(lines).encode()).hexdigest()
 
+_CORPUS_CS_CACHE = {}
 def corpus_cs(path):
+    # cache ต่อ path: corpus ไม่เปลี่ยนระหว่างรัน → ไม่ต้อง hash ซ้ำทุก invocation
+    # (สำคัญมากในโหมด BIG ที่ corpus ใหญ่ ~300MB)
+    key = str(path)
+    if key in _CORPUS_CS_CACHE:
+        return _CORPUS_CS_CACHE[key]
     e = []
     for f in sorted(pathlib.Path(path).rglob("*")):
         if f.is_file():
@@ -77,7 +99,9 @@ def corpus_cs(path):
     hh = hashlib.sha256()
     for rel, hx in e:
         hh.update(rel.encode()); hh.update(b"\x00"); hh.update(hx.encode()); hh.update(b"\n")
-    return "sha256:" + hh.hexdigest()
+    val = "sha256:" + hh.hexdigest()
+    _CORPUS_CS_CACHE[key] = val
+    return val
 
 _KCS = None
 def kcs():
@@ -112,11 +136,13 @@ def gen_csv(dest, n, size_kb):
         content = ("".join(buf)[:target]).ljust(target)
         (dest / f"file{i:04d}.csv").write_bytes(content.encode("ascii", "replace"))
 
-def gen_binary(dest, n, size_kb):
+def gen_binary(dest, n, size_kb, ext="dat"):
     dest.mkdir(parents=True, exist_ok=True)
     rng = random.Random(42)
+    nbytes = size_kb * 1024
     for i in range(n):
-        (dest / f"file{i:04d}.dat").write_bytes(bytes(rng.getrandbits(8) for _ in range(size_kb * 1024)))
+        # randbytes (Py3.9+) เร็วกว่าการสุ่มทีละไบต์มาก — สำคัญตอน corpus ใหญ่
+        (dest / f"file{i:04d}.{ext}").write_bytes(rng.randbytes(nbytes))
 
 def setup_corpus():
     print(f"📁 corpus @ {CORPUS}")
@@ -127,6 +153,20 @@ def setup_corpus():
     for kb in (10, 100, 512, 1024):
         gen_text(CORPUS / f"size/txt-{kb}kb", n=1, size_kb=kb)
     print("  ✓ size gradient text 10/100/512/1024 KB")
+
+def setup_corpus_prod():
+    """corpus ระดับ production จริง (BIG) — จำนวนไฟล์ตามระบบเดิม+เผื่อ, รวม ~300MB"""
+    total_mb = (PROD_TXT_N*PROD_TXT_KB + PROD_CSV_N*PROD_CSV_KB
+                + PROD_PDF_N*PROD_PDF_KB + PROD_ZIP_N*PROD_ZIP_KB) / 1024
+    print(f"📦 PROD corpus @ {CORPUS}/prod  (รวม ≈ {total_mb:.0f} MB) — อาจใช้เวลาสร้างสักครู่")
+    gen_text(CORPUS / "prod/txt", n=PROD_TXT_N, size_kb=PROD_TXT_KB)
+    print(f"  ✓ txt  {PROD_TXT_N}×{PROD_TXT_KB}KB (compressible)")
+    gen_csv(CORPUS / "prod/csv", n=PROD_CSV_N, size_kb=PROD_CSV_KB)
+    print(f"  ✓ csv  {PROD_CSV_N}×{PROD_CSV_KB}KB (compressible)")
+    gen_binary(CORPUS / "prod/pdf", n=PROD_PDF_N, size_kb=PROD_PDF_KB, ext="pdf")
+    print(f"  ✓ pdf  {PROD_PDF_N}×{PROD_PDF_KB}KB (incompressible)")
+    gen_binary(CORPUS / "prod/zip", n=PROD_ZIP_N, size_kb=PROD_ZIP_KB, ext="zip")
+    print(f"  ✓ zip  {PROD_ZIP_N}×{PROD_ZIP_KB}KB (incompressible)")
 
 # ── run one (binary,variant) → p50 ms ──────────────────────────────────────
 def run_one(binary_cmd, variant, corpus_path, out_dir):
@@ -190,7 +230,7 @@ def main():
 
     print("=" * 64)
     print("klauspost A/B/C benchmark  (go-stdlib vs go-klauspost vs java)")
-    print(f"ROUNDS={ROUNDS} WARMUP={WARMUP}")
+    print(f"ROUNDS={ROUNDS} WARMUP={WARMUP} BIG={'on (production-scale ~300MB)' if BIG else 'off'}")
     print("=" * 64)
     os.system("nproc >/dev/null 2>&1 && echo -n 'cores: ' && nproc || true")
 
@@ -206,11 +246,22 @@ def main():
         ("txt-512KB",    CORPUS / "size/txt-512kb"),
         ("txt-1MB",      CORPUS / "size/txt-1024kb"),
     ]
+
+    if BIG:
+        setup_corpus_prod()
+        scenarios += [
+            (f"prod-txt-{PROD_TXT_N}", CORPUS / "prod/txt"),
+            (f"prod-csv-{PROD_CSV_N}", CORPUS / "prod/csv"),
+            (f"prod-pdf-{PROD_PDF_N}", CORPUS / "prod/pdf"),
+            (f"prod-zip-{PROD_ZIP_N}", CORPUS / "prod/zip"),
+        ]
     labels = ["go-stdlib", "go-klauspost"] + (["java"] if have_java else [])
 
     results = {
         "startedAt": datetime.now(timezone.utc).isoformat(),
-        "rounds": ROUNDS, "warmup": WARMUP,
+        "rounds": ROUNDS, "warmup": WARMUP, "big": BIG,
+        "prodProfile": ({"txt": [PROD_TXT_N, PROD_TXT_KB], "csv": [PROD_CSV_N, PROD_CSV_KB],
+                          "pdf": [PROD_PDF_N, PROD_PDF_KB], "zip": [PROD_ZIP_N, PROD_ZIP_KB]} if BIG else None),
         "branch": subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                                  cwd=REPO, capture_output=True, text=True).stdout.strip(),
         "scenarios": {},

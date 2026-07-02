@@ -24,9 +24,32 @@ bash scripts/vm/build_klauspost_ab.sh
 
 # 3) รันเทียบ (ปรับ ROUNDS/WARMUP ได้)
 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
+
+# 3b) รันแบบ production-scale (ไฟล์ทุกสกุลรวม ~300MB, จำนวนตามระบบเดิม+เผื่อ)
+BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
 ```
 
 ผลออกที่ `report/results_klauspost_ab.json` + ตารางสรุปบนจอ
+
+## โหมด BIG (production-scale)
+เปิดด้วย `BIG=1` — เพิ่ม scenario ตามจำนวนไฟล์จริงของระบบเดิม (เผื่อขึ้นเล็กน้อยเพื่อความปลอดภัย):
+
+| สกุล | ระบบเดิม | เทสนี้ (ดีฟอลต์) | ขนาด/ไฟล์ | รวม |
+|------|---------:|----------------:|----------:|----:|
+| txt (compressible) | 1200 | **1300** | 128 KB | ~166 MB |
+| csv (compressible) | 400  | **450**  | 128 KB | ~58 MB |
+| pdf (incompressible) | 300 | **350** | 192 KB | ~70 MB |
+| zip (incompressible) | 20  | **30**   | 256 KB | ~8 MB |
+| **รวม** | | ~2130 ไฟล์ | | **~302 MB** |
+
+ปรับจำนวน/ขนาดได้ผ่าน env: `PROD_TXT_N`, `PROD_CSV_N`, `PROD_PDF_N`, `PROD_ZIP_N`,
+`PROD_TXT_KB`, `PROD_CSV_KB`, `PROD_PDF_KB`, `PROD_ZIP_KB`
+
+⚠️ **ข้อควรรู้โหมด BIG:**
+- corpus ~300MB — ถ้าใช้ tmpfs `/mnt/corpus` (2GB ตาม ENVIRONMENT.md) พอ; เผื่อพื้นที่ด้วย
+- ใช้เวลานานขึ้นมาก (สร้าง corpus + รัน ~2100 ไฟล์ × 2 variant × 3 label × ROUNDS)
+- ทุกไฟล์ ≤256KB → in-memory engine ปลอดภัยกับ RAM 8GB (โหลดทีละไฟล์)
+- checksum ของ corpus ถูก cache แล้ว (ไม่ hash ซ้ำทุก invocation)
 
 ## อ่านผลยังไง
 - คอลัมน์ `kp vs std` = go-stdlib / go-klauspost → >1 คือ klauspost เร็วกว่า stdlib
