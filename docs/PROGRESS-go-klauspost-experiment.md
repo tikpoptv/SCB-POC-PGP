@@ -51,13 +51,22 @@
 
 ## สิ่งที่เหลือ (ทำต่อตามลำดับ) ⏭️
 
-### Step 1 — รัน harness เต็ม เทียบ Go(klauspost) vs Java  ← ทำต่อจากตรงนี้
-เป้าหมาย: ได้ตัวเลขเทียบตรงๆ บน corpus จริงทุก scenario ลง report
-- ต้อง: build Java runner (`runners/java`, ใช้ maven `pom.xml`) + ตั้ง Python harness (`harness/`, ดู `harness/requirements.txt`)
-- ตรวจว่า harness เรียก Go runner ที่ build จาก branch นี้ (มี klauspost)
-- ระวัง: harness อาจ build Go runner ใหม่ — ต้องแน่ใจว่า `replace` directive ยังทำงาน (build ใน `runners/go` ปกติ)
-- Scenario อ้างอิงเดิมอยู่ใน `report/results_extended.json` (Java txt ~17ms, Go เดิม ~30ms)
-- Output: อัปเดต report + สไลด์ด้วยตัวเลข Go-ใหม่ vs Java
+### Step 1 — รัน harness เต็ม เทียบ Go(klauspost) vs Java  ← พร้อมรันบน VM แล้ว
+**สคริปต์พร้อมแล้ว** (smoke-test บนเครื่อง dev ผ่าน): รันบน VM ได้เลย
+- `scripts/vm/build_klauspost_ab.sh` — build go-runner-klauspost + go-runner-stdlib + java jar
+- `scripts/vm/run_klauspost_ab.py` — เทียบ 3 ทาง (go-stdlib/go-klauspost/java) → `report/results_klauspost_ab.json` + ตารางสรุป
+- `scripts/vm/README.md` — ขั้นตอนบน VM
+
+วิธีรันบน VM (ย่อ):
+```bash
+cd ~/POC-Encryption && git checkout experiment/go-klauspost-compression
+sudo cpupower frequency-set -g performance || true
+bash scripts/vm/build_klauspost_ab.sh
+ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
+```
+- smoke-test บน dev (ROUNDS=1): go-klauspost ชนะ go-stdlib 2.6–5x บน txt/csv/dat ✅
+- ⚠️ **ต้องใช้ WARMUP ≥ 3** ไม่งั้น Java ช้าผิดปกติ (JIT cold)
+- ยังเหลือ: รันจริงบน VM แล้วเอา `results_klauspost_ab.json` มาอัปเดต report/สไลด์
 
 ### Step 2 — Push branch + เปิด PR
 - `git push -u origin experiment/go-klauspost-compression`
