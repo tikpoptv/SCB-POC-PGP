@@ -25,3 +25,6 @@ runners/go/*.test
 runners/java/target/
 
 MEETING-SUMMARY.md
+
+# Playwright MCP debug artifacts (screenshots/console logs ระหว่างตรวจ report)
+.playwright-mcp/
