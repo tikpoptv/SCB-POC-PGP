@@ -65,13 +65,36 @@ def pick_corpus_dir():
 
 CORPUS = pick_corpus_dir()
 
-# runner ต่อ label: (binary_cmd, variants)
-GO_VARIANTS   = ["go-inmem-single", "go-stream-parallel"]
-JAVA_VARIANTS = ["java-inmem-single", "java-stream-parallel"]
+# SIZEGRAD = โหมด size gradient: วัด "ขนาดไฟล์มีผลแค่ไหน" ต่อสกุลไฟล์
+#   ไฟล์เดียวต่อขนาด ไล่ 1KB → SIZEGRAD_MAX (ดีฟอลต์ 300MB) ครบทุกสกุล
+#   in-memory variant ถูกจำกัดที่ INMEM_CAP_MB (256MB ตาม ENVIRONMENT.md);
+#   ขนาดใหญ่กว่านั้นวัดเฉพาะ streaming variant (Req 15.4)
+#   เปิดด้วย: SIZEGRAD=1 python3 scripts/vm/run_klauspost_ab.py
+SIZEGRAD = os.getenv("SIZEGRAD", "0") not in ("0", "", "false", "no")
+INMEM_CAP_MB = int(os.getenv("INMEM_CAP_MB", "256"))
+# สเต็ปขนาด (KB) ปรับได้ผ่าน env SIZEGRAD_STEPS_KB (คั่นด้วย comma)
+_DEFAULT_STEPS = "1,64,512,4096,16384,65536,131072,262144,307200"  # 1KB..300MB
+SIZEGRAD_STEPS_KB = [int(x) for x in os.getenv("SIZEGRAD_STEPS_KB", _DEFAULT_STEPS).split(",") if x.strip()]
+# สกุลไฟล์ที่ทดสอบใน size gradient (txt/csv=compressible, pdf/zip=incompressible)
+SIZEGRAD_TYPES = [t.strip() for t in os.getenv("SIZEGRAD_TYPES", "txt,csv,pdf,zip").split(",") if t.strip()]
+
+# แยก variant เป็น in-memory vs streaming เพื่อ gate ตามขนาดไฟล์
+GO_INMEM     = ["go-inmem-single"]
+GO_STREAM    = ["go-stream-parallel"]
+JAVA_INMEM   = ["java-inmem-single"]
+JAVA_STREAM  = ["java-stream-parallel"]
+GO_VARIANTS   = GO_INMEM + GO_STREAM
+JAVA_VARIANTS = JAVA_INMEM + JAVA_STREAM
 RUNNERS = {
     "go-stdlib":    ([str(GO_STD)], GO_VARIANTS),
     "go-klauspost": ([str(GO_KP)],  GO_VARIANTS),
     "java":         (["java", "-Xmx3g", "-jar", str(JAR)], JAVA_VARIANTS),
+}
+# variant เฉพาะ streaming (ใช้เมื่อไฟล์ > INMEM_CAP_MB)
+RUNNERS_STREAM_ONLY = {
+    "go-stdlib":    ([str(GO_STD)], GO_STREAM),
+    "go-klauspost": ([str(GO_KP)],  GO_STREAM),
+    "java":         (["java", "-Xmx3g", "-jar", str(JAR)], JAVA_STREAM),
 }
 
 # ── checksum helpers (เหมือน harness) ───────────────────────────────────────
@@ -154,6 +177,24 @@ def setup_corpus():
         gen_text(CORPUS / f"size/txt-{kb}kb", n=1, size_kb=kb)
     print("  ✓ size gradient text 10/100/512/1024 KB")
 
+def gen_one(dest, ext, size_kb):
+    """สร้างไฟล์เดียวขนาด size_kb ตามสกุล (txt/csv=บีบได้, pdf/zip/dat=บีบไม่ได้)"""
+    if ext == "txt":
+        gen_text(dest, n=1, size_kb=size_kb)
+    elif ext == "csv":
+        gen_csv(dest, n=1, size_kb=size_kb)
+    else:  # pdf, zip, dat → incompressible
+        gen_binary(dest, n=1, size_kb=size_kb, ext=ext)
+
+def setup_corpus_sizegrad():
+    """size gradient: ไฟล์เดียวต่อขนาด ไล่ตาม SIZEGRAD_STEPS_KB ครบทุกสกุล"""
+    mx = max(SIZEGRAD_STEPS_KB) / 1024
+    print(f"📏 SIZEGRAD corpus @ {CORPUS}/sizegrad  (max {mx:.0f} MB/ไฟล์, สกุล: {','.join(SIZEGRAD_TYPES)})")
+    for ext in SIZEGRAD_TYPES:
+        for kb in SIZEGRAD_STEPS_KB:
+            gen_one(CORPUS / f"sizegrad/{ext}/{kb}kb", ext, kb)
+    print(f"  ✓ {len(SIZEGRAD_TYPES)}สกุล × {len(SIZEGRAD_STEPS_KB)}ขนาด ({SIZEGRAD_STEPS_KB[0]}KB..{SIZEGRAD_STEPS_KB[-1]}KB)")
+
 def setup_corpus_prod():
     """corpus ระดับ production จริง (BIG) — จำนวนไฟล์ตามระบบเดิม+เผื่อ, รวม ~300MB"""
     total_mb = (PROD_TXT_N*PROD_TXT_KB + PROD_CSV_N*PROD_CSV_KB
@@ -195,8 +236,8 @@ def run_one(binary_cmd, variant, corpus_path, out_dir):
         sys.stderr.write(f"    ERR {variant}: {e}\n")
         return None
 
-def bench(label, corpus_path, out_root):
-    binary_cmd, variants = RUNNERS[label]
+def bench(label, corpus_path, out_root, runners_map=RUNNERS):
+    binary_cmd, variants = runners_map[label]
     best = {}
     for v in variants:
         samples = []
@@ -230,49 +271,66 @@ def main():
 
     print("=" * 64)
     print("klauspost A/B/C benchmark  (go-stdlib vs go-klauspost vs java)")
-    print(f"ROUNDS={ROUNDS} WARMUP={WARMUP} BIG={'on (production-scale ~300MB)' if BIG else 'off'}")
+    print(f"ROUNDS={ROUNDS} WARMUP={WARMUP} "
+          f"BIG={'on (file-count load)' if BIG else 'off'} "
+          f"SIZEGRAD={'on (1KB→%dMB/file, inmem cap %dMB)' % (max(SIZEGRAD_STEPS_KB)//1024, INMEM_CAP_MB) if SIZEGRAD else 'off'}")
     print("=" * 64)
     os.system("nproc >/dev/null 2>&1 && echo -n 'cores: ' && nproc || true")
 
     setup_corpus()
     out_root = CORPUS / "_out"; out_root.mkdir(exist_ok=True)
 
+    # แต่ละ scenario = (ชื่อ, path, runners_map)
     scenarios = [
-        ("txt-512KB×15", CORPUS / "ft/txt"),
-        ("csv-512KB×15", CORPUS / "ft/csv"),
-        ("dat-512KB×15", CORPUS / "ft/dat"),
-        ("txt-10KB",     CORPUS / "size/txt-10kb"),
-        ("txt-100KB",    CORPUS / "size/txt-100kb"),
-        ("txt-512KB",    CORPUS / "size/txt-512kb"),
-        ("txt-1MB",      CORPUS / "size/txt-1024kb"),
+        ("txt-512KB×15", CORPUS / "ft/txt", RUNNERS),
+        ("csv-512KB×15", CORPUS / "ft/csv", RUNNERS),
+        ("dat-512KB×15", CORPUS / "ft/dat", RUNNERS),
+        ("txt-10KB",     CORPUS / "size/txt-10kb", RUNNERS),
+        ("txt-100KB",    CORPUS / "size/txt-100kb", RUNNERS),
+        ("txt-512KB",    CORPUS / "size/txt-512kb", RUNNERS),
+        ("txt-1MB",      CORPUS / "size/txt-1024kb", RUNNERS),
     ]
 
     if BIG:
         setup_corpus_prod()
         scenarios += [
-            (f"prod-txt-{PROD_TXT_N}", CORPUS / "prod/txt"),
-            (f"prod-csv-{PROD_CSV_N}", CORPUS / "prod/csv"),
-            (f"prod-pdf-{PROD_PDF_N}", CORPUS / "prod/pdf"),
-            (f"prod-zip-{PROD_ZIP_N}", CORPUS / "prod/zip"),
+            (f"prod-txt-{PROD_TXT_N}", CORPUS / "prod/txt", RUNNERS),
+            (f"prod-csv-{PROD_CSV_N}", CORPUS / "prod/csv", RUNNERS),
+            (f"prod-pdf-{PROD_PDF_N}", CORPUS / "prod/pdf", RUNNERS),
+            (f"prod-zip-{PROD_ZIP_N}", CORPUS / "prod/zip", RUNNERS),
         ]
+
+    if SIZEGRAD:
+        setup_corpus_sizegrad()
+        for ext in SIZEGRAD_TYPES:
+            for kb in SIZEGRAD_STEPS_KB:
+                # ไฟล์ > INMEM_CAP_MB → วัดเฉพาะ streaming (กัน OOM in-memory)
+                rmap = RUNNERS_STREAM_ONLY if (kb / 1024) > INMEM_CAP_MB else RUNNERS
+                tag = "S" if rmap is RUNNERS_STREAM_ONLY else ""
+                label_sz = f"{kb//1024}MB" if kb >= 1024 else f"{kb}KB"
+                scenarios.append(
+                    (f"sg-{ext}-{label_sz}{tag}", CORPUS / f"sizegrad/{ext}/{kb}kb", rmap)
+                )
     labels = ["go-stdlib", "go-klauspost"] + (["java"] if have_java else [])
 
     results = {
         "startedAt": datetime.now(timezone.utc).isoformat(),
-        "rounds": ROUNDS, "warmup": WARMUP, "big": BIG,
+        "rounds": ROUNDS, "warmup": WARMUP, "big": BIG, "sizegrad": SIZEGRAD,
         "prodProfile": ({"txt": [PROD_TXT_N, PROD_TXT_KB], "csv": [PROD_CSV_N, PROD_CSV_KB],
                           "pdf": [PROD_PDF_N, PROD_PDF_KB], "zip": [PROD_ZIP_N, PROD_ZIP_KB]} if BIG else None),
+        "sizegradProfile": ({"stepsKB": SIZEGRAD_STEPS_KB, "types": SIZEGRAD_TYPES,
+                              "inmemCapMB": INMEM_CAP_MB} if SIZEGRAD else None),
         "branch": subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                                  cwd=REPO, capture_output=True, text=True).stdout.strip(),
         "scenarios": {},
     }
 
-    for sc_name, corpus_path in scenarios:
+    for sc_name, corpus_path, rmap in scenarios:
         print(f"\n[{sc_name}]  ({len(list(pathlib.Path(corpus_path).iterdir()))} files)")
         sc = {}
         for label in labels:
             print(f"  {label:14s} ", end="")
-            sc[label] = bench(label, corpus_path, out_root)
+            sc[label] = bench(label, corpus_path, out_root, runners_map=rmap)
             print()
         results["scenarios"][sc_name] = sc
 
