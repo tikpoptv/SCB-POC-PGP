@@ -58,14 +58,25 @@ ssh tikxd@10.110.1.42 'curl -s localhost:9100/metrics | grep -c "^pgp_bench_"'
 
 ## ขั้นตอนถัดไป (หลัง FULL เสร็จ)
 1. ตรวจท้าย log ต้องเห็น `🔒 correctness: roundTripOk 100% และไม่มีไฟล์ถูก skip` — ถ้าเห็น `❌❌` ให้หยุดวิเคราะห์ก่อน (อย่าใช้ผล)
-2. ดึง `results_klauspost_ab.json` มาสรุป + อัปเดตสไลด์ `docs/compression-gap-go-vs-java.md` ด้วยตัวเลข VM จริง
-3. จัด Grafana dashboard (metric prefix `pgp_bench_`, PromQL ตัวอย่างใน `scripts/vm/README.md`)
-4. **Step 2 (ค้าง)**: push branch ขึ้น remote + เปิด PR — ยังไม่ทำ รอผู้ใช้ตัดสินใจ
+2. ดึง `results_klauspost_ab.json` จาก VM มาที่ `report/` แล้ว **สร้าง report v3 สำหรับพรีเซนต์**:
+   ```bash
+   scp tikxd@10.110.1.42:~/POC-Encryption/report/results_klauspost_ab.json report/
+   python3 report/build_klauspost_report.py          # → report/klauspost_report_v3.html
+   open report/klauspost_report_v3.html              # เปิดดู (self-contained, ไม่ต้องต่อเน็ต)
+   ```
+   - report v3 = HTML หน้าเดียว มีแท็บ: สรุปผล / Filetype×KeyAlg / Size Gradient / Production Load / Scaling / Correctness
+   - กราฟเป็น inline SVG (ไม่พึ่ง CDN) → เปิดออฟไลน์ตอนพรีเซนต์ได้
+   - มี banner correctness (แดงถ้าเจอ roundTripOk<100% หรือ skip) + ตารางแจกแจงทุก variant
+   - speedup 2 คอลัมน์: kp vs stdlib, kp vs java (เขียว=klauspost เร็วกว่า)
+3. อัปเดตสไลด์ `docs/compression-gap-go-vs-java.md` ด้วยตัวเลข VM จริง
+4. จัด Grafana dashboard (metric prefix `pgp_bench_`, PromQL ตัวอย่างใน `scripts/vm/README.md`)
+5. **Step 2 (ค้าง)**: push branch ขึ้น remote + เปิด PR — ยังไม่ทำ รอผู้ใช้ตัดสินใจ
 
 ## ไฟล์สำคัญ
 - `scripts/vm/run_klauspost_ab.py` — ตัวรัน benchmark (มีโหมด FULL/BIG/SIZEGRAD + export .prom)
 - `scripts/vm/build_klauspost_ab.sh` — build 3 binary
 - `scripts/vm/verify_correctness.py` — ด่าน correctness
+- `report/build_klauspost_report.py` — สร้าง report v3 HTML จาก `results_klauspost_ab.json` (self-contained, พร้อมใช้แล้ว ทดสอบ render ผ่าน)
 - `scripts/vm/README.md` — วิธีรัน + Grafana/PromQL + gotchas
 - `docs/PROGRESS-go-klauspost-experiment.md` — progress ละเอียด
 - `runners/go/third_party/go-crypto/` — fork (สลับ zlib ใน openpgp/packet/compressed.go)
