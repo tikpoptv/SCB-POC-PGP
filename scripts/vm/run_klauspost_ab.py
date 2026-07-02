@@ -149,38 +149,57 @@ def kcs():
     return _KCS
 
 # ── corpus generators ──────────────────────────────────────────────────────
+# เขียนไฟล์เป็น chunk เพื่อ (1) รองรับไฟล์ใหญ่ 300MB (2) คุม memory
+# (3) เลี่ยง rng.randbytes ก้อนใหญ่ที่ overflow C int limit ของ getrandbits)
+_GEN_CHUNK = 8 * 1024 * 1024   # 8MB
+
 def gen_text(dest, n, size_kb):
     dest.mkdir(parents=True, exist_ok=True)
     rng = random.Random(42)
     vocab = "the quick brown fox jumps over lazy dog data encrypt secure file process network request response service application".split()
+    nbytes = size_kb * 1024
     for i in range(n):
-        target = size_kb * 1024
-        buf, total = [], 0
-        while total < target:
-            line = " ".join(rng.choices(vocab, k=rng.randint(8, 20))) + "\n"
-            buf.append(line); total += len(line)
-        content = ("".join(buf)[:target]).ljust(target)
-        (dest / f"file{i:04d}.txt").write_bytes(content.encode("ascii", "replace"))
+        with open(dest / f"file{i:04d}.txt", "wb") as f:
+            written = 0
+            while written < nbytes:
+                block, blen = [], 0
+                # สร้างทีละบล็อก ~256KB (คำสุ่มสดทุกบรรทัด → compressibility สมจริง)
+                while blen < 256 * 1024 and written + blen < nbytes:
+                    line = " ".join(rng.choices(vocab, k=rng.randint(8, 20))) + "\n"
+                    block.append(line); blen += len(line)
+                data = "".join(block).encode("ascii", "replace")
+                if written + len(data) > nbytes:
+                    data = data[:nbytes - written]
+                f.write(data); written += len(data)
 
 def gen_csv(dest, n, size_kb):
     dest.mkdir(parents=True, exist_ok=True)
     rng = random.Random(7)
+    nbytes = size_kb * 1024
     for i in range(n):
-        target = size_kb * 1024
-        buf, total = [], 0
-        while total < target:
-            row = f"{rng.randint(0,99999)},{rng.randint(0,999)},{rng.randint(0,1)},{rng.random()*1000:.2f}\n"
-            buf.append(row); total += len(row)
-        content = ("".join(buf)[:target]).ljust(target)
-        (dest / f"file{i:04d}.csv").write_bytes(content.encode("ascii", "replace"))
+        with open(dest / f"file{i:04d}.csv", "wb") as f:
+            written = 0
+            while written < nbytes:
+                block, blen = [], 0
+                while blen < 256 * 1024 and written + blen < nbytes:
+                    row = f"{rng.randint(0,99999)},{rng.randint(0,999)},{rng.randint(0,1)},{rng.random()*1000:.2f}\n"
+                    block.append(row); blen += len(row)
+                data = "".join(block).encode("ascii", "replace")
+                if written + len(data) > nbytes:
+                    data = data[:nbytes - written]
+                f.write(data); written += len(data)
 
 def gen_binary(dest, n, size_kb, ext="dat"):
     dest.mkdir(parents=True, exist_ok=True)
     rng = random.Random(42)
     nbytes = size_kb * 1024
     for i in range(n):
-        # randbytes (Py3.9+) เร็วกว่าการสุ่มทีละไบต์มาก — สำคัญตอน corpus ใหญ่
-        (dest / f"file{i:04d}.{ext}").write_bytes(rng.randbytes(nbytes))
+        with open(dest / f"file{i:04d}.{ext}", "wb") as f:
+            remaining = nbytes
+            while remaining > 0:
+                c = min(_GEN_CHUNK, remaining)   # 8MB/chunk → getrandbits ไม่ overflow
+                f.write(rng.randbytes(c))
+                remaining -= c
 
 def setup_corpus():
     print(f"📁 corpus @ {CORPUS}")
