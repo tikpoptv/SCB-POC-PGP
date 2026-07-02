@@ -1,8 +1,29 @@
 # Progress — Go klauspost compression experiment
 
 > จุดประสงค์: ทำให้ Go runner บีบอัด txt/csv เร็วขึ้นเพื่อลบช่องว่างที่ Go แพ้ Java
-> สถานะ: **หยุดพักไว้** — Step 3 เสร็จ, เหลือ Step 1 (harness vs Java) และ Step 2 (push/PR)
-> อัปเดตล่าสุด: บันทึกโดย Kiro ตามคำขอ "save stage"
+> สถานะ: **รอเทสบน VM** — โค้ด+สคริปต์พร้อมหมดแล้ว, ผู้ใช้กำลังจะเปิด VM มารันเทียบ (เก่า/ใหม่/java)
+> อัปเดตล่าสุด: ก่อนรอบเทสบน VM
+
+---
+
+## 🎯 กำลังจะทำอะไรต่อ (รอบเทสบน VM)
+
+เป้าหมายรอบนี้: วัดจริงบน VM ว่า **go-stdlib (เก่า) vs go-klauspost (ใหม่) vs java** ต่างกันแค่ไหน
+
+Checklist บน VM (ทำตาม `scripts/vm/README.md`):
+- [ ] `cd ~/POC-Encryption && git fetch && git checkout experiment/go-klauspost-compression`
+      (ถ้ายังไม่ push ให้ push ก่อน — ดู Step 2 ด้านล่าง)
+- [ ] จูน VM: `sudo cpupower frequency-set -g performance || true`
+- [ ] `bash scripts/vm/build_klauspost_ab.sh` → ได้ go-runner-klauspost + go-runner-stdlib + java jar
+- [ ] `ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`
+- [ ] เอา `report/results_klauspost_ab.json` + ตารางสรุป กลับมาให้ Kiro อัปเดต report/สไลด์
+- [ ] (ทางเลือก) interop: `cd runners/go && go test -run TestInteropKlauspostCiphertextDecryptsWithGPG -v`
+
+⚠️ ต้องมี **WARMUP ≥ 3** ไม่งั้น Java ช้าผิดปกติ (JIT cold) — เห็นชัดในเคสไฟล์เดียว
+⚠️ ต้องมีเน็ตบน VM ตอน build (baseline stdlib ต้อง `go mod tidy` ดึง go-crypto upstream)
+
+หมายเหตุ: ตอนนี้ branch **ยังไม่ push** → ก่อนรันบน VM ต้อง push ก่อน (หรือ copy ขึ้นไป)
+ถ้าจะ push ให้ทำ Step 2 ด้านล่าง
 
 ---
 
