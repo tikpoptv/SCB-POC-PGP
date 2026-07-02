@@ -1,8 +1,29 @@
 # Progress — Go klauspost compression experiment
 
 > จุดประสงค์: ทำให้ Go runner บีบอัด txt/csv เร็วขึ้นเพื่อลบช่องว่างที่ Go แพ้ Java
-> สถานะ: **รอเทสบน VM** — โค้ด+สคริปต์พร้อมหมดแล้ว, ผู้ใช้กำลังจะเปิด VM มารันเทียบ (เก่า/ใหม่/java)
-> อัปเดตล่าสุด: ก่อนรอบเทสบน VM
+> สถานะ: **VM พร้อมรันแล้ว** — เชื่อม VM 122 (tikxd@10.110.1.42) + เตรียมทรัพยากรครบ + validate chain ถึง Grafana แล้ว
+> อัปเดตล่าสุด: หลังเตรียม VM เสร็จ (pre-flight ผ่าน)
+
+## ✅ สถานะ VM 122 (10.110.1.42) — พร้อมรัน
+- Go 1.24.3 ติดตั้งแล้ว (/usr/local/go), Java 25, python3.12, gpg, git, mvnw ✅
+- branch `experiment/go-klauspost-compression` อยู่บน VM (ส่งผ่าน git bundle) ✅
+- build ครบ 3: go-runner-klauspost (173 klauspost symbols), go-runner-stdlib (0), java jar ✅
+- keys ครบ rsa2048/rsa4096/cv25519 ✅
+- node_exporter รัน + textfile dir `/var/lib/node_exporter/textfile_collector` (tikxd เขียนได้) ✅
+- **pre-flight dry-run ผ่าน**: quick 7 scenarios รันได้, เขียน `.prom`, node_exporter expose 350 บรรทัด `pgp_bench_*` ที่ :9100 → Prometheus/Grafana เห็นแล้ว ✅
+- corpus แนะนำใช้ disk: `POC_CORPUS=$HOME/corpus-kp` (disk / ว่าง 48G; crypto time วัดใน runner ไม่ขึ้นกับ I/O)
+- CPU governor: VM ไม่มี cpufreq (host คุม) — ข้ามได้
+
+### คำสั่งรันจริงบน VM (FULL — กว้างเท่า run_v5 + 300MB + จำนวนไฟล์)
+```bash
+ssh tikxd@10.110.1.42
+cd ~/POC-Encryption && export PATH=$PATH:/usr/local/go/bin
+# รันยาว (หลาย ชม.) แนะนำ nohup กัน SSH หลุด
+POC_CORPUS=$HOME/corpus-kp FULL=1 ROUNDS=5 WARMUP=3 \
+  NODE_EXPORTER_TEXTFILE_DIR=/var/lib/node_exporter/textfile_collector \
+  nohup python3 scripts/vm/run_klauspost_ab.py > ~/kp_full.log 2>&1 &
+tail -f ~/kp_full.log
+```
 
 ---
 
