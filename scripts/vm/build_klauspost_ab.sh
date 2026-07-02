@@ -45,28 +45,30 @@ trap - EXIT
 echo "  ✓ $OUT/go-runner-stdlib"
 
 # verify ว่า binary klauspost มี symbol ของ klauspost จริง (stdlib ต้องไม่มี)
+# ใช้ grep -c (อ่านครบทั้ง stream ไม่ early-exit) กัน SIGPIPE ตอน pipefail
 echo ""
 echo "== verify klauspost linkage =="
-if go tool nm "$OUT/go-runner-klauspost" 2>/dev/null | grep -q 'klauspost/compress'; then
-  echo "  ✓ go-runner-klauspost  -> มี klauspost/compress"
-else
-  echo "  ⚠ go-runner-klauspost  -> ไม่พบ symbol klauspost (ตรวจ build)"
-fi
-if go tool nm "$OUT/go-runner-stdlib" 2>/dev/null | grep -q 'klauspost/compress'; then
-  echo "  ⚠ go-runner-stdlib     -> ไม่ควรมี klauspost แต่กลับเจอ"
-else
-  echo "  ✓ go-runner-stdlib     -> ไม่มี klauspost (ใช้ stdlib)"
-fi
+kp_syms=$(go tool nm "$OUT/go-runner-klauspost" 2>/dev/null | grep -c 'klauspost/compress' || true)
+std_syms=$(go tool nm "$OUT/go-runner-stdlib" 2>/dev/null | grep -c 'klauspost/compress' || true)
+[ "${kp_syms:-0}" -gt 0 ] \
+  && echo "  ✓ go-runner-klauspost  -> มี klauspost/compress ($kp_syms symbols)" \
+  || echo "  ⚠ go-runner-klauspost  -> ไม่พบ symbol klauspost (ตรวจ build)"
+[ "${std_syms:-0}" -eq 0 ] \
+  && echo "  ✓ go-runner-stdlib     -> ไม่มี klauspost (ใช้ stdlib)" \
+  || echo "  ⚠ go-runner-stdlib     -> ไม่ควรมี klauspost แต่เจอ $std_syms symbols"
 
 # --- 3) Java runner --------------------------------------------------------
 echo ""
 echo "[3/3] build java-runner jar"
 cd "$JAVA_DIR"
-if command -v mvn >/dev/null 2>&1; then
+if [ -x "./mvnw" ]; then
+  ./mvnw -q -DskipTests package
+  echo "  ✓ $(ls -1 "$JAVA_DIR"/target/*-runner-*.jar 2>/dev/null | head -1)"
+elif command -v mvn >/dev/null 2>&1; then
   mvn -q -DskipTests package
   echo "  ✓ $(ls -1 "$JAVA_DIR"/target/*-runner-*.jar 2>/dev/null | head -1)"
 else
-  echo "  ⚠ ไม่พบ mvn — ข้าม build Java (ถ้ามี jar อยู่แล้วจะใช้ตัวเดิม)"
+  echo "  ⚠ ไม่พบ ./mvnw และ mvn — ข้าม build Java (ถ้ามี jar อยู่แล้วจะใช้ตัวเดิม)"
 fi
 
 echo ""
