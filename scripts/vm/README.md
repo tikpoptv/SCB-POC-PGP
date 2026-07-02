@@ -49,7 +49,13 @@ FULL=1 BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
 | concurrent | stream-parallel, concurrency 1/2/4/8 |
 | size gradient | (รวมให้อัตโนมัติ) 1KB→300MB/ไฟล์ ทุกสกุล, in-memory cap 256MB |
 
-ปรับได้ผ่าน env: `FULL_KEY_ALGS`, `FULL_FILETYPES`, `FULL_COUNTS`, `FULL_CONC`
+| **file-count** (รวม BIG อัตโนมัติ) | txt 1300 / csv 450 / pdf 350 / zip 30 (ตามระบบเดิม +เผื่อ) |
+
+**FULL ครอบทั้ง SIZEGRAD และ BIG ให้อัตโนมัติ** → `FULL=1` ครบทั้ง 2 เงื่อนไข:
+1. ✅ ทุกสกุล (txt/csv/pdf/zip) วัดถึง **300MB/ไฟล์** (size gradient)
+2. ✅ เทส **จำนวนไฟล์** ตามระบบเดิม txt 1200/csv 400/pdf 300/zip 20 (เทสจริง 1300/450/350/30)
+
+ปรับได้ผ่าน env: `FULL_KEY_ALGS`, `FULL_FILETYPES`, `FULL_COUNTS`, `FULL_CONC`, `PROD_*_N/KB`, `SIZEGRAD_*`
 - ⚠️ FULL ใช้เวลานานมาก (หลายชั่วโมง) — เหมาะรันทิ้งไว้บน VM
 - ต้องมี key ครบ (rsa2048/rsa4096/cv25519) ใน `keys/`
 

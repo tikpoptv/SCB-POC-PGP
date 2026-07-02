@@ -83,6 +83,10 @@ FULL_CONC = [int(x) for x in os.getenv("FULL_CONC", "1,2,4,8").split(",") if x.s
 
 SIZEGRAD = (os.getenv("SIZEGRAD", "0") not in ("0", "", "false", "no")) or FULL
 INMEM_CAP_MB = int(os.getenv("INMEM_CAP_MB", "256"))
+
+# FULL ครอบทั้ง size gradient (SIZEGRAD) และ เทสจำนวนไฟล์ตามระบบเดิม (BIG)
+# → FULL=1 ครบทั้ง 2 เงื่อนไข: (1) ทุกสกุลถึง 300MB  (2) จำนวนไฟล์ txt/csv/pdf/zip
+BIG = BIG or FULL
 # สเต็ปขนาด (KB) ปรับได้ผ่าน env SIZEGRAD_STEPS_KB (คั่นด้วย comma)
 _DEFAULT_STEPS = "1,64,512,4096,16384,65536,131072,262144,307200"  # 1KB..300MB
 SIZEGRAD_STEPS_KB = [int(x) for x in os.getenv("SIZEGRAD_STEPS_KB", _DEFAULT_STEPS).split(",") if x.strip()]
