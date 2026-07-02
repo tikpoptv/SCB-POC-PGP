@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POC: Java comeback ด้วย zlib-ng — ผลจริงบน VM</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f2f5;color:#2c3e50;font-size:14px}
+.wrap{max-width:1280px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:36px;
+  border-radius:12px;margin-bottom:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.hdr h1{font-size:24px;font-weight:800;margin-bottom:6px}
+.hdr .sub{font-size:13px;opacity:.85;margin-bottom:14px;line-height:1.6}
+.hdr .meta{font-size:11px;opacity:.65;display:flex;gap:18px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;margin-bottom:0;flex-wrap:wrap}
+.tab{padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600;
+  font-size:13px;border:none;background:#dde1e7;color:#555;transition:.2s}
+.tab.active{background:#fff;color:#0f3460;box-shadow:0 -2px 8px rgba(0,0,0,.08)}
+.tab:hover{background:#e8eaed}
+.page{display:none;background:#fff;border-radius:0 12px 12px 12px;padding:28px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:20px}
+.page.active{display:block}
+.card{background:#f8f9fa;border-radius:10px;padding:22px;margin-bottom:18px;border:1px solid #e9ecef}
+h2{font-size:18px;font-weight:700;color:#1a1a2e;border-left:4px solid #00ADE8;padding-left:12px;margin-bottom:16px}
+h3{font-size:15px;font-weight:600;color:#2c3e50;margin:16px 0 8px}
+p,li{line-height:1.8;color:#444}
+ul{padding-left:20px}
+.verdict{background:linear-gradient(135deg,#00ADE8,#0078a8);color:#fff;padding:22px;
+  border-radius:10px;text-align:center;margin-bottom:18px}
+.verdict .big{font-size:32px;font-weight:900}
+.verdict .vsub{font-size:14px;opacity:.92;margin-top:6px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+.sbox{background:#fff;border-radius:10px;padding:16px;text-align:center;border:2px solid #e9ecef;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.sbox .val{font-size:26px;font-weight:800}
+.sbox .lbl{font-size:11px;color:#6c757d;margin-top:3px}
+.go-b{border-color:#00ADE8}.go-b .val{color:#00ADE8}
+.java-b{border-color:#F89820}.java-b .val{color:#F89820}
+.green-b{border-color:#27ae60}.green-b .val{color:#27ae60}
+.gray-b{border-color:#7f8c8d}.gray-b .val{color:#7f8c8d}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#1a1a2e;color:#fff;padding:10px 9px;text-align:left;font-weight:600;white-space:nowrap}
+td{padding:9px;border-bottom:1px solid #e9ecef;vertical-align:middle}
+tr:hover td{background:#f0f4f8}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.win{color:#27ae60;font-weight:700}
+.lose{color:#e74c3c;font-weight:700}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.ok{background:#d4edda;color:#1e7e34}
+.bad{background:#f8d7da;color:#a71d2a}
+.hi{background:#fff3cd;border-left:4px solid #ffc107;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.info{background:#d1ecf1;border-left:4px solid #17a2b8;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.okbar{background:linear-gradient(135deg,#27ae60,#1e8449);color:#fff;padding:18px 22px;border-radius:10px;margin-bottom:18px;font-size:15px;font-weight:700}
+.errbar{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;padding:18px 22px;border-radius:10px;margin-bottom:18px;font-size:15px;font-weight:700}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;margin:8px 0 14px}
+.legend .k{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.chart-box{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:16px}
+.chart-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+.chart-sub{font-size:11px;color:#888;margin-bottom:10px}
+footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}}
+</style></head><body><div class="wrap">
+<div class="hdr">
+  <h1>🏁 POC: Java comeback ด้วย zlib-ng ได้แค่ไหน?</h1>
+  <div class="sub">คำถามต่อจาก report v3 (Go+klauspost ชนะ): ถ้าให้ Java ได้โมชั้นบีบอัดบ้าง
+  (LD_PRELOAD zlib-ng — ไม่แก้โค้ด) จะไล่ทันมั้ย? · เทียบ 3 ทาง: java / java+zlib-ng / go-klauspost</div>
+  <div class="meta">
+    <span>📅 เริ่ม: 2026-07-02 08:48:14 UTC</span>
+    <span>⏱ ใช้เวลารัน: 23 นาที</span>
+    <span>🔁 ROUNDS=5 WARMUP=3</span>
+    <span>🌿 experiment/go-klauspost-compression</span>
+    <span>🧬 zlib-ng 1.3.1 (zlib-compat)</span>
+  </div>
+</div>
+<div class="tabs"><button class="tab active" id="tab-summary" onclick="showTab('summary')">📊 สรุปผล</button><button class="tab" id="tab-why" onclick="showTab('why')">🔬 ทำไม csv ฟื้น txt ไม่ฟื้น</button><button class="tab" id="tab-encdec" onclick="showTab('encdec')">🔀 เข้า vs ถอด</button><button class="tab" id="tab-method" onclick="showTab('method')">🧪 วิธีทดสอบ + Correctness</button></div>
+<div class="page active" id="page-summary">
+<div class="verdict">
+  <div class="big">Java comeback ได้ครึ่งสนาม 🟡</div>
+  <div class="vsub">LD_PRELOAD zlib-ng (ไม่แก้โค้ด Java เลย) → <b>csv เร็วขึ้น 3.0× จนแซง klauspost เล็กน้อย</b><br>
+  แต่ <b>txt ได้แค่ 1.32× — klauspost ยังนำ 2.4×</b> ข้อสรุปหลักของ experiment เดิมยังยืน</div>
+</div>
+<div class="legend"><span><span class="k" style="background:#F89820"></span>Java (libz ระบบ)</span><span><span class="k" style="background:#27ae60"></span>Java + zlib-ng (LD_PRELOAD)</span><span><span class="k" style="background:#00ADE8"></span>Go klauspost (เป้าที่ต้องไล่)</span></div>
+<div class="stats">
+  <div class="sbox green-b"><div class="val">3.0×</div><div class="lbl">csv: zlib-ng ช่วย Java (เฉลี่ย)</div></div>
+  <div class="sbox green-b"><div class="val">1.05×</div><div class="lbl">csv: Java+zlib-ng ชนะ klauspost</div></div>
+  <div class="sbox java-b"><div class="val">1.32×</div><div class="lbl">txt: zlib-ng ช่วย Java (เฉลี่ย)</div></div>
+  <div class="sbox go-b"><div class="val">2.4×</div><div class="lbl">txt: klauspost ยังนำ</div></div>
+</div>
+<div class="chart-box"><div class="chart-title">ภาพรวม: zlib-ng ดัน Java ขึ้นมาแค่ไหน</div><div class="chart-sub">p50 roundtrip ต่อ scenario (ต่ำ = ดี) — hover ดูค่า</div><svg viewBox="0 0 760 282" width="100%" style="max-width:760px" font-family="Segoe UI,Arial" font-size="11"><line x1="56" y1="18.0" x2="606" y2="18.0" stroke="#e9ecef"/><text x="50" y="22.0" text-anchor="end" fill="#888">8,448</text><line x1="56" y1="73.0" x2="606" y2="73.0" stroke="#e9ecef"/><text x="50" y="77.0" text-anchor="end" fill="#888">6,336</text><line x1="56" y1="128.0" x2="606" y2="128.0" stroke="#e9ecef"/><text x="50" y="132.0" text-anchor="end" fill="#888">4,224</text><line x1="56" y1="183.0" x2="606" y2="183.0" stroke="#e9ecef"/><text x="50" y="187.0" text-anchor="end" fill="#888">2,112</text><line x1="56" y1="238.0" x2="606" y2="238.0" stroke="#e9ecef"/><text x="50" y="242.0" text-anchor="end" fill="#888">0</text><text x="12" y="128" transform="rotate(-90 12 128)" text-anchor="middle" fill="#888">ms</text><rect x="56" y="237.1" width="26" height="0.9" rx="3" fill="#F89820"><title>Java (BC) — csv 512KB×15: 34.4 ms</title></rect><text x="69.0" y="233.1" text-anchor="middle" fill="#555" font-size="10">34</text><rect x="86" y="237.7" width="26" height="0.3" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 512KB×15: 11.9 ms</title></rect><text x="99.0" y="233.7" text-anchor="middle" fill="#555" font-size="10">12</text><rect x="116" y="237.7" width="26" height="0.3" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 512KB×15: 12.5 ms</title></rect><text x="129.0" y="233.7" text-anchor="middle" fill="#555" font-size="10">12</text><text x="99.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 512KB×15</text><rect x="172" y="210.3" width="26" height="27.7" rx="3" fill="#F89820"><title>Java (BC) — csv 16MB: 1.06 s</title></rect><text x="185.0" y="206.3" text-anchor="middle" fill="#555" font-size="10">1,063</text><rect x="202" y="229.2" width="26" height="8.8" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 16MB: 337.4 ms</title></rect><text x="215.0" y="225.2" text-anchor="middle" fill="#555" font-size="10">337</text><rect x="232" y="228.3" width="26" height="9.7" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 16MB: 371.2 ms</title></rect><text x="245.0" y="224.3" text-anchor="middle" fill="#555" font-size="10">371</text><text x="215.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 16MB</text><rect x="288" y="18.0" width="26" height="220.0" rx="3" fill="#F89820"><title>Java (BC) — csv 128MB: 8.45 s</title></rect><text x="301.0" y="14.0" text-anchor="middle" fill="#555" font-size="10">8,448</text><rect x="318" y="169.3" width="26" height="68.7" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 128MB: 2.64 s</title></rect><text x="331.0" y="165.3" text-anchor="middle" fill="#555" font-size="10">2,638</text><rect x="348" y="162.1" width="26" height="75.9" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 128MB: 2.92 s</title></rect><text x="361.0" y="158.1" text-anchor="middle" fill="#555" font-size="10">2,916</text><text x="331.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 128MB</text><rect x="404" y="225.1" width="26" height="12.9" rx="3" fill="#F89820"><title>Java (BC) — txt 16MB: 496.7 ms</title></rect><text x="417.0" y="221.1" text-anchor="middle" fill="#555" font-size="10">497</text><rect x="434" y="228.1" width="26" height="9.9" rx="3" fill="#27ae60"><title>Java + zlib-ng — txt 16MB: 378.7 ms</title></rect><text x="447.0" y="224.1" text-anchor="middle" fill="#555" font-size="10">379</text><rect x="464" y="233.9" width="26" height="4.1" rx="3" fill="#00ADE8"><title>Go (klauspost) — txt 16MB: 158.2 ms</title></rect><text x="477.0" y="229.9" text-anchor="middle" fill="#555" font-size="10">158</text><text x="447.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">txt 16MB</text><rect x="520" y="135.8" width="26" height="102.2" rx="3" fill="#F89820"><title>Java (BC) — txt 128MB: 3.92 s</title></rect><text x="533.0" y="131.8" text-anchor="middle" fill="#555" font-size="10">3,923</text><rect x="550" y="162.1" width="26" height="75.9" rx="3" fill="#27ae60"><title>Java + zlib-ng — txt 128MB: 2.91 s</title></rect><text x="563.0" y="158.1" text-anchor="middle" fill="#555" font-size="10">2,913</text><rect x="580" y="205.4" width="26" height="32.6" rx="3" fill="#00ADE8"><title>Go (klauspost) — txt 128MB: 1.25 s</title></rect><text x="593.0" y="201.4" text-anchor="middle" fill="#555" font-size="10">1,253</text><text x="563.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">txt 128MB</text></svg></div>
+<div class="card">
+<h2>ตารางผลเต็ม (ทุก scenario)</h2>
+<p style="margin-bottom:10px">"zlib-ng ช่วย" = java/java-zlibng (&gt;1 = เร็วขึ้น) ·
+"เทียบ klauspost" = ฝั่งไหนเร็วกว่าและกี่เท่า (มุมมอง Java+zlib-ng)</p>
+<table><tr><th>Scenario</th><th>Java (p50)</th><th>Java+zlib-ng (p50)</th><th>Go klauspost (p50)</th><th>zlib-ng ช่วย</th><th>เทียบ klauspost</th></tr><tr><td>txt-512KB×15</td><td class="num">16.8 ms</td><td class="num" style="color:#27ae60;font-weight:700">12.8 ms</td><td class="num">5.94 ms</td><td class="num win">1.31×</td><td class="num lose">แพ้ 2.16×</td></tr><tr><td>csv-512KB×15</td><td class="num">34.4 ms</td><td class="num" style="color:#27ae60;font-weight:700">11.9 ms</td><td class="num">12.5 ms</td><td class="num win">2.90×</td><td class="num win">ชนะ 1.05×</td></tr><tr><td>dat-512KB×15</td><td class="num">13.9 ms</td><td class="num" style="color:#27ae60;font-weight:700">11.6 ms</td><td class="num">5.21 ms</td><td class="num win">1.20×</td><td class="num lose">แพ้ 2.23×</td></tr><tr><td>sg-txt-1MB</td><td class="num">35.4 ms</td><td class="num" style="color:#27ae60;font-weight:700">27.0 ms</td><td class="num">10.7 ms</td><td class="num win">1.31×</td><td class="num lose">แพ้ 2.53×</td></tr><tr><td>sg-csv-1MB</td><td class="num">70.0 ms</td><td class="num" style="color:#27ae60;font-weight:700">25.5 ms</td><td class="num">24.2 ms</td><td class="num win">2.74×</td><td class="num lose">แพ้ 1.05×</td></tr><tr><td>sg-txt-16MB</td><td class="num">496.7 ms</td><td class="num" style="color:#27ae60;font-weight:700">378.7 ms</td><td class="num">158.2 ms</td><td class="num win">1.31×</td><td class="num lose">แพ้ 2.39×</td></tr><tr><td>sg-csv-16MB</td><td class="num">1.06 s</td><td class="num" style="color:#27ae60;font-weight:700">337.4 ms</td><td class="num">371.2 ms</td><td class="num win">3.15×</td><td class="num win">ชนะ 1.10×</td></tr><tr><td>sg-txt-128MB</td><td class="num">3.92 s</td><td class="num" style="color:#27ae60;font-weight:700">2.91 s</td><td class="num">1.25 s</td><td class="num win">1.35×</td><td class="num lose">แพ้ 2.33×</td></tr><tr><td>sg-csv-128MB</td><td class="num">8.45 s</td><td class="num" style="color:#27ae60;font-weight:700">2.64 s</td><td class="num">2.92 s</td><td class="num win">3.20×</td><td class="num win">ชนะ 1.11×</td></tr></table>
+</div>
+<div class="info">💡 <b>วิธีโม:</b> Deflater ของ JDK เรียก libz.so ของระบบแบบ dynamic →
+ใช้ <code>LD_PRELOAD</code> สลับเป็น zlib-ng 1.3.1 (โหมด zlib-compat, มี AVX2/AVX512) ตอนเปิด JVM
+โดยไม่แตะโค้ด Java สักบรรทัด — output ยังเป็น ZLIB มาตรฐาน (ยืนยันแล้ว: gpg ถอดได้ byte-for-byte,
+packet เป็น algo=2 ปกติ)</div>
+</div><div class="page" id="page-why">
+<h2>ทำไม csv ฟื้นสุดตัว แต่ txt ฟื้นนิดเดียว?</h2>
+<p>zlib-ng ไม่ได้เร่ง deflate ทุกส่วนเท่ากัน — มันเร่งด้วย SIMD (AVX2/AVX512) ตรงส่วน
+<b>match finding / hash chain</b> ซึ่งเป็นคอขวดของข้อมูลแบบ csv (แพทเทิร์นสั้น ซ้ำถี่ ตัวเลขล้วน)
+ส่วน txt ของเรา (ประโยคคำสุ่ม ซ้ำยาวกว่า กระจายกว่า) คอขวดไปอยู่ที่ส่วนอื่นของอัลกอริทึม
+ที่ zlib-ng ช่วยได้น้อยกว่า จึงเห็น gain ต่างกันชัด:</p>
+<div class="stats">
+  <div class="sbox green-b"><div class="val">2.7–3.2×</div><div class="lbl">csv: gain จาก zlib-ng (ทุกขนาด)</div></div>
+  <div class="sbox java-b"><div class="val">1.31–1.35×</div><div class="lbl">txt: gain จาก zlib-ng (ทุกขนาด)</div></div>
+</div>
+<div class="legend"><span><span class="k" style="background:#F89820"></span>Java (libz ระบบ)</span><span><span class="k" style="background:#27ae60"></span>Java + zlib-ng (LD_PRELOAD)</span><span><span class="k" style="background:#00ADE8"></span>Go klauspost (เป้าที่ต้องไล่)</span></div>
+<div class="chart-box"><div class="chart-title">Size gradient — txt (สเกล log-log)</div><div class="chart-sub">ช่องว่างแนวตั้งคงที่ = อัตราส่วนคงที่ · hover ดูค่า</div><svg viewBox="0 0 760 300" width="100%" style="max-width:760px" font-family="Segoe UI,Arial" font-size="11"><line x1="64" y1="260.0" x2="744" y2="260.0" stroke="#e9ecef"/><text x="58" y="264.0" text-anchor="end" fill="#888">10</text><line x1="64" y1="178.0" x2="744" y2="178.0" stroke="#e9ecef"/><text x="58" y="182.0" text-anchor="end" fill="#888">100</text><line x1="64" y1="96.0" x2="744" y2="96.0" stroke="#e9ecef"/><text x="58" y="100.0" text-anchor="end" fill="#888">1,000</text><line x1="64" y1="14.0" x2="744" y2="14.0" stroke="#e9ecef"/><text x="58" y="18.0" text-anchor="end" fill="#888">10,000</text><text x="64.0" y="276" text-anchor="middle" fill="#888">1MB</text><text x="452.6" y="276" text-anchor="middle" fill="#888">16MB</text><text x="744.0" y="276" text-anchor="middle" fill="#888">128MB</text><text x="14" y="137" transform="rotate(-90 14 137)" text-anchor="middle" fill="#888">ms (log)</text><path d="M64.0,215.0 L452.6,120.9 L744.0,47.3" fill="none" stroke="#F89820" stroke-width="2.5" pointer-events="none"/><circle cx="64.0" cy="215.0" r="3.5" fill="#F89820"/><circle cx="64.0" cy="215.0" r="10" fill="transparent"><title>Java (BC) @ 1MB: 35.4 ms</title></circle><circle cx="452.6" cy="120.9" r="3.5" fill="#F89820"/><circle cx="452.6" cy="120.9" r="10" fill="transparent"><title>Java (BC) @ 16MB: 496.7 ms</title></circle><circle cx="744.0" cy="47.3" r="3.5" fill="#F89820"/><circle cx="744.0" cy="47.3" r="10" fill="transparent"><title>Java (BC) @ 128MB: 3.92 s</title></circle><path d="M64.0,224.6 L452.6,130.6 L744.0,57.9" fill="none" stroke="#27ae60" stroke-width="2.5" pointer-events="none"/><circle cx="64.0" cy="224.6" r="3.5" fill="#27ae60"/><circle cx="64.0" cy="224.6" r="10" fill="transparent"><title>Java + zlib-ng @ 1MB: 27.0 ms</title></circle><circle cx="452.6" cy="130.6" r="3.5" fill="#27ae60"/><circle cx="452.6" cy="130.6" r="10" fill="transparent"><title>Java + zlib-ng @ 16MB: 378.7 ms</title></circle><circle cx="744.0" cy="57.9" r="3.5" fill="#27ae60"/><circle cx="744.0" cy="57.9" r="10" fill="transparent"><title>Java + zlib-ng @ 128MB: 2.91 s</title></circle><path d="M64.0,257.7 L452.6,161.7 L744.0,88.0" fill="none" stroke="#00ADE8" stroke-width="2.5" pointer-events="none"/><circle cx="64.0" cy="257.7" r="3.5" fill="#00ADE8"/><circle cx="64.0" cy="257.7" r="10" fill="transparent"><title>Go (klauspost) @ 1MB: 10.7 ms</title></circle><circle cx="452.6" cy="161.7" r="3.5" fill="#00ADE8"/><circle cx="452.6" cy="161.7" r="10" fill="transparent"><title>Go (klauspost) @ 16MB: 158.2 ms</title></circle><circle cx="744.0" cy="88.0" r="3.5" fill="#00ADE8"/><circle cx="744.0" cy="88.0" r="10" fill="transparent"><title>Go (klauspost) @ 128MB: 1.25 s</title></circle></svg></div><div class="chart-box"><div class="chart-title">Size gradient — csv (สเกล log-log)</div><div class="chart-sub">ช่องว่างแนวตั้งคงที่ = อัตราส่วนคงที่ · hover ดูค่า</div><svg viewBox="0 0 760 300" width="100%" style="max-width:760px" font-family="Segoe UI,Arial" font-size="11"><line x1="64" y1="260.0" x2="744" y2="260.0" stroke="#e9ecef"/><text x="58" y="264.0" text-anchor="end" fill="#888">10</text><line x1="64" y1="178.0" x2="744" y2="178.0" stroke="#e9ecef"/><text x="58" y="182.0" text-anchor="end" fill="#888">100</text><line x1="64" y1="96.0" x2="744" y2="96.0" stroke="#e9ecef"/><text x="58" y="100.0" text-anchor="end" fill="#888">1,000</text><line x1="64" y1="14.0" x2="744" y2="14.0" stroke="#e9ecef"/><text x="58" y="18.0" text-anchor="end" fill="#888">10,000</text><text x="64.0" y="276" text-anchor="middle" fill="#888">1MB</text><text x="452.6" y="276" text-anchor="middle" fill="#888">16MB</text><text x="744.0" y="276" text-anchor="middle" fill="#888">128MB</text><text x="14" y="137" transform="rotate(-90 14 137)" text-anchor="middle" fill="#888">ms (log)</text><path d="M64.0,190.7 L452.6,93.8 L744.0,20.0" fill="none" stroke="#F89820" stroke-width="2.5" pointer-events="none"/><circle cx="64.0" cy="190.7" r="3.5" fill="#F89820"/><circle cx="64.0" cy="190.7" r="10" fill="transparent"><title>Java (BC) @ 1MB: 70.0 ms</title></circle><circle cx="452.6" cy="93.8" r="3.5" fill="#F89820"/><circle cx="452.6" cy="93.8" r="10" fill="transparent"><title>Java (BC) @ 16MB: 1.06 s</title></circle><circle cx="744.0" cy="20.0" r="3.5" fill="#F89820"/><circle cx="744.0" cy="20.0" r="10" fill="transparent"><title>Java (BC) @ 128MB: 8.45 s</title></circle><path d="M64.0,226.7 L452.6,134.7 L744.0,61.4" fill="none" stroke="#27ae60" stroke-width="2.5" pointer-events="none"/><circle cx="64.0" cy="226.7" r="3.5" fill="#27ae60"/><circle cx="64.0" cy="226.7" r="10" fill="transparent"><title>Java + zlib-ng @ 1MB: 25.5 ms</title></circle><circle cx="452.6" cy="134.7" r="3.5" fill="#27ae60"/><circle cx="452.6" cy="134.7" r="10" fill="transparent"><title>Java + zlib-ng @ 16MB: 337.4 ms</title></circle><circle cx="744.0" cy="61.4" r="3.5" fill="#27ae60"/><circle cx="744.0" cy="61.4" r="10" fill="transparent"><title>Java + zlib-ng @ 128MB: 2.64 s</title></circle><path d="M64.0,228.6 L452.6,131.3 L744.0,57.9" fill="none" stroke="#00ADE8" stroke-width="2.5" pointer-events="none"/><circle cx="64.0" cy="228.6" r="3.5" fill="#00ADE8"/><circle cx="64.0" cy="228.6" r="10" fill="transparent"><title>Go (klauspost) @ 1MB: 24.2 ms</title></circle><circle cx="452.6" cy="131.3" r="3.5" fill="#00ADE8"/><circle cx="452.6" cy="131.3" r="10" fill="transparent"><title>Go (klauspost) @ 16MB: 371.2 ms</title></circle><circle cx="744.0" cy="57.9" r="3.5" fill="#00ADE8"/><circle cx="744.0" cy="57.9" r="10" fill="transparent"><title>Go (klauspost) @ 128MB: 2.92 s</title></circle></svg></div>
+<div class="card">
+<h3>Compression ratio ไม่เสีย</h3>
+<p>ที่ 128MB: txt — java 6.41× vs zlib-ng 6.41× ·
+csv — java 2.20× vs zlib-ng 2.19×
+(zlib-ng level เดียวกัน บีบได้เท่าเดิม ไม่ได้แลกความเร็วกับขนาด)</p>
+<p style="margin-top:8px">ส่วน klauspost ratio ต่ำกว่าเล็กน้อย (txt 5.36× vs 6.41×) —
+เร็วกว่าแต่บีบหลวมกว่านิดหน่อย เป็น trade-off ที่รู้อยู่แล้วจาก report v3</p>
+</div>
+<div class="hi">⚠️ <b>ข้อจำกัดของข้อสรุปนี้:</b> corpus เป็น synthetic — csv จริงของ production
+อาจมีสัดส่วน text ปนมากกว่า ทำให้ gain อยู่ระหว่าง 1.3×–3.2× · จุดที่ควรจำ:
+gain ของ zlib-ng <b>ขึ้นกับชนิดข้อมูลแรงมาก</b> ต่างจาก klauspost ที่สม่ำเสมอกว่า</div>
+</div><div class="page" id="page-encdec">
+<h2>เข้า vs ถอด — zlib-ng ช่วยทั้งสองขา</h2>
+<p>ต่างจาก klauspost ที่ gain เกือบทั้งหมดอยู่ฝั่ง encrypt — zlib-ng เร่งทั้ง deflate (เข้า)
+และ inflate (ถอด) เพราะสลับที่ระดับไลบรารี C ทั้งก้อน:</p>
+<div class="legend"><span><span class="k" style="background:#F89820"></span>Java (libz ระบบ)</span><span><span class="k" style="background:#27ae60"></span>Java + zlib-ng (LD_PRELOAD)</span><span><span class="k" style="background:#00ADE8"></span>Go klauspost (เป้าที่ต้องไล่)</span></div>
+<div class="chart-box"><div class="chart-title">เฉพาะเข้ารหัส (encrypt = compress+encrypt)</div><div class="chart-sub">enc p50 — ฝั่งที่ zlib-ng ออกแรง</div><svg viewBox="0 0 760 282" width="100%" style="max-width:760px" font-family="Segoe UI,Arial" font-size="11"><line x1="56" y1="18.0" x2="490" y2="18.0" stroke="#e9ecef"/><text x="50" y="22.0" text-anchor="end" fill="#888">7,636</text><line x1="56" y1="73.0" x2="490" y2="73.0" stroke="#e9ecef"/><text x="50" y="77.0" text-anchor="end" fill="#888">5,727</text><line x1="56" y1="128.0" x2="490" y2="128.0" stroke="#e9ecef"/><text x="50" y="132.0" text-anchor="end" fill="#888">3,818</text><line x1="56" y1="183.0" x2="490" y2="183.0" stroke="#e9ecef"/><text x="50" y="187.0" text-anchor="end" fill="#888">1,909</text><line x1="56" y1="238.0" x2="490" y2="238.0" stroke="#e9ecef"/><text x="50" y="242.0" text-anchor="end" fill="#888">0</text><text x="12" y="128" transform="rotate(-90 12 128)" text-anchor="middle" fill="#888">ms</text><rect x="56" y="210.4" width="26" height="27.6" rx="3" fill="#F89820"><title>Java (BC) — csv 16MB: 956.6 ms</title></rect><text x="69.0" y="206.4" text-anchor="middle" fill="#555" font-size="10">957</text><rect x="86" y="230.5" width="26" height="7.5" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 16MB: 259.0 ms</title></rect><text x="99.0" y="226.5" text-anchor="middle" fill="#555" font-size="10">259</text><rect x="116" y="231.5" width="26" height="6.5" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 16MB: 226.3 ms</title></rect><text x="129.0" y="227.5" text-anchor="middle" fill="#555" font-size="10">226</text><text x="99.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 16MB</text><rect x="172" y="18.0" width="26" height="220.0" rx="3" fill="#F89820"><title>Java (BC) — csv 128MB: 7.64 s</title></rect><text x="185.0" y="14.0" text-anchor="middle" fill="#555" font-size="10">7,636</text><rect x="202" y="179.1" width="26" height="58.9" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 128MB: 2.04 s</title></rect><text x="215.0" y="175.1" text-anchor="middle" fill="#555" font-size="10">2,043</text><rect x="232" y="186.1" width="26" height="51.9" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 128MB: 1.80 s</title></rect><text x="245.0" y="182.1" text-anchor="middle" fill="#555" font-size="10">1,801</text><text x="215.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 128MB</text><rect x="288" y="225.3" width="26" height="12.7" rx="3" fill="#F89820"><title>Java (BC) — txt 16MB: 441.4 ms</title></rect><text x="301.0" y="221.3" text-anchor="middle" fill="#555" font-size="10">441</text><rect x="318" y="228.1" width="26" height="9.9" rx="3" fill="#27ae60"><title>Java + zlib-ng — txt 16MB: 342.7 ms</title></rect><text x="331.0" y="224.1" text-anchor="middle" fill="#555" font-size="10">343</text><rect x="348" y="235.4" width="26" height="2.6" rx="3" fill="#00ADE8"><title>Go (klauspost) — txt 16MB: 91.7 ms</title></rect><text x="361.0" y="231.4" text-anchor="middle" fill="#555" font-size="10">92</text><text x="331.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">txt 16MB</text><rect x="404" y="136.4" width="26" height="101.6" rx="3" fill="#F89820"><title>Java (BC) — txt 128MB: 3.52 s</title></rect><text x="417.0" y="132.4" text-anchor="middle" fill="#555" font-size="10">3,525</text><rect x="434" y="160.2" width="26" height="77.8" rx="3" fill="#27ae60"><title>Java + zlib-ng — txt 128MB: 2.70 s</title></rect><text x="447.0" y="156.2" text-anchor="middle" fill="#555" font-size="10">2,701</text><rect x="464" y="217.3" width="26" height="20.7" rx="3" fill="#00ADE8"><title>Go (klauspost) — txt 128MB: 718.2 ms</title></rect><text x="477.0" y="213.3" text-anchor="middle" fill="#555" font-size="10">718</text><text x="447.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">txt 128MB</text></svg></div><div class="chart-box"><div class="chart-title">เฉพาะถอดรหัส (decrypt = decrypt+decompress)</div><div class="chart-sub">dec p50 — โบนัส: inflate ของ zlib-ng ก็เร็วขึ้นด้วย</div><svg viewBox="0 0 760 282" width="100%" style="max-width:760px" font-family="Segoe UI,Arial" font-size="11"><line x1="56" y1="18.0" x2="490" y2="18.0" stroke="#e9ecef"/><text x="50" y="22.0" text-anchor="end" fill="#888">1,108</text><line x1="56" y1="73.0" x2="490" y2="73.0" stroke="#e9ecef"/><text x="50" y="77.0" text-anchor="end" fill="#888">831</text><line x1="56" y1="128.0" x2="490" y2="128.0" stroke="#e9ecef"/><text x="50" y="132.0" text-anchor="end" fill="#888">554</text><line x1="56" y1="183.0" x2="490" y2="183.0" stroke="#e9ecef"/><text x="50" y="187.0" text-anchor="end" fill="#888">277</text><line x1="56" y1="238.0" x2="490" y2="238.0" stroke="#e9ecef"/><text x="50" y="242.0" text-anchor="end" fill="#888">0</text><text x="12" y="128" transform="rotate(-90 12 128)" text-anchor="middle" fill="#888">ms</text><rect x="56" y="217.2" width="26" height="20.8" rx="3" fill="#F89820"><title>Java (BC) — csv 16MB: 104.7 ms</title></rect><text x="69.0" y="213.2" text-anchor="middle" fill="#555" font-size="10">105</text><rect x="86" y="222.4" width="26" height="15.6" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 16MB: 78.5 ms</title></rect><text x="99.0" y="218.4" text-anchor="middle" fill="#555" font-size="10">78</text><rect x="116" y="209.4" width="26" height="28.6" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 16MB: 143.9 ms</title></rect><text x="129.0" y="205.4" text-anchor="middle" fill="#555" font-size="10">144</text><text x="99.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 16MB</text><rect x="172" y="76.8" width="26" height="161.2" rx="3" fill="#F89820"><title>Java (BC) — csv 128MB: 811.9 ms</title></rect><text x="185.0" y="72.8" text-anchor="middle" fill="#555" font-size="10">812</text><rect x="202" y="117.3" width="26" height="120.7" rx="3" fill="#27ae60"><title>Java + zlib-ng — csv 128MB: 607.9 ms</title></rect><text x="215.0" y="113.3" text-anchor="middle" fill="#555" font-size="10">608</text><rect x="232" y="18.0" width="26" height="220.0" rx="3" fill="#00ADE8"><title>Go (klauspost) — csv 128MB: 1.11 s</title></rect><text x="245.0" y="14.0" text-anchor="middle" fill="#555" font-size="10">1,108</text><text x="215.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">csv 128MB</text><rect x="288" y="226.8" width="26" height="11.2" rx="3" fill="#F89820"><title>Java (BC) — txt 16MB: 56.5 ms</title></rect><text x="301.0" y="222.8" text-anchor="middle" fill="#555" font-size="10">57</text><rect x="318" y="230.8" width="26" height="7.2" rx="3" fill="#27ae60"><title>Java + zlib-ng — txt 16MB: 36.3 ms</title></rect><text x="331.0" y="226.8" text-anchor="middle" fill="#555" font-size="10">36</text><rect x="348" y="224.8" width="26" height="13.2" rx="3" fill="#00ADE8"><title>Go (klauspost) — txt 16MB: 66.4 ms</title></rect><text x="361.0" y="220.8" text-anchor="middle" fill="#555" font-size="10">66</text><text x="331.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">txt 16MB</text><rect x="404" y="162.9" width="26" height="75.1" rx="3" fill="#F89820"><title>Java (BC) — txt 128MB: 378.2 ms</title></rect><text x="417.0" y="158.9" text-anchor="middle" fill="#555" font-size="10">378</text><rect x="434" y="195.9" width="26" height="42.1" rx="3" fill="#27ae60"><title>Java + zlib-ng — txt 128MB: 211.9 ms</title></rect><text x="447.0" y="191.9" text-anchor="middle" fill="#555" font-size="10">212</text><rect x="464" y="135.4" width="26" height="102.6" rx="3" fill="#00ADE8"><title>Go (klauspost) — txt 128MB: 516.9 ms</title></rect><text x="477.0" y="131.4" text-anchor="middle" fill="#555" font-size="10">517</text><text x="447.0" y="254" text-anchor="middle" fill="#2c3e50" font-weight="600">txt 128MB</text></svg></div>
+<div class="info">💡 ที่ 128MB csv: decrypt ของ Java+zlib-ng (608ms) เร็วกว่า klauspost (1,108ms) เกือบ 2× —
+ฝั่งถอดรหัส Java แข็งแรงอยู่แล้ว (จาก report v3) พอเสริม zlib-ng ยิ่งทิ้งห่าง</div>
+</div><div class="page" id="page-method">
+<div class="okbar">🔒 correctness ผ่านครบ: roundTripOk 100% byte-for-byte, ไม่มีไฟล์ถูก skip ทุก scenario/variant + gpg interop ยืนยันก่อนรัน</div>
+
+<h2>วิธีทดสอบ</h2>
+<div class="card">
+<h3>Setup</h3>
+<ul>
+<li><b>VM:</b> Ubuntu 24.04, 8 vCPU (VM 122) — เครื่องเดียวกับ FULL run ของ report v3</li>
+<li><b>zlib-ng:</b> 1.3.1 build โหมด <code>--zlib-compat</code> (AVX2/AVX512 ครบ) →
+    <code>LD_PRELOAD</code> ตอนเปิด JVM — โค้ด Java/Bouncy Castle ไม่ถูกแก้เลย</li>
+<li><b>เทียบ 3 ทาง:</b> java (libz ระบบ) / java + zlib-ng / go-klauspost (ผู้ชนะจาก report v3)</li>
+<li><b>วัดแบบเดียวกับ FULL run:</b> ROUNDS=5 (median), WARMUP=3 (กัน JIT cold),
+    p50 ของ variant ที่เร็วสุดต่อ label, corpus generator ตัวเดียวกัน seed เดิม</li>
+<li><b>Scenarios:</b> txt/csv/dat 512KB×15 + size gradient txt/csv @ 1MB/16MB/128MB (รวม 9)</li>
+</ul>
+<h3>ด่านความถูกต้องก่อนเชื่อผล</h3>
+<ul>
+<li><b>preload gate:</b> เช็คว่า lib มี marker zlib-ng จริง + <code>java -version</code> ใต้ preload ไม่มี ld.so error
+    (กัน LD_PRELOAD ล้มเงียบแล้ววัดได้ค่าเท่า java เดิม)</li>
+<li><b>gpg interop:</b> Java+zlib-ng encrypt → gpg (reference implementation) ถอด byte-for-byte ผ่าน,
+    packet เป็น <code>compressed algo=2</code> (ZLIB มาตรฐาน) → ไม่หลุดสเปค OpenPGP</li>
+<li><b>in-run guard:</b> roundTripOk ต้อง 100% และ skip ต้อง 0 ทุกรอบ (anti-v2)</li>
+</ul>
+</div>
+<div class="card">
+<h3>ความหมายเชิงตัดสินใจ</h3>
+<ul>
+<li>🟢 <b>ถ้าทีมต้องอยู่กับ Java ต่อ:</b> zlib-ng คือ quick win ของจริง — env var ตัวเดียว
+    ได้ csv 3× / txt 1.3× ฟรี ไม่แตะโค้ด (แต่ต้องดูแล lib เพิ่ม 1 ตัวใน deployment)</li>
+<li>🔵 <b>ข้อสรุปหลักของ experiment ยังยืน:</b> Go+klauspost ยังเร็วกว่าใน txt (สกุลที่ปริมาณเยอะสุดใน
+    production: 1300 ไฟล์/รอบ) ~2.3–2.5× และ incompressible ~2.2×</li>
+<li>🟡 <b>csv เป็นข้อยกเว้น:</b> Java+zlib-ng แซง klauspost ~5–10% — ถ้า workload หนัก csv
+    ช่องว่างระหว่างสองภาษาแทบหายไป</li>
+</ul>
+</div>
+</div>
+<footer>สร้างจาก results_java_zlibng_ab.json · self-contained (เปิดออฟไลน์ได้) · กราฟ hover ดูค่าได้</footer>
+</div><script>
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
+}
+</script></body></html>
