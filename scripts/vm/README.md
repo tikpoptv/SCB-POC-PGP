@@ -31,9 +31,27 @@ BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
 # 3c) โหมด "ขนาดไฟล์มีผลแค่ไหน" (size gradient 1KB→300MB/ไฟล์ ครบทุกสกุล)
 SIZEGRAD=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
 
-# จะเปิดพร้อมกันก็ได้:
-BIG=1 SIZEGRAD=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
+# 3d) ⭐ โหมด FULL — กว้างเท่า run_v5 (แนะนำสำหรับผลสมบูรณ์)
+FULL=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
+
+# จะเปิดพร้อมกันก็ได้ (FULL ครอบ SIZEGRAD ให้อยู่แล้ว; เพิ่ม BIG ได้):
+FULL=1 BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py
 ```
+
+## โหมด FULL — ครอบทุกมิติเท่า run_v5 ⭐
+เปิดด้วย `FULL=1` — ให้ครบสเกลเท่า `scripts/run_v5.py` แต่เทียบ 3 ทาง (go-stdlib/go-klauspost/java):
+
+| เฟส | เนื้อหา |
+|-----|---------|
+| filetype matrix | 6 สกุล (txt,csv,pdf,xlsx,zip,dat) × 3 key alg (RSA-2048, RSA-4096, Curve25519) |
+| count gradient | 100KB binary × 1,5,10,25,50,100,200,500,1000 ไฟล์ |
+| many-small | 1kb×200, 10kb×200, 100kb×100 |
+| concurrent | stream-parallel, concurrency 1/2/4/8 |
+| size gradient | (รวมให้อัตโนมัติ) 1KB→300MB/ไฟล์ ทุกสกุล, in-memory cap 256MB |
+
+ปรับได้ผ่าน env: `FULL_KEY_ALGS`, `FULL_FILETYPES`, `FULL_COUNTS`, `FULL_CONC`
+- ⚠️ FULL ใช้เวลานานมาก (หลายชั่วโมง) — เหมาะรันทิ้งไว้บน VM
+- ต้องมี key ครบ (rsa2048/rsa4096/cv25519) ใน `keys/`
 
 ผลออกที่ `report/results_klauspost_ab.json` + ตารางสรุปบนจอ
 

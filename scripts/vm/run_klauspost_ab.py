@@ -52,7 +52,8 @@ PROD_ZIP_KB = int(os.getenv("PROD_ZIP_KB", "256"))  # 30×256KB   ≈ 8MB
 def pick_corpus_dir():
     env = os.getenv("POC_CORPUS")
     if env:
-        return pathlib.Path(env)
+        p = pathlib.Path(env); p.mkdir(parents=True, exist_ok=True)
+        return p
     for cand in ("/mnt/corpus", "/tmp/corpus-klauspost"):
         try:
             p = pathlib.Path(cand); p.mkdir(parents=True, exist_ok=True)
@@ -70,7 +71,17 @@ CORPUS = pick_corpus_dir()
 #   in-memory variant ถูกจำกัดที่ INMEM_CAP_MB (256MB ตาม ENVIRONMENT.md);
 #   ขนาดใหญ่กว่านั้นวัดเฉพาะ streaming variant (Req 15.4)
 #   เปิดด้วย: SIZEGRAD=1 python3 scripts/vm/run_klauspost_ab.py
-SIZEGRAD = os.getenv("SIZEGRAD", "0") not in ("0", "", "false", "no")
+# FULL = ครอบทุกมิติเท่า run_v5 (6 สกุล × 3 key alg + count gradient + many-small
+#        + concurrent) เทียบ 3 ทาง + รวม size gradient ถึง 300MB
+#   เปิดด้วย: FULL=1 python3 scripts/vm/run_klauspost_ab.py
+FULL = os.getenv("FULL", "0") not in ("0", "", "false", "no")
+# key algorithms (ต้องมี key ใน keys/ : rsa2048, rsa4096, cv25519)
+FULL_KEY_ALGS = [a.strip() for a in os.getenv("FULL_KEY_ALGS", "RSA-2048,RSA-4096,Curve25519").split(",") if a.strip()]
+FULL_FILETYPES = [t.strip() for t in os.getenv("FULL_FILETYPES", "txt,csv,pdf,xlsx,zip,dat").split(",") if t.strip()]
+FULL_COUNTS = [int(x) for x in os.getenv("FULL_COUNTS", "1,5,10,25,50,100,200,500,1000").split(",") if x.strip()]
+FULL_CONC = [int(x) for x in os.getenv("FULL_CONC", "1,2,4,8").split(",") if x.strip()]
+
+SIZEGRAD = (os.getenv("SIZEGRAD", "0") not in ("0", "", "false", "no")) or FULL
 INMEM_CAP_MB = int(os.getenv("INMEM_CAP_MB", "256"))
 # สเต็ปขนาด (KB) ปรับได้ผ่าน env SIZEGRAD_STEPS_KB (คั่นด้วย comma)
 _DEFAULT_STEPS = "1,64,512,4096,16384,65536,131072,262144,307200"  # 1KB..300MB
@@ -177,6 +188,34 @@ def setup_corpus():
         gen_text(CORPUS / f"size/txt-{kb}kb", n=1, size_kb=kb)
     print("  ✓ size gradient text 10/100/512/1024 KB")
 
+def gen_filetype(dest, ext, n, size_kb):
+    """สร้าง n ไฟล์ตามสกุล: txt/csv=บีบได้, pdf/xlsx/zip/dat=บีบไม่ได้"""
+    if ext == "txt":
+        gen_text(dest, n=n, size_kb=size_kb)
+    elif ext == "csv":
+        gen_csv(dest, n=n, size_kb=size_kb)
+    else:
+        gen_binary(dest, n=n, size_kb=size_kb, ext=ext)
+
+def setup_corpus_full():
+    """corpus ครบเท่า run_v5: filetypes / count-gradient / many-small / concurrent"""
+    print("🗂️  FULL corpus (เท่า run_v5) — สร้างสักครู่")
+    # 1) filetype matrix: 6 สกุล × 15 ไฟล์ × 512KB
+    for ft in FULL_FILETYPES:
+        gen_filetype(CORPUS / f"ft/{ft}", ft, n=15, size_kb=512)
+    print(f"  ✓ filetypes: {','.join(FULL_FILETYPES)} (15×512KB)")
+    # 2) count gradient: 100KB binary, จำนวนต่างๆ
+    for c in FULL_COUNTS:
+        gen_binary(CORPUS / f"count/{c}", n=c, size_kb=100, ext="dat")
+    print(f"  ✓ count gradient: {FULL_COUNTS} × 100KB")
+    # 3) many-small: text
+    for name, n, kb in [("1kb", 200, 1), ("10kb", 200, 10), ("100kb", 100, 100)]:
+        gen_text(CORPUS / f"many/{name}", n=n, size_kb=kb)
+    print("  ✓ many-small: 1kb×200, 10kb×200, 100kb×100")
+    # 4) concurrent: 100 × 1MB binary
+    gen_binary(CORPUS / "conc", n=100, size_kb=1024, ext="dat")
+    print("  ✓ concurrent corpus: 100×1MB")
+
 def gen_one(dest, ext, size_kb):
     """สร้างไฟล์เดียวขนาด size_kb ตามสกุล (txt/csv=บีบได้, pdf/zip/dat=บีบไม่ได้)"""
     if ext == "txt":
@@ -210,11 +249,11 @@ def setup_corpus_prod():
     print(f"  ✓ zip  {PROD_ZIP_N}×{PROD_ZIP_KB}KB (incompressible)")
 
 # ── run one (binary,variant) → p50 ms ──────────────────────────────────────
-def run_one(binary_cmd, variant, corpus_path, out_dir):
+def run_one(binary_cmd, variant, corpus_path, out_dir, pub_alg="RSA-2048", concurrency=1):
     cmd = {
         "command": "run", "variantId": variant,
-        "mode": "steady_state", "warmupIterations": WARMUP, "concurrency": 1,
-        "cryptoProfile": {"pubAlg": "RSA-2048", "cipher": "AES-256", "compression": "ZLIB", "hash": "SHA-256"},
+        "mode": "steady_state", "warmupIterations": WARMUP, "concurrency": concurrency,
+        "cryptoProfile": {"pubAlg": pub_alg, "cipher": "AES-256", "compression": "ZLIB", "hash": "SHA-256"},
         "outputEncoding": "binary",
         "keySetPath": str(KEYS), "keySetChecksum": kcs(),
         "corpusPath": str(corpus_path), "corpusChecksum": corpus_cs(corpus_path),
@@ -236,14 +275,14 @@ def run_one(binary_cmd, variant, corpus_path, out_dir):
         sys.stderr.write(f"    ERR {variant}: {e}\n")
         return None
 
-def bench(label, corpus_path, out_root, runners_map=RUNNERS):
+def bench(label, corpus_path, out_root, runners_map=RUNNERS, pub_alg="RSA-2048", concurrency=1):
     binary_cmd, variants = runners_map[label]
     best = {}
     for v in variants:
         samples = []
         for rnd in range(ROUNDS):
             od = out_root / label / v / f"r{rnd}"; od.mkdir(parents=True, exist_ok=True)
-            p50 = run_one(binary_cmd, v, corpus_path, od)
+            p50 = run_one(binary_cmd, v, corpus_path, od, pub_alg=pub_alg, concurrency=concurrency)
             if p50 is not None:
                 samples.append(p50); sys.stdout.write(".")
             else:
@@ -272,32 +311,56 @@ def main():
     print("=" * 64)
     print("klauspost A/B/C benchmark  (go-stdlib vs go-klauspost vs java)")
     print(f"ROUNDS={ROUNDS} WARMUP={WARMUP} "
+          f"FULL={'on (run_v5-equivalent matrix)' if FULL else 'off'} "
           f"BIG={'on (file-count load)' if BIG else 'off'} "
           f"SIZEGRAD={'on (1KB→%dMB/file, inmem cap %dMB)' % (max(SIZEGRAD_STEPS_KB)//1024, INMEM_CAP_MB) if SIZEGRAD else 'off'}")
     print("=" * 64)
     os.system("nproc >/dev/null 2>&1 && echo -n 'cores: ' && nproc || true")
 
-    setup_corpus()
-    out_root = CORPUS / "_out"; out_root.mkdir(exist_ok=True)
+    out_root = CORPUS / "_out"; out_root.mkdir(parents=True, exist_ok=True)
 
-    # แต่ละ scenario = (ชื่อ, path, runners_map)
-    scenarios = [
-        ("txt-512KB×15", CORPUS / "ft/txt", RUNNERS),
-        ("csv-512KB×15", CORPUS / "ft/csv", RUNNERS),
-        ("dat-512KB×15", CORPUS / "ft/dat", RUNNERS),
-        ("txt-10KB",     CORPUS / "size/txt-10kb", RUNNERS),
-        ("txt-100KB",    CORPUS / "size/txt-100kb", RUNNERS),
-        ("txt-512KB",    CORPUS / "size/txt-512kb", RUNNERS),
-        ("txt-1MB",      CORPUS / "size/txt-1024kb", RUNNERS),
-    ]
+    # แต่ละ scenario = (ชื่อ, path, runners_map, pub_alg, concurrency)
+    def SC(name, path, rmap=RUNNERS, alg="RSA-2048", conc=1):
+        return (name, path, rmap, alg, conc)
+
+    scenarios = []
+
+    if not FULL:
+        # ชุด quick (ดีฟอลต์) — ข้ามเมื่อ FULL เพราะซ้ำกับ matrix ด้านล่าง
+        setup_corpus()
+        scenarios += [
+            SC("txt-512KB×15", CORPUS / "ft/txt"),
+            SC("csv-512KB×15", CORPUS / "ft/csv"),
+            SC("dat-512KB×15", CORPUS / "ft/dat"),
+            SC("txt-10KB",     CORPUS / "size/txt-10kb"),
+            SC("txt-100KB",    CORPUS / "size/txt-100kb"),
+            SC("txt-512KB",    CORPUS / "size/txt-512kb"),
+            SC("txt-1MB",      CORPUS / "size/txt-1024kb"),
+        ]
+
+    if FULL:
+        setup_corpus_full()
+        # 1) filetype matrix: 6 สกุล × 3 key alg
+        for ft in FULL_FILETYPES:
+            for alg in FULL_KEY_ALGS:
+                scenarios.append(SC(f"ft-{ft}-{alg}", CORPUS / f"ft/{ft}", RUNNERS, alg, 1))
+        # 2) count gradient: 100KB binary, RSA-2048
+        for c in FULL_COUNTS:
+            scenarios.append(SC(f"count-{c}", CORPUS / f"count/{c}", RUNNERS, "RSA-2048", 1))
+        # 3) many-small: text, RSA-2048
+        for name in ("1kb", "10kb", "100kb"):
+            scenarios.append(SC(f"many-{name}", CORPUS / f"many/{name}", RUNNERS, "RSA-2048", 1))
+        # 4) concurrent: stream-parallel เท่านั้น, concurrency 1/2/4/8
+        for cl in FULL_CONC:
+            scenarios.append(SC(f"conc-{cl}", CORPUS / "conc", RUNNERS_STREAM_ONLY, "RSA-2048", cl))
 
     if BIG:
         setup_corpus_prod()
         scenarios += [
-            (f"prod-txt-{PROD_TXT_N}", CORPUS / "prod/txt", RUNNERS),
-            (f"prod-csv-{PROD_CSV_N}", CORPUS / "prod/csv", RUNNERS),
-            (f"prod-pdf-{PROD_PDF_N}", CORPUS / "prod/pdf", RUNNERS),
-            (f"prod-zip-{PROD_ZIP_N}", CORPUS / "prod/zip", RUNNERS),
+            SC(f"prod-txt-{PROD_TXT_N}", CORPUS / "prod/txt"),
+            SC(f"prod-csv-{PROD_CSV_N}", CORPUS / "prod/csv"),
+            SC(f"prod-pdf-{PROD_PDF_N}", CORPUS / "prod/pdf"),
+            SC(f"prod-zip-{PROD_ZIP_N}", CORPUS / "prod/zip"),
         ]
 
     if SIZEGRAD:
@@ -309,13 +372,15 @@ def main():
                 tag = "S" if rmap is RUNNERS_STREAM_ONLY else ""
                 label_sz = f"{kb//1024}MB" if kb >= 1024 else f"{kb}KB"
                 scenarios.append(
-                    (f"sg-{ext}-{label_sz}{tag}", CORPUS / f"sizegrad/{ext}/{kb}kb", rmap)
+                    SC(f"sg-{ext}-{label_sz}{tag}", CORPUS / f"sizegrad/{ext}/{kb}kb", rmap)
                 )
     labels = ["go-stdlib", "go-klauspost"] + (["java"] if have_java else [])
 
     results = {
         "startedAt": datetime.now(timezone.utc).isoformat(),
-        "rounds": ROUNDS, "warmup": WARMUP, "big": BIG, "sizegrad": SIZEGRAD,
+        "rounds": ROUNDS, "warmup": WARMUP, "full": FULL, "big": BIG, "sizegrad": SIZEGRAD,
+        "fullProfile": ({"keyAlgs": FULL_KEY_ALGS, "filetypes": FULL_FILETYPES,
+                          "counts": FULL_COUNTS, "concurrency": FULL_CONC} if FULL else None),
         "prodProfile": ({"txt": [PROD_TXT_N, PROD_TXT_KB], "csv": [PROD_CSV_N, PROD_CSV_KB],
                           "pdf": [PROD_PDF_N, PROD_PDF_KB], "zip": [PROD_ZIP_N, PROD_ZIP_KB]} if BIG else None),
         "sizegradProfile": ({"stepsKB": SIZEGRAD_STEPS_KB, "types": SIZEGRAD_TYPES,
@@ -325,12 +390,15 @@ def main():
         "scenarios": {},
     }
 
-    for sc_name, corpus_path, rmap in scenarios:
-        print(f"\n[{sc_name}]  ({len(list(pathlib.Path(corpus_path).iterdir()))} files)")
+    for sc_name, corpus_path, rmap, alg, conc in scenarios:
+        nfiles = len(list(pathlib.Path(corpus_path).iterdir()))
+        extra = f" alg={alg}" + (f" conc={conc}" if conc != 1 else "")
+        print(f"\n[{sc_name}]  ({nfiles} files{extra})")
         sc = {}
         for label in labels:
             print(f"  {label:14s} ", end="")
-            sc[label] = bench(label, corpus_path, out_root, runners_map=rmap)
+            sc[label] = bench(label, corpus_path, out_root, runners_map=rmap,
+                              pub_alg=alg, concurrency=conc)
             print()
         results["scenarios"][sc_name] = sc
 

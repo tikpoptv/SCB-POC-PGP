@@ -20,6 +20,8 @@ Checklist บน VM (ทำตาม `scripts/vm/README.md`):
       `BIG=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`
 - [ ] รอบขนาดไฟล์ (size gradient 1KB→300MB/ไฟล์ ทุกสกุล, in-memory cap 256MB):
       `SIZEGRAD=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`
+- [ ] ⭐ รอบ FULL (กว้างเท่า run_v5: 6 สกุล × 3 key alg + count + many + concurrent + size gradient):
+      `FULL=1 ROUNDS=5 WARMUP=3 python3 scripts/vm/run_klauspost_ab.py`  ← ใช้เวลาหลายชั่วโมง
 - [ ] เอา `report/results_klauspost_ab.json` + ตารางสรุป กลับมาให้ Kiro อัปเดต report/สไลด์
 - [ ] (ทางเลือก) interop: `cd runners/go && go test -run TestInteropKlauspostCiphertextDecryptsWithGPG -v`
 
