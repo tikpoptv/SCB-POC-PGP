@@ -12,7 +12,7 @@ run_klauspost_ab.py — เทียบ 3 ทางบน VM: go-stdlib vs go-kl
   ROUNDS (default 5), WARMUP (default 3), POC_CORPUS (default อัตโนมัติ)
 ผลออกที่: report/results_klauspost_ab.json  (+ ตารางสรุปบน stdout)
 """
-import json, os, subprocess, statistics, pathlib, hashlib, random, sys, time
+import json, os, subprocess, statistics, pathlib, hashlib, random, sys, time, shutil
 from datetime import datetime, timezone
 
 # ── ค้น repo root จาก git (ไม่ผูกกับชื่อโฟลเดอร์) ────────────────────────────
@@ -318,6 +318,9 @@ def bench(label, corpus_path, out_root, runners_map=RUNNERS, pub_alg="RSA-2048",
             else:
                 sys.stdout.write("x")
             sys.stdout.flush()
+            # ลบ output ciphertext ทันที (เราเก็บแค่ timing จาก stdout) — กัน disk เต็ม
+            # ตอนรันไฟล์ใหญ่ 300MB ที่เขียน output สะสมได้มหาศาล
+            shutil.rmtree(od, ignore_errors=True)
         if rounds:
             # aggregate = median ข้ามรอบ ของแต่ละ metric
             agg = {k: _median([r[k] for r in rounds])
