@@ -1,0 +1,4167 @@
+{
+  "startedAt": "2026-07-02T09:48:42.488749+00:00",
+  "rounds": 5,
+  "warmup": 3,
+  "full": true,
+  "big": true,
+  "sizegrad": true,
+  "fullProfile": {
+    "keyAlgs": [
+      "RSA-2048",
+      "RSA-4096",
+      "Curve25519"
+    ],
+    "filetypes": [
+      "txt",
+      "csv",
+      "pdf",
+      "xlsx",
+      "zip",
+      "dat"
+    ],
+    "counts": [
+      1,
+      5,
+      10,
+      25,
+      50,
+      100,
+      200,
+      500,
+      1000
+    ],
+    "concurrency": [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  "prodProfile": {
+    "txt": [
+      1300,
+      128
+    ],
+    "csv": [
+      450,
+      128
+    ],
+    "pdf": [
+      350,
+      192
+    ],
+    "zip": [
+      30,
+      256
+    ]
+  },
+  "sizegradProfile": {
+    "stepsKB": [
+      1,
+      64,
+      512,
+      4096,
+      16384,
+      65536,
+      131072,
+      262144,
+      307200
+    ],
+    "types": [
+      "txt",
+      "csv",
+      "pdf",
+      "zip"
+    ],
+    "inmemCapMB": 256
+  },
+  "zlibngLib": "/home/tikxd/zlib-ng/libz.so.1",
+  "branch": "experiment/go-klauspost-compression",
+  "scenarios": {
+    "ft-txt-RSA-2048": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 6.386,
+          "p95": 6.673,
+          "enc_p50": 3.346,
+          "dec_p50": 3.078,
+          "mbps": 77.62,
+          "ratio": 5.325,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.977,
+          "p95": 6.148,
+          "enc_p50": 3.131,
+          "dec_p50": 2.803,
+          "mbps": 84.22,
+          "ratio": 5.32,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 13.189,
+          "p95": 13.919,
+          "enc_p50": 10.915,
+          "dec_p50": 2.204,
+          "mbps": 37.33,
+          "ratio": 6.348,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 13.003,
+          "p95": 14.435,
+          "enc_p50": 10.893,
+          "dec_p50": 2.018,
+          "mbps": 36.92,
+          "ratio": 6.348,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-txt-RSA-4096": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 10.217,
+          "p95": 10.588,
+          "enc_p50": 3.514,
+          "dec_p50": 6.752,
+          "mbps": 48.78,
+          "ratio": 5.312,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 9.841,
+          "p95": 10.112,
+          "enc_p50": 3.216,
+          "dec_p50": 6.473,
+          "mbps": 50.83,
+          "ratio": 5.307,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 17.294,
+          "p95": 18.646,
+          "enc_p50": 10.967,
+          "dec_p50": 6.281,
+          "mbps": 28.64,
+          "ratio": 6.329,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 17.291,
+          "p95": 17.644,
+          "enc_p50": 11.113,
+          "dec_p50": 6.149,
+          "mbps": 28.78,
+          "ratio": 6.329,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-txt-Curve25519": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 5.666,
+          "p95": 6.101,
+          "enc_p50": 3.268,
+          "dec_p50": 2.312,
+          "mbps": 88.21,
+          "ratio": 5.335,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.259,
+          "p95": 5.43,
+          "enc_p50": 3.045,
+          "dec_p50": 2.131,
+          "mbps": 94.63,
+          "ratio": 5.33,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 12.87,
+          "p95": 15.323,
+          "enc_p50": 11.293,
+          "dec_p50": 1.57,
+          "mbps": 36.82,
+          "ratio": 6.362,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 12.689,
+          "p95": 16.196,
+          "enc_p50": 11.283,
+          "dec_p50": 1.326,
+          "mbps": 37.75,
+          "ratio": 6.362,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-csv-RSA-2048": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 12.965,
+          "p95": 13.774,
+          "enc_p50": 7.592,
+          "dec_p50": 5.31,
+          "mbps": 37.52,
+          "ratio": 2.099,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 12.527,
+          "p95": 17.408,
+          "enc_p50": 7.424,
+          "dec_p50": 5.102,
+          "mbps": 36.13,
+          "ratio": 2.099,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 12.008,
+          "p95": 16.324,
+          "enc_p50": 8.414,
+          "dec_p50": 3.595,
+          "mbps": 38.93,
+          "ratio": 2.175,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.954,
+          "p95": 13.346,
+          "enc_p50": 8.464,
+          "dec_p50": 3.488,
+          "mbps": 40.79,
+          "ratio": 2.175,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-csv-RSA-4096": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 16.863,
+          "p95": 17.262,
+          "enc_p50": 7.761,
+          "dec_p50": 9.083,
+          "mbps": 29.64,
+          "ratio": 2.097,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 16.31,
+          "p95": 16.548,
+          "enc_p50": 7.487,
+          "dec_p50": 8.739,
+          "mbps": 30.68,
+          "ratio": 2.096,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 16.422,
+          "p95": 18.011,
+          "enc_p50": 8.492,
+          "dec_p50": 7.782,
+          "mbps": 30.09,
+          "ratio": 2.173,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 16.095,
+          "p95": 16.964,
+          "enc_p50": 8.522,
+          "dec_p50": 7.589,
+          "mbps": 30.64,
+          "ratio": 2.173,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-csv-Curve25519": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 12.236,
+          "p95": 12.661,
+          "enc_p50": 7.601,
+          "dec_p50": 4.649,
+          "mbps": 40.6,
+          "ratio": 2.101,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 11.934,
+          "p95": 12.302,
+          "enc_p50": 7.453,
+          "dec_p50": 4.437,
+          "mbps": 41.5,
+          "ratio": 2.1,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.592,
+          "p95": 11.838,
+          "enc_p50": 8.65,
+          "dec_p50": 2.944,
+          "mbps": 42.79,
+          "ratio": 2.177,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.515,
+          "p95": 11.861,
+          "enc_p50": 8.646,
+          "dec_p50": 2.822,
+          "mbps": 43.24,
+          "ratio": 2.177,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-pdf-RSA-2048": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 5.164,
+          "p95": 5.371,
+          "enc_p50": 2.679,
+          "dec_p50": 2.494,
+          "mbps": 96.75,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.25,
+          "p95": 5.344,
+          "enc_p50": 2.524,
+          "dec_p50": 2.69,
+          "mbps": 94.96,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 12.05,
+          "p95": 13.167,
+          "enc_p50": 8.928,
+          "dec_p50": 3.123,
+          "mbps": 40.29,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.86,
+          "p95": 12.588,
+          "enc_p50": 8.751,
+          "dec_p50": 3.058,
+          "mbps": 41.37,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-pdf-RSA-4096": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 9.084,
+          "p95": 9.418,
+          "enc_p50": 2.812,
+          "dec_p50": 6.237,
+          "mbps": 54.73,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 9.195,
+          "p95": 9.641,
+          "enc_p50": 2.79,
+          "dec_p50": 6.394,
+          "mbps": 54.06,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 16.271,
+          "p95": 18.968,
+          "enc_p50": 8.975,
+          "dec_p50": 7.359,
+          "mbps": 28.83,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 16.511,
+          "p95": 17.462,
+          "enc_p50": 8.886,
+          "dec_p50": 7.344,
+          "mbps": 29.99,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-pdf-Curve25519": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 4.489,
+          "p95": 4.721,
+          "enc_p50": 2.639,
+          "dec_p50": 1.82,
+          "mbps": 109.35,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 4.577,
+          "p95": 5.027,
+          "enc_p50": 2.536,
+          "dec_p50": 2.027,
+          "mbps": 103.06,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.287,
+          "p95": 12.761,
+          "enc_p50": 8.936,
+          "dec_p50": 2.364,
+          "mbps": 42.21,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.389,
+          "p95": 12.102,
+          "enc_p50": 8.966,
+          "dec_p50": 2.313,
+          "mbps": 43.13,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-xlsx-RSA-2048": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 5.115,
+          "p95": 5.402,
+          "enc_p50": 2.591,
+          "dec_p50": 2.499,
+          "mbps": 95.31,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.193,
+          "p95": 5.403,
+          "enc_p50": 2.524,
+          "dec_p50": 2.683,
+          "mbps": 95.08,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.735,
+          "p95": 13.233,
+          "enc_p50": 8.747,
+          "dec_p50": 3.064,
+          "mbps": 41.2,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.818,
+          "p95": 12.47,
+          "enc_p50": 8.745,
+          "dec_p50": 3.092,
+          "mbps": 42.0,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-xlsx-RSA-4096": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 9.173,
+          "p95": 10.038,
+          "enc_p50": 2.837,
+          "dec_p50": 6.279,
+          "mbps": 52.87,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 9.139,
+          "p95": 9.558,
+          "enc_p50": 2.751,
+          "dec_p50": 6.392,
+          "mbps": 53.39,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 15.945,
+          "p95": 17.894,
+          "enc_p50": 8.78,
+          "dec_p50": 7.151,
+          "mbps": 30.49,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 16.678,
+          "p95": 22.018,
+          "enc_p50": 9.044,
+          "dec_p50": 7.553,
+          "mbps": 28.52,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-xlsx-Curve25519": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 4.518,
+          "p95": 4.783,
+          "enc_p50": 2.666,
+          "dec_p50": 1.823,
+          "mbps": 109.96,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 4.585,
+          "p95": 4.686,
+          "enc_p50": 2.548,
+          "dec_p50": 2.031,
+          "mbps": 108.98,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.272,
+          "p95": 12.371,
+          "enc_p50": 8.889,
+          "dec_p50": 2.359,
+          "mbps": 43.43,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.187,
+          "p95": 12.631,
+          "enc_p50": 8.916,
+          "dec_p50": 2.295,
+          "mbps": 43.83,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-zip-RSA-2048": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 5.177,
+          "p95": 5.508,
+          "enc_p50": 2.679,
+          "dec_p50": 2.479,
+          "mbps": 95.93,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.307,
+          "p95": 5.634,
+          "enc_p50": 2.541,
+          "dec_p50": 2.702,
+          "mbps": 92.62,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.957,
+          "p95": 12.877,
+          "enc_p50": 8.737,
+          "dec_p50": 3.128,
+          "mbps": 40.95,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.641,
+          "p95": 12.248,
+          "enc_p50": 8.616,
+          "dec_p50": 2.987,
+          "mbps": 42.32,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-zip-RSA-4096": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 9.153,
+          "p95": 9.376,
+          "enc_p50": 2.883,
+          "dec_p50": 6.256,
+          "mbps": 54.68,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 9.139,
+          "p95": 9.435,
+          "enc_p50": 2.747,
+          "dec_p50": 6.379,
+          "mbps": 54.42,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 17.111,
+          "p95": 20.052,
+          "enc_p50": 9.085,
+          "dec_p50": 7.536,
+          "mbps": 28.56,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 15.887,
+          "p95": 16.752,
+          "enc_p50": 8.721,
+          "dec_p50": 7.145,
+          "mbps": 31.01,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-zip-Curve25519": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 4.461,
+          "p95": 4.612,
+          "enc_p50": 2.556,
+          "dec_p50": 1.835,
+          "mbps": 111.71,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 4.57,
+          "p95": 4.675,
+          "enc_p50": 2.566,
+          "dec_p50": 2.014,
+          "mbps": 108.98,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.437,
+          "p95": 12.483,
+          "enc_p50": 8.945,
+          "dec_p50": 2.451,
+          "mbps": 43.12,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.336,
+          "p95": 11.772,
+          "enc_p50": 8.969,
+          "dec_p50": 2.362,
+          "mbps": 43.53,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-dat-RSA-2048": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 5.081,
+          "p95": 5.268,
+          "enc_p50": 2.63,
+          "dec_p50": 2.482,
+          "mbps": 98.24,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.195,
+          "p95": 5.289,
+          "enc_p50": 2.541,
+          "dec_p50": 2.671,
+          "mbps": 95.96,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 12.126,
+          "p95": 13.476,
+          "enc_p50": 8.806,
+          "dec_p50": 3.092,
+          "mbps": 40.28,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.597,
+          "p95": 12.212,
+          "enc_p50": 8.67,
+          "dec_p50": 2.932,
+          "mbps": 42.34,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-dat-RSA-4096": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 9.184,
+          "p95": 9.955,
+          "enc_p50": 2.779,
+          "dec_p50": 6.275,
+          "mbps": 53.58,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 9.211,
+          "p95": 9.279,
+          "enc_p50": 2.787,
+          "dec_p50": 6.422,
+          "mbps": 54.36,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 16.487,
+          "p95": 18.927,
+          "enc_p50": 8.971,
+          "dec_p50": 7.293,
+          "mbps": 29.38,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 15.869,
+          "p95": 17.053,
+          "enc_p50": 8.725,
+          "dec_p50": 7.095,
+          "mbps": 30.99,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "ft-dat-Curve25519": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 4.5,
+          "p95": 4.738,
+          "enc_p50": 2.676,
+          "dec_p50": 1.819,
+          "mbps": 110.53,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 4.568,
+          "p95": 4.709,
+          "enc_p50": 2.548,
+          "dec_p50": 2.029,
+          "mbps": 108.49,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.656,
+          "p95": 13.0,
+          "enc_p50": 9.091,
+          "dec_p50": 2.478,
+          "mbps": 41.87,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 11.199,
+          "p95": 11.446,
+          "enc_p50": 8.868,
+          "dec_p50": 2.327,
+          "mbps": 44.49,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 15,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-1": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.871,
+          "p95": 1.871,
+          "enc_p50": 0.811,
+          "dec_p50": 1.075,
+          "mbps": 52.18,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.968,
+          "p95": 1.968,
+          "enc_p50": 0.751,
+          "dec_p50": 1.228,
+          "mbps": 49.63,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 5.544,
+          "p95": 5.544,
+          "enc_p50": 2.217,
+          "dec_p50": 2.864,
+          "mbps": 17.61,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5.165,
+          "p95": 5.165,
+          "enc_p50": 2.311,
+          "dec_p50": 2.854,
+          "mbps": 18.91,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-5": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.781,
+          "p95": 1.97,
+          "enc_p50": 0.658,
+          "dec_p50": 1.061,
+          "mbps": 53.8,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 5,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.895,
+          "p95": 1.958,
+          "enc_p50": 0.737,
+          "dec_p50": 1.113,
+          "mbps": 51.99,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 5,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.989,
+          "p95": 4.054,
+          "enc_p50": 2.12,
+          "dec_p50": 1.83,
+          "mbps": 24.89,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 5,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.779,
+          "p95": 3.907,
+          "enc_p50": 2.044,
+          "dec_p50": 1.715,
+          "mbps": 25.75,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 5,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-10": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.757,
+          "p95": 1.938,
+          "enc_p50": 0.692,
+          "dec_p50": 1.052,
+          "mbps": 55.38,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 10,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.869,
+          "p95": 2.002,
+          "enc_p50": 0.736,
+          "dec_p50": 1.109,
+          "mbps": 52.37,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 10,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.463,
+          "p95": 3.877,
+          "enc_p50": 1.932,
+          "dec_p50": 1.529,
+          "mbps": 27.72,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 10,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.756,
+          "p95": 4.083,
+          "enc_p50": 2.042,
+          "dec_p50": 1.632,
+          "mbps": 25.89,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 10,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-25": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.82,
+          "p95": 2.547,
+          "enc_p50": 0.704,
+          "dec_p50": 1.09,
+          "mbps": 51.92,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 25,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.919,
+          "p95": 2.511,
+          "enc_p50": 0.755,
+          "dec_p50": 1.141,
+          "mbps": 50.08,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 25,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.478,
+          "p95": 3.763,
+          "enc_p50": 1.952,
+          "dec_p50": 1.524,
+          "mbps": 28.12,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 25,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.212,
+          "p95": 3.45,
+          "enc_p50": 1.845,
+          "dec_p50": 1.369,
+          "mbps": 30.08,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 25,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-50": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.752,
+          "p95": 1.954,
+          "enc_p50": 0.654,
+          "dec_p50": 1.064,
+          "mbps": 54.94,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 50,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.879,
+          "p95": 2.047,
+          "enc_p50": 0.716,
+          "dec_p50": 1.112,
+          "mbps": 52.15,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 50,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.145,
+          "p95": 3.898,
+          "enc_p50": 1.802,
+          "dec_p50": 1.331,
+          "mbps": 30.22,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 50,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.122,
+          "p95": 3.368,
+          "enc_p50": 1.795,
+          "dec_p50": 1.326,
+          "mbps": 30.4,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 50,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-100": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.778,
+          "p95": 1.988,
+          "enc_p50": 0.684,
+          "dec_p50": 1.065,
+          "mbps": 54.33,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.87,
+          "p95": 1.994,
+          "enc_p50": 0.755,
+          "dec_p50": 1.114,
+          "mbps": 52.28,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.108,
+          "p95": 4.295,
+          "enc_p50": 1.789,
+          "dec_p50": 1.313,
+          "mbps": 30.23,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.039,
+          "p95": 4.632,
+          "enc_p50": 1.762,
+          "dec_p50": 1.275,
+          "mbps": 29.79,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-200": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.789,
+          "p95": 2.35,
+          "enc_p50": 0.668,
+          "dec_p50": 1.071,
+          "mbps": 52.71,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.902,
+          "p95": 2.107,
+          "enc_p50": 0.783,
+          "dec_p50": 1.118,
+          "mbps": 51.19,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 2.982,
+          "p95": 3.476,
+          "enc_p50": 1.726,
+          "dec_p50": 1.253,
+          "mbps": 32.13,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2.987,
+          "p95": 3.16,
+          "enc_p50": 1.728,
+          "dec_p50": 1.256,
+          "mbps": 32.15,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-500": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.822,
+          "p95": 2.15,
+          "enc_p50": 0.736,
+          "dec_p50": 1.072,
+          "mbps": 52.15,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 500,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.891,
+          "p95": 2.021,
+          "enc_p50": 0.786,
+          "dec_p50": 1.106,
+          "mbps": 52.05,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 500,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 2.853,
+          "p95": 3.35,
+          "enc_p50": 1.668,
+          "dec_p50": 1.187,
+          "mbps": 33.36,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 500,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2.865,
+          "p95": 3.072,
+          "enc_p50": 1.677,
+          "dec_p50": 1.188,
+          "mbps": 33.72,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 500,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "count-1000": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.835,
+          "p95": 2.138,
+          "enc_p50": 0.71,
+          "dec_p50": 1.115,
+          "mbps": 52.45,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 1000,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.96,
+          "p95": 2.344,
+          "enc_p50": 0.847,
+          "dec_p50": 1.112,
+          "mbps": 48.33,
+          "ratio": 0.997,
+          "ok_ratio": 1.0,
+          "n": 1000,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 2.849,
+          "p95": 3.358,
+          "enc_p50": 1.66,
+          "dec_p50": 1.185,
+          "mbps": 33.49,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 1000,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2.835,
+          "p95": 3.197,
+          "enc_p50": 1.664,
+          "dec_p50": 1.172,
+          "mbps": 33.83,
+          "ratio": 0.996,
+          "ok_ratio": 1.0,
+          "n": 1000,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "many-1kb": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 0.866,
+          "p95": 1.042,
+          "enc_p50": 0.123,
+          "dec_p50": 0.71,
+          "mbps": 1.11,
+          "ratio": 1.578,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 0.931,
+          "p95": 1.029,
+          "enc_p50": 0.208,
+          "dec_p50": 0.717,
+          "mbps": 1.08,
+          "ratio": 1.578,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 1.037,
+          "p95": 1.21,
+          "enc_p50": 0.153,
+          "dec_p50": 0.881,
+          "mbps": 0.91,
+          "ratio": 1.596,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 1.066,
+          "p95": 1.887,
+          "enc_p50": 0.17,
+          "dec_p50": 0.893,
+          "mbps": 0.77,
+          "ratio": 1.596,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "many-10kb": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.022,
+          "p95": 1.486,
+          "enc_p50": 0.208,
+          "dec_p50": 0.75,
+          "mbps": 9.09,
+          "ratio": 4.111,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.018,
+          "p95": 1.163,
+          "enc_p50": 0.193,
+          "dec_p50": 0.759,
+          "mbps": 9.72,
+          "ratio": 4.111,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 1.176,
+          "p95": 1.902,
+          "enc_p50": 0.266,
+          "dec_p50": 0.908,
+          "mbps": 7.41,
+          "ratio": 4.463,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 1.176,
+          "p95": 1.337,
+          "enc_p50": 0.269,
+          "dec_p50": 0.903,
+          "mbps": 8.03,
+          "ratio": 4.463,
+          "ok_ratio": 1.0,
+          "n": 200,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "many-100kb": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.965,
+          "p95": 2.125,
+          "enc_p50": 0.854,
+          "dec_p50": 1.104,
+          "mbps": 49.07,
+          "ratio": 5.185,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.858,
+          "p95": 1.986,
+          "enc_p50": 0.666,
+          "dec_p50": 1.197,
+          "mbps": 52.5,
+          "ratio": 5.181,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.272,
+          "p95": 3.555,
+          "enc_p50": 2.158,
+          "dec_p50": 1.108,
+          "mbps": 29.34,
+          "ratio": 6.086,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.271,
+          "p95": 3.882,
+          "enc_p50": 2.171,
+          "dec_p50": 1.096,
+          "mbps": 28.93,
+          "ratio": 6.086,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "conc-1": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 9.377,
+          "p95": 10.125,
+          "enc_p50": 4.684,
+          "dec_p50": 4.657,
+          "mbps": 104.92,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 21.432,
+          "p95": 22.751,
+          "enc_p50": 16.746,
+          "dec_p50": 4.646,
+          "mbps": 46.36,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "conc-2": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 10.055,
+          "p95": 12.691,
+          "enc_p50": 5.145,
+          "dec_p50": 4.94,
+          "mbps": 95.89,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 21.651,
+          "p95": 23.311,
+          "enc_p50": 16.917,
+          "dec_p50": 4.689,
+          "mbps": 45.21,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "conc-4": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 11.557,
+          "p95": 14.189,
+          "enc_p50": 5.777,
+          "dec_p50": 5.497,
+          "mbps": 85.1,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 22.063,
+          "p95": 27.187,
+          "enc_p50": 17.145,
+          "dec_p50": 4.897,
+          "mbps": 43.86,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "conc-8": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 15.117,
+          "p95": 20.589,
+          "enc_p50": 7.581,
+          "dec_p50": 7.308,
+          "mbps": 64.76,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 31.571,
+          "p95": 38.765,
+          "enc_p50": 24.274,
+          "dec_p50": 6.916,
+          "mbps": 33.12,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 100,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "prod-txt-1300": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2.172,
+          "p95": 2.644,
+          "enc_p50": 0.807,
+          "dec_p50": 1.343,
+          "mbps": 56.11,
+          "ratio": 5.219,
+          "ok_ratio": 1.0,
+          "n": 1300,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2.225,
+          "p95": 2.996,
+          "enc_p50": 0.87,
+          "dec_p50": 1.259,
+          "mbps": 54.88,
+          "ratio": 5.217,
+          "ok_ratio": 1.0,
+          "n": 1300,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.711,
+          "p95": 4.09,
+          "enc_p50": 2.647,
+          "dec_p50": 1.06,
+          "mbps": 33.14,
+          "ratio": 6.155,
+          "ok_ratio": 1.0,
+          "n": 1300,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.699,
+          "p95": 4.165,
+          "enc_p50": 2.662,
+          "dec_p50": 1.034,
+          "mbps": 32.97,
+          "ratio": 6.155,
+          "ok_ratio": 1.0,
+          "n": 1300,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "prod-csv-450": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 3.819,
+          "p95": 4.12,
+          "enc_p50": 1.868,
+          "dec_p50": 1.952,
+          "mbps": 32.35,
+          "ratio": 2.076,
+          "ok_ratio": 1.0,
+          "n": 450,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 3.901,
+          "p95": 4.163,
+          "enc_p50": 2.052,
+          "dec_p50": 1.826,
+          "mbps": 31.6,
+          "ratio": 2.076,
+          "ok_ratio": 1.0,
+          "n": 450,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.561,
+          "p95": 4.166,
+          "enc_p50": 2.116,
+          "dec_p50": 1.449,
+          "mbps": 34.26,
+          "ratio": 2.144,
+          "ok_ratio": 1.0,
+          "n": 450,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.559,
+          "p95": 3.785,
+          "enc_p50": 2.131,
+          "dec_p50": 1.434,
+          "mbps": 34.79,
+          "ratio": 2.144,
+          "ok_ratio": 1.0,
+          "n": 450,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "prod-pdf-350": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2.585,
+          "p95": 3.041,
+          "enc_p50": 1.152,
+          "dec_p50": 1.379,
+          "mbps": 71.91,
+          "ratio": 0.998,
+          "ok_ratio": 1.0,
+          "n": 350,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2.636,
+          "p95": 3.076,
+          "enc_p50": 1.172,
+          "dec_p50": 1.46,
+          "mbps": 68.66,
+          "ratio": 0.998,
+          "ok_ratio": 1.0,
+          "n": 350,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 4.69,
+          "p95": 5.348,
+          "enc_p50": 3.158,
+          "dec_p50": 1.528,
+          "mbps": 39.11,
+          "ratio": 0.998,
+          "ok_ratio": 1.0,
+          "n": 350,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 4.681,
+          "p95": 5.263,
+          "enc_p50": 3.165,
+          "dec_p50": 1.517,
+          "mbps": 39.33,
+          "ratio": 0.998,
+          "ok_ratio": 1.0,
+          "n": 350,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "prod-zip-30": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2.907,
+          "p95": 3.316,
+          "enc_p50": 1.3,
+          "dec_p50": 1.586,
+          "mbps": 84.71,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 30,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 3.167,
+          "p95": 3.944,
+          "enc_p50": 1.458,
+          "dec_p50": 1.718,
+          "mbps": 76.3,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 30,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 6.362,
+          "p95": 7.223,
+          "enc_p50": 4.399,
+          "dec_p50": 1.94,
+          "mbps": 38.22,
+          "ratio": 0.998,
+          "ok_ratio": 1.0,
+          "n": 30,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 6.257,
+          "p95": 6.557,
+          "enc_p50": 4.345,
+          "dec_p50": 1.91,
+          "mbps": 39.55,
+          "ratio": 0.998,
+          "ok_ratio": 1.0,
+          "n": 30,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-1KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.098,
+          "p95": 1.098,
+          "enc_p50": 0.341,
+          "dec_p50": 0.736,
+          "mbps": 0.89,
+          "ratio": 1.593,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.28,
+          "p95": 1.28,
+          "enc_p50": 0.526,
+          "dec_p50": 0.741,
+          "mbps": 0.76,
+          "ratio": 1.593,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.309,
+          "p95": 3.309,
+          "enc_p50": 0.714,
+          "dec_p50": 2.7,
+          "mbps": 0.3,
+          "ratio": 1.615,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 3.325,
+          "p95": 3.325,
+          "enc_p50": 0.796,
+          "dec_p50": 2.345,
+          "mbps": 0.29,
+          "ratio": 1.615,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-64KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.59,
+          "p95": 1.59,
+          "enc_p50": 0.452,
+          "dec_p50": 1.139,
+          "mbps": 39.31,
+          "ratio": 5.095,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.787,
+          "p95": 1.787,
+          "enc_p50": 0.783,
+          "dec_p50": 1.003,
+          "mbps": 34.98,
+          "ratio": 5.093,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 11.776,
+          "p95": 11.776,
+          "enc_p50": 2.567,
+          "dec_p50": 7.424,
+          "mbps": 5.31,
+          "ratio": 5.959,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5.747,
+          "p95": 5.747,
+          "enc_p50": 2.353,
+          "dec_p50": 3.322,
+          "mbps": 10.88,
+          "ratio": 5.959,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-512KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 6.185,
+          "p95": 6.185,
+          "enc_p50": 3.184,
+          "dec_p50": 2.953,
+          "mbps": 80.84,
+          "ratio": 5.33,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.821,
+          "p95": 5.821,
+          "enc_p50": 3.003,
+          "dec_p50": 2.783,
+          "mbps": 85.9,
+          "ratio": 5.327,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 14.775,
+          "p95": 14.775,
+          "enc_p50": 11.293,
+          "dec_p50": 3.409,
+          "mbps": 33.84,
+          "ratio": 6.361,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 15.109,
+          "p95": 15.109,
+          "enc_p50": 11.637,
+          "dec_p50": 3.455,
+          "mbps": 33.09,
+          "ratio": 6.361,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-4MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 44.393,
+          "p95": 44.393,
+          "enc_p50": 24.573,
+          "dec_p50": 19.59,
+          "mbps": 90.1,
+          "ratio": 5.355,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 40.783,
+          "p95": 40.783,
+          "enc_p50": 23.608,
+          "dec_p50": 17.233,
+          "mbps": 98.08,
+          "ratio": 5.35,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 108.378,
+          "p95": 108.378,
+          "enc_p50": 86.591,
+          "dec_p50": 18.312,
+          "mbps": 36.91,
+          "ratio": 6.404,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 95.103,
+          "p95": 95.103,
+          "enc_p50": 85.6,
+          "dec_p50": 9.498,
+          "mbps": 42.06,
+          "ratio": 6.404,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-16MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 172.28,
+          "p95": 172.28,
+          "enc_p50": 96.763,
+          "dec_p50": 75.534,
+          "mbps": 92.87,
+          "ratio": 5.36,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 157.42,
+          "p95": 157.42,
+          "enc_p50": 91.786,
+          "dec_p50": 65.749,
+          "mbps": 101.64,
+          "ratio": 5.356,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 380.358,
+          "p95": 380.358,
+          "enc_p50": 339.225,
+          "dec_p50": 46.957,
+          "mbps": 42.07,
+          "ratio": 6.412,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 376.938,
+          "p95": 376.938,
+          "enc_p50": 341.757,
+          "dec_p50": 36.819,
+          "mbps": 42.45,
+          "ratio": 6.412,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-64MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 663.335,
+          "p95": 663.335,
+          "enc_p50": 365.972,
+          "dec_p50": 295.809,
+          "mbps": 96.48,
+          "ratio": 5.361,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 650.925,
+          "p95": 650.925,
+          "enc_p50": 376.701,
+          "dec_p50": 259.844,
+          "mbps": 98.32,
+          "ratio": 5.356,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 1524.256,
+          "p95": 1524.256,
+          "enc_p50": 1349.696,
+          "dec_p50": 177.55,
+          "mbps": 41.99,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 1477.487,
+          "p95": 1477.487,
+          "enc_p50": 1364.835,
+          "dec_p50": 115.333,
+          "mbps": 43.32,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-128MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1295.122,
+          "p95": 1295.122,
+          "enc_p50": 712.692,
+          "dec_p50": 581.609,
+          "mbps": 98.83,
+          "ratio": 5.361,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1255.824,
+          "p95": 1255.824,
+          "enc_p50": 727.569,
+          "dec_p50": 528.255,
+          "mbps": 101.93,
+          "ratio": 5.357,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3058.464,
+          "p95": 3058.464,
+          "enc_p50": 2688.207,
+          "dec_p50": 344.161,
+          "mbps": 41.85,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2931.217,
+          "p95": 2931.217,
+          "enc_p50": 2714.363,
+          "dec_p50": 218.74,
+          "mbps": 43.67,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-256MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2638.505,
+          "p95": 2638.505,
+          "enc_p50": 1433.006,
+          "dec_p50": 1195.339,
+          "mbps": 97.02,
+          "ratio": 5.361,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2519.157,
+          "p95": 2519.157,
+          "enc_p50": 1466.572,
+          "dec_p50": 1065.356,
+          "mbps": 101.62,
+          "ratio": 5.357,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 5953.501,
+          "p95": 5953.501,
+          "enc_p50": 5397.261,
+          "dec_p50": 565.572,
+          "mbps": 43.0,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5800.988,
+          "p95": 5800.988,
+          "enc_p50": 5377.282,
+          "dec_p50": 421.788,
+          "mbps": 44.13,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-txt-300MBS": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 2957.081,
+          "p95": 2957.081,
+          "enc_p50": 1730.485,
+          "dec_p50": 1226.596,
+          "mbps": 101.45,
+          "ratio": 5.357,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 6837.139,
+          "p95": 6837.139,
+          "enc_p50": 6331.559,
+          "dec_p50": 501.224,
+          "mbps": 43.88,
+          "ratio": 6.414,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-1KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.158,
+          "p95": 1.158,
+          "enc_p50": 0.341,
+          "dec_p50": 0.843,
+          "mbps": 0.84,
+          "ratio": 1.229,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.23,
+          "p95": 1.23,
+          "enc_p50": 0.491,
+          "dec_p50": 0.732,
+          "mbps": 0.79,
+          "ratio": 1.229,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.293,
+          "p95": 3.293,
+          "enc_p50": 0.647,
+          "dec_p50": 2.641,
+          "mbps": 0.3,
+          "ratio": 1.234,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2.957,
+          "p95": 2.957,
+          "enc_p50": 0.672,
+          "dec_p50": 2.257,
+          "mbps": 0.33,
+          "ratio": 1.234,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-64KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2.411,
+          "p95": 2.411,
+          "enc_p50": 1.184,
+          "dec_p50": 1.238,
+          "mbps": 25.93,
+          "ratio": 2.049,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2.643,
+          "p95": 2.643,
+          "enc_p50": 1.355,
+          "dec_p50": 1.288,
+          "mbps": 23.65,
+          "ratio": 2.048,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 12.26,
+          "p95": 12.26,
+          "enc_p50": 7.2,
+          "dec_p50": 5.117,
+          "mbps": 5.1,
+          "ratio": 2.106,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5.37,
+          "p95": 5.37,
+          "enc_p50": 2.203,
+          "dec_p50": 3.167,
+          "mbps": 11.64,
+          "ratio": 2.106,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-512KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 12.625,
+          "p95": 12.625,
+          "enc_p50": 7.446,
+          "dec_p50": 5.214,
+          "mbps": 39.6,
+          "ratio": 2.097,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 12.908,
+          "p95": 12.908,
+          "enc_p50": 7.754,
+          "dec_p50": 5.118,
+          "mbps": 38.73,
+          "ratio": 2.097,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 13.278,
+          "p95": 13.278,
+          "enc_p50": 8.57,
+          "dec_p50": 4.724,
+          "mbps": 37.66,
+          "ratio": 2.175,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 15.378,
+          "p95": 15.378,
+          "enc_p50": 8.785,
+          "dec_p50": 6.059,
+          "mbps": 32.51,
+          "ratio": 2.175,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-4MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 96.474,
+          "p95": 96.474,
+          "enc_p50": 58.923,
+          "dec_p50": 37.551,
+          "mbps": 41.46,
+          "ratio": 2.106,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 92.848,
+          "p95": 92.848,
+          "enc_p50": 57.345,
+          "dec_p50": 35.443,
+          "mbps": 43.08,
+          "ratio": 2.106,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 91.26,
+          "p95": 91.26,
+          "enc_p50": 65.877,
+          "dec_p50": 26.696,
+          "mbps": 43.83,
+          "ratio": 2.184,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 85.302,
+          "p95": 85.302,
+          "enc_p50": 64.038,
+          "dec_p50": 21.104,
+          "mbps": 46.89,
+          "ratio": 2.184,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-16MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 372.755,
+          "p95": 372.755,
+          "enc_p50": 225.589,
+          "dec_p50": 148.89,
+          "mbps": 42.92,
+          "ratio": 2.107,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 365.676,
+          "p95": 365.676,
+          "enc_p50": 227.754,
+          "dec_p50": 136.835,
+          "mbps": 43.75,
+          "ratio": 2.107,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 346.419,
+          "p95": 346.419,
+          "enc_p50": 258.013,
+          "dec_p50": 86.465,
+          "mbps": 46.19,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 329.646,
+          "p95": 329.646,
+          "enc_p50": 253.208,
+          "dec_p50": 77.799,
+          "mbps": 48.54,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-64MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1447.939,
+          "p95": 1447.939,
+          "enc_p50": 896.382,
+          "dec_p50": 548.099,
+          "mbps": 44.2,
+          "ratio": 2.108,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1440.342,
+          "p95": 1440.342,
+          "enc_p50": 896.861,
+          "dec_p50": 543.263,
+          "mbps": 44.43,
+          "ratio": 2.107,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 1364.677,
+          "p95": 1364.677,
+          "enc_p50": 1039.504,
+          "dec_p50": 329.207,
+          "mbps": 46.9,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 1329.332,
+          "p95": 1329.332,
+          "enc_p50": 1022.178,
+          "dec_p50": 307.154,
+          "mbps": 48.14,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-128MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2903.153,
+          "p95": 2903.153,
+          "enc_p50": 1810.03,
+          "dec_p50": 1079.066,
+          "mbps": 44.09,
+          "ratio": 2.108,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2922.935,
+          "p95": 2922.935,
+          "enc_p50": 1826.847,
+          "dec_p50": 1104.486,
+          "mbps": 43.79,
+          "ratio": 2.107,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 2822.506,
+          "p95": 2822.506,
+          "enc_p50": 2065.606,
+          "dec_p50": 732.297,
+          "mbps": 45.35,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2631.817,
+          "p95": 2631.817,
+          "enc_p50": 2039.987,
+          "dec_p50": 592.218,
+          "mbps": 48.64,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-256MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 5856.61,
+          "p95": 5856.61,
+          "enc_p50": 3660.736,
+          "dec_p50": 2202.382,
+          "mbps": 43.71,
+          "ratio": 2.108,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5847.204,
+          "p95": 5847.204,
+          "enc_p50": 3627.152,
+          "dec_p50": 2201.337,
+          "mbps": 43.78,
+          "ratio": 2.107,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 5377.494,
+          "p95": 5377.494,
+          "enc_p50": 4078.925,
+          "dec_p50": 1298.569,
+          "mbps": 47.61,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5290.274,
+          "p95": 5290.274,
+          "enc_p50": 4077.537,
+          "dec_p50": 1177.483,
+          "mbps": 48.39,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-csv-300MBS": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 6840.335,
+          "p95": 6840.335,
+          "enc_p50": 4247.981,
+          "dec_p50": 2591.844,
+          "mbps": 43.86,
+          "ratio": 2.107,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 6197.064,
+          "p95": 6197.064,
+          "enc_p50": 4783.437,
+          "dec_p50": 1395.538,
+          "mbps": 48.41,
+          "ratio": 2.186,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-1KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.159,
+          "p95": 1.159,
+          "enc_p50": 0.353,
+          "dec_p50": 0.806,
+          "mbps": 0.84,
+          "ratio": 0.75,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.272,
+          "p95": 1.272,
+          "enc_p50": 0.541,
+          "dec_p50": 0.748,
+          "mbps": 0.77,
+          "ratio": 0.75,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.613,
+          "p95": 3.613,
+          "enc_p50": 0.676,
+          "dec_p50": 2.746,
+          "mbps": 0.27,
+          "ratio": 0.751,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2.969,
+          "p95": 2.969,
+          "enc_p50": 0.721,
+          "dec_p50": 2.252,
+          "mbps": 0.33,
+          "ratio": 0.751,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-64KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.621,
+          "p95": 1.621,
+          "enc_p50": 0.706,
+          "dec_p50": 0.924,
+          "mbps": 38.56,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.507,
+          "p95": 1.507,
+          "enc_p50": 0.536,
+          "dec_p50": 0.981,
+          "mbps": 41.46,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 6.73,
+          "p95": 6.73,
+          "enc_p50": 2.314,
+          "dec_p50": 4.451,
+          "mbps": 9.29,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5.743,
+          "p95": 5.743,
+          "enc_p50": 2.33,
+          "dec_p50": 3.413,
+          "mbps": 10.88,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-512KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 4.933,
+          "p95": 4.933,
+          "enc_p50": 2.426,
+          "dec_p50": 2.473,
+          "mbps": 101.35,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.265,
+          "p95": 5.265,
+          "enc_p50": 2.584,
+          "dec_p50": 2.674,
+          "mbps": 94.96,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 13.905,
+          "p95": 13.905,
+          "enc_p50": 9.148,
+          "dec_p50": 4.653,
+          "mbps": 35.96,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 13.641,
+          "p95": 13.641,
+          "enc_p50": 9.034,
+          "dec_p50": 4.535,
+          "mbps": 36.65,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-4MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 36.387,
+          "p95": 36.387,
+          "enc_p50": 18.426,
+          "dec_p50": 15.721,
+          "mbps": 109.93,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 34.015,
+          "p95": 34.015,
+          "enc_p50": 17.636,
+          "dec_p50": 16.324,
+          "mbps": 117.6,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 91.146,
+          "p95": 91.146,
+          "enc_p50": 71.406,
+          "dec_p50": 19.739,
+          "mbps": 43.89,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 84.979,
+          "p95": 84.979,
+          "enc_p50": 67.375,
+          "dec_p50": 17.487,
+          "mbps": 47.07,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-16MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 131.455,
+          "p95": 131.455,
+          "enc_p50": 71.085,
+          "dec_p50": 58.645,
+          "mbps": 121.71,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 134.509,
+          "p95": 134.509,
+          "enc_p50": 69.561,
+          "dec_p50": 63.766,
+          "mbps": 118.95,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 349.057,
+          "p95": 349.057,
+          "enc_p50": 271.321,
+          "dec_p50": 78.853,
+          "mbps": 45.84,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 338.268,
+          "p95": 338.268,
+          "enc_p50": 276.72,
+          "dec_p50": 61.769,
+          "mbps": 47.3,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-64MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 522.595,
+          "p95": 522.595,
+          "enc_p50": 299.573,
+          "dec_p50": 224.75,
+          "mbps": 122.47,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 515.945,
+          "p95": 515.945,
+          "enc_p50": 270.182,
+          "dec_p50": 246.37,
+          "mbps": 124.04,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 1347.394,
+          "p95": 1347.394,
+          "enc_p50": 1082.759,
+          "dec_p50": 264.634,
+          "mbps": 47.5,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 1321.925,
+          "p95": 1321.925,
+          "enc_p50": 1070.065,
+          "dec_p50": 238.076,
+          "mbps": 48.41,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-128MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1106.392,
+          "p95": 1106.392,
+          "enc_p50": 656.851,
+          "dec_p50": 451.871,
+          "mbps": 115.69,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1047.529,
+          "p95": 1047.529,
+          "enc_p50": 545.142,
+          "dec_p50": 500.617,
+          "mbps": 122.19,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 2764.019,
+          "p95": 2764.019,
+          "enc_p50": 2180.425,
+          "dec_p50": 586.882,
+          "mbps": 46.31,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2603.195,
+          "p95": 2603.195,
+          "enc_p50": 2101.014,
+          "dec_p50": 471.95,
+          "mbps": 49.17,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-256MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2228.471,
+          "p95": 2228.471,
+          "enc_p50": 1298.527,
+          "dec_p50": 902.465,
+          "mbps": 114.88,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2082.889,
+          "p95": 2082.889,
+          "enc_p50": 1097.855,
+          "dec_p50": 987.567,
+          "mbps": 122.91,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 5654.157,
+          "p95": 5654.157,
+          "enc_p50": 4385.805,
+          "dec_p50": 1192.355,
+          "mbps": 45.28,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5172.858,
+          "p95": 5172.858,
+          "enc_p50": 4236.992,
+          "dec_p50": 944.628,
+          "mbps": 49.49,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-pdf-300MBS": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 2460.051,
+          "p95": 2460.051,
+          "enc_p50": 1312.106,
+          "dec_p50": 1144.972,
+          "mbps": 121.95,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 6097.038,
+          "p95": 6097.038,
+          "enc_p50": 4989.748,
+          "dec_p50": 1107.29,
+          "mbps": 49.2,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-1KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.211,
+          "p95": 1.211,
+          "enc_p50": 0.465,
+          "dec_p50": 0.903,
+          "mbps": 0.81,
+          "ratio": 0.75,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.241,
+          "p95": 1.241,
+          "enc_p50": 0.528,
+          "dec_p50": 0.718,
+          "mbps": 0.79,
+          "ratio": 0.75,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 3.087,
+          "p95": 3.087,
+          "enc_p50": 0.797,
+          "dec_p50": 2.29,
+          "mbps": 0.32,
+          "ratio": 0.751,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2.961,
+          "p95": 2.961,
+          "enc_p50": 0.697,
+          "dec_p50": 2.266,
+          "mbps": 0.33,
+          "ratio": 0.751,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-64KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1.583,
+          "p95": 1.583,
+          "enc_p50": 0.642,
+          "dec_p50": 0.938,
+          "mbps": 39.49,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1.505,
+          "p95": 1.505,
+          "enc_p50": 0.521,
+          "dec_p50": 0.98,
+          "mbps": 41.54,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 6.229,
+          "p95": 6.229,
+          "enc_p50": 2.385,
+          "dec_p50": 4.007,
+          "mbps": 10.03,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5.265,
+          "p95": 5.265,
+          "enc_p50": 2.437,
+          "dec_p50": 2.793,
+          "mbps": 11.87,
+          "ratio": 0.995,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-512KB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 4.97,
+          "p95": 4.97,
+          "enc_p50": 2.503,
+          "dec_p50": 2.462,
+          "mbps": 100.6,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 5.261,
+          "p95": 5.261,
+          "enc_p50": 2.582,
+          "dec_p50": 2.667,
+          "mbps": 95.04,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 14.457,
+          "p95": 14.457,
+          "enc_p50": 9.382,
+          "dec_p50": 5.074,
+          "mbps": 34.59,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 13.784,
+          "p95": 13.784,
+          "enc_p50": 9.021,
+          "dec_p50": 4.769,
+          "mbps": 36.27,
+          "ratio": 0.999,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-4MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 33.885,
+          "p95": 33.885,
+          "enc_p50": 18.34,
+          "dec_p50": 15.322,
+          "mbps": 118.05,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 34.719,
+          "p95": 34.719,
+          "enc_p50": 17.916,
+          "dec_p50": 16.803,
+          "mbps": 115.21,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 90.64,
+          "p95": 90.64,
+          "enc_p50": 70.769,
+          "dec_p50": 19.871,
+          "mbps": 44.13,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 85.371,
+          "p95": 85.371,
+          "enc_p50": 67.93,
+          "dec_p50": 17.502,
+          "mbps": 46.85,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-16MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 129.074,
+          "p95": 129.074,
+          "enc_p50": 70.66,
+          "dec_p50": 57.526,
+          "mbps": 123.96,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 131.249,
+          "p95": 131.249,
+          "enc_p50": 69.145,
+          "dec_p50": 62.212,
+          "mbps": 121.91,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 354.792,
+          "p95": 354.792,
+          "enc_p50": 274.217,
+          "dec_p50": 79.903,
+          "mbps": 45.1,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 345.349,
+          "p95": 345.349,
+          "enc_p50": 269.458,
+          "dec_p50": 72.468,
+          "mbps": 46.33,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-64MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 529.017,
+          "p95": 529.017,
+          "enc_p50": 300.187,
+          "dec_p50": 227.782,
+          "mbps": 120.98,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 516.324,
+          "p95": 516.324,
+          "enc_p50": 269.254,
+          "dec_p50": 248.228,
+          "mbps": 123.95,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 1376.453,
+          "p95": 1376.453,
+          "enc_p50": 1107.725,
+          "dec_p50": 263.686,
+          "mbps": 46.5,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 1340.983,
+          "p95": 1340.983,
+          "enc_p50": 1094.651,
+          "dec_p50": 246.01,
+          "mbps": 47.73,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-128MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 1110.946,
+          "p95": 1110.946,
+          "enc_p50": 665.485,
+          "dec_p50": 453.503,
+          "mbps": 115.22,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 1047.257,
+          "p95": 1047.257,
+          "enc_p50": 556.42,
+          "dec_p50": 493.376,
+          "mbps": 122.22,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 2762.393,
+          "p95": 2762.393,
+          "enc_p50": 2181.233,
+          "dec_p50": 580.885,
+          "mbps": 46.34,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 2587.635,
+          "p95": 2587.635,
+          "enc_p50": 2098.73,
+          "dec_p50": 475.626,
+          "mbps": 49.47,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-256MB": {
+      "go-klauspost": {
+        "go-inmem-single": {
+          "p50": 2213.889,
+          "p95": 2213.889,
+          "enc_p50": 1307.42,
+          "dec_p50": 899.528,
+          "mbps": 115.63,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "go-stream-parallel": {
+          "p50": 2081.642,
+          "p95": 2081.642,
+          "enc_p50": 1091.946,
+          "dec_p50": 982.372,
+          "mbps": 122.98,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-inmem-single": {
+          "p50": 5540.607,
+          "p95": 5540.607,
+          "enc_p50": 4359.142,
+          "dec_p50": 1181.465,
+          "mbps": 46.2,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        },
+        "java-stream-parallel": {
+          "p50": 5167.349,
+          "p95": 5167.349,
+          "enc_p50": 4205.221,
+          "dec_p50": 936.157,
+          "mbps": 49.54,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    },
+    "sg-zip-300MBS": {
+      "go-klauspost": {
+        "go-stream-parallel": {
+          "p50": 2434.412,
+          "p95": 2434.412,
+          "enc_p50": 1285.882,
+          "dec_p50": 1146.732,
+          "mbps": 123.23,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      },
+      "java-zlibng": {
+        "java-stream-parallel": {
+          "p50": 6047.333,
+          "p95": 6047.333,
+          "enc_p50": 4943.537,
+          "dec_p50": 1109.114,
+          "mbps": 49.61,
+          "ratio": 1.0,
+          "ok_ratio": 1.0,
+          "n": 1,
+          "rounds": 5,
+          "ok_ratio_min": 1.0,
+          "skipped_max": 0
+        }
+      }
+    }
+  },
+  "finishedAt": "2026-07-02T11:31:40.535853+00:00"
+}
