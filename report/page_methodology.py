@@ -47,10 +47,10 @@ def build() -> str:
     </div>
   </div>
   <div class="hi" style="margin-top:14px">
-    <strong>ทำไมต้องแยก subprocess (กระบวนการแยกกัน)?</strong>
-    เพราะ memory (หน่วยความจำ), GC (garbage collection — การเก็บขยะหน่วยความจำ),
-    JIT (Just-In-Time compiler — ตัวแปลภาษา) ของแต่ละภาษาจะแยกกันสมบูรณ์
-    ไม่ปนกัน ผล benchmark จึงสะท้อนความสามารถจริงของแต่ละภาษา
+    <strong>ทำไมต้องแยกโปรแกรมออกจากกัน?</strong>
+    เหมือนการแข่งรถที่ต้องรันบนสนามแยก ไม่ใช่บนสนามเดียวกันพร้อมกัน
+    เพราะถ้ารันพร้อมกัน Go อาจแย่งหน่วยความจำกับ Java ทำให้ผลบิดเบือนได้
+    การแยก process ทำให้แต่ละภาษาได้ทรัพยากรเต็มที่ ผลที่ได้จึงยุติธรรมและเชื่อถือได้
   </div>
 </div>
 
@@ -113,8 +113,8 @@ def build() -> str:
         <li>การเรียก <strong>encrypt() function</strong> จริง — เข้ารหัส</li>
         <li>การเรียก <strong>decrypt() function</strong> จริง — ถอดรหัส</li>
         <li>เฉพาะ crypto transform เท่านั้น</li>
-        <li>Go: monotonic clock (นาฬิกาที่ไม่เดินถอยหลัง)</li>
-        <li>Java: System.nanoTime() (จับเวลาระดับ nanosecond)</li>
+        <li>Go: นาฬิกาที่แม่นยำระดับ nanosecond ไม่เดินถอยหลัง</li>
+        <li>Java: System.nanoTime() (เดียวกัน ความแม่นยำระดับ nanosecond)</li>
       </ul>
     </div>
     <div class="mbox red">
@@ -122,16 +122,17 @@ def build() -> str:
       <ul>
         <li>การโหลดกุญแจจาก disk (hard drive)</li>
         <li>การอ่าน/เขียนไฟล์ (disk I/O)</li>
-        <li>JVM startup time (เวลาเปิด Java)</li>
-        <li>JIT warm-up iterations (รอบอุ่นเครื่อง)</li>
+        <li>เวลาที่ Java ใช้เปิดตัวโปรแกรม (JVM startup)</li>
+        <li>เวลาที่ Java อุ่นเครื่องก่อนทำงานเต็มประสิทธิภาพ</li>
         <li>Warm_Up_Iteration rounds</li>
         <li>Harness overhead (เวลาตัวกลาง)</li>
       </ul>
     </div>
   </div>
   <div class="hi" style="margin-top:12px">
-    <strong>Cold_Start metric</strong> (เวลา process startup + JIT warm-up รวม) ถูกบันทึกแยกต่างหาก
-    เป็น "metric เสริม" ไม่ถูกนำไปรวมกับ core crypto-time ที่ใช้เปรียบเทียบ
+    <strong>Cold_Start</strong> (เวลาเปิดโปรแกรม + อุ่นเครื่องรวม) บันทึกแยกต่างหาก
+    เป็นข้อมูลเสริม ไม่ถูกนำไปรวมกับเวลาเข้ารหัสที่ใช้เปรียบเทียบหลัก —
+    สำคัญสำหรับ use case ที่โปรแกรมเปิด-ปิดบ่อย เช่น serverless หรือ batch ทีละไฟล์
   </div>
 </div>
 
@@ -155,10 +156,10 @@ def build() -> str:
          เท่ากันทั้งสองฝ่าย มี 1 ซอฟต์แวร์ active ต่อเวลา ไม่แย่งทรัพยากรกัน</p>
     </div>
     <div class="mbox">
-      <h4>📦 Isolated Process (แยก process)</h4>
-      <p>Go และ Java รันเป็น subprocess แยกกันสมบูรณ์
-         GC (garbage collection), memory heap, JIT (compiler) ของ Java
-         ไม่ส่งผลต่อ Go และในทางกลับกัน</p>
+      <h4>📦 แยกโปรแกรม (แต่ละภาษารันแยกกัน)</h4>
+      <p>Go และ Java รันเป็นโปรแกรมแยกกันสมบูรณ์
+         หน่วยความจำ, การจัดการ garbage, compiler ของ Java
+         ไม่ส่งผลต่อ Go และในทางกลับกัน — ไม่มีการแย่งทรัพยากรกัน</p>
     </div>
   </div>
 </div>"""

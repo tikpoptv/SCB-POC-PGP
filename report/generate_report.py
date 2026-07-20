@@ -2,38 +2,59 @@
 """
 generate_report.py — entry point หลัก
 
-โครงสร้าง:
-  data_loader.py  — โหลด results.json → rows[]
-  charts.py       — สร้าง Chart.js HTML snippet (ไม่ต้องติดตั้งอะไร)
-  html_builder.py — ประกอบ HTML รายงานเต็ม
-  generate_report.py (ไฟล์นี้) — รันทั้งหมด
+ใช้ results_extended.json (full benchmark 26 scenarios) เป็น primary data
+ถ้าไม่มีจึง fallback ไป results.json (original 15 scenarios)
 
 USAGE:
-  python3 generate_report.py                    # หา results.json อัตโนมัติ
-  python3 generate_report.py /path/results.json
+    python3 generate_report.py                     # auto-find
+    python3 generate_report.py /path/results.json  # explicit
 """
 import sys, pathlib
 import data_loader, charts, html_builder
 
+REPORT_DIR = pathlib.Path(__file__).parent
+
 
 def main():
-    # หา results.json
+    # ── หา results หลัก (extended ก่อน, fallback ไป original) ─────────────
     if len(sys.argv) > 1:
-        results_path = sys.argv[1]
+        primary_path = sys.argv[1]
     else:
-        results_path = data_loader.find_results_json()
-        if not results_path:
-            print("❌ ไม่พบ results.json")
-            print("   usage: python3 generate_report.py /path/to/results.json")
+        # ลำดับความสำคัญ: extended > original > /tmp
+        candidates = [
+            REPORT_DIR / "results_extended.json",    # full benchmark
+            REPORT_DIR / "results.json",              # original
+            pathlib.Path("/tmp/bench_results_extended.json"),
+            pathlib.Path("/tmp/bench-full/results_full.json"),
+            pathlib.Path("/tmp/bench_results.json"),
+        ]
+        primary_path = None
+        for c in candidates:
+            if c.exists():
+                primary_path = str(c)
+                break
+        if not primary_path:
+            print("❌ ไม่พบไฟล์ results")
             sys.exit(1)
 
-    print(f"\n🔍 โหลดข้อมูลจาก: {results_path}")
-    data = data_loader.load(results_path)
-    rows = data_loader.extract_rows(data)
-    print(f"  ✓ {len(rows)} test cases")
+    print(f"\n🔍 โหลดข้อมูลจาก: {primary_path}")
+    data = data_loader.load(primary_path)
 
-    out_dir  = pathlib.Path(__file__).parent
-    out_html = str(out_dir / "pgp_benchmark_report.html")
+    # ── ตรวจว่าเป็น extended format (มี pub_alg ใน scenario) หรือ original ──
+    first_sc = list(data.get("scenarios", {}).values())[:1]
+    is_extended = (first_sc and isinstance(first_sc[0], dict)
+                   and "pub_alg" in first_sc[0])
+
+    if is_extended:
+        print("  ✓ Extended format (full benchmark 26 scenarios)")
+        rows = data_loader.extract_extended_rows(data)
+    else:
+        print("  ✓ Original format (15 scenarios)")
+        rows = data_loader.extract_rows(data)
+
+    print(f"  ✓ {len(rows)} test scenarios")
+
+    out_html = str(REPORT_DIR / "pgp_benchmark_report.html")
 
     print("\n📊 สร้างกราฟ Chart.js...")
     chart_html = charts.build(rows)

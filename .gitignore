@@ -17,9 +17,14 @@ harness/.venv/
 
 # Go runner build output
 runners/go/go-runner
+runners/go/go-runner-klauspost
+runners/go/go-runner-stdlib
 runners/go/*.test
 
 # Java runner build output (keep mvnw, mvnw.cmd, .mvn/ committed)
 runners/java/target/
 
 MEETING-SUMMARY.md
+
+# Playwright MCP debug artifacts (screenshots/console logs ระหว่างตรวจ report)
+.playwright-mcp/

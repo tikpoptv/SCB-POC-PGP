@@ -2,20 +2,25 @@
 import json, statistics
 
 def build(rows: list[dict]) -> str:
-    pub_algs = list(dict.fromkeys(r["pub_alg"] for r in rows))
+    # รองรับทั้ง extended rows (sc_id+pub_alg) และ original rows (scenario+pub_alg)
+    def _pub_alg(r): return r.get("pub_alg", r.get("pub_alg", "RSA-2048"))
+    def _lbl(r):     return r.get("sc_label", r.get("sc_id", r.get("scenario", "")))[:20]
 
-    # Chart 1 — Go vs Java per scenario (RSA-2048)
-    r2048   = [r for r in rows if r["pub_alg"] == "RSA-2048"]
-    c1_lbl  = [r["scenario"] for r in r2048]
+    pub_algs = list(dict.fromkeys(_pub_alg(r) for r in rows))
+
+    # Chart 1 — Go vs Java per scenario (RSA-2048, max 10)
+    r2048   = [r for r in rows if _pub_alg(r) == "RSA-2048"][:10]
+    c1_lbl  = [_lbl(r) for r in r2048]
     c1_go   = [r["go_p50"]   for r in r2048]
     c1_java = [r["java_p50"] for r in r2048]
 
-    # Chart 2 — Speedup diverging bar
-    c2_lbl    = [f"{r['scenario'][:10]}/{r['pub_alg']}" for r in rows]
+    # Chart 2 — Speedup diverging bar (max 15)
+    rows15  = rows[:15]
+    c2_lbl    = [_lbl(r)[:12]+"/"+_pub_alg(r)[:8] for r in rows15]
     c2_vals   = [r["speedup"] if r["winner"]=="GO" else
-                 -r["speedup"] if r["winner"]=="JAVA" else 0 for r in rows]
+                 -r["speedup"] if r["winner"]=="JAVA" else 0 for r in rows15]
     c2_colors = ['"#00ADE8"' if r["winner"]=="GO" else
-                 '"#F89820"' if r["winner"]=="JAVA" else '"#95a5a6"' for r in rows]
+                 '"#F89820"' if r["winner"]=="JAVA" else '"#95a5a6"' for r in rows15]
 
     # Chart 3 — by key type
     c3_go, c3_java = [], []
@@ -31,7 +36,6 @@ def build(rows: list[dict]) -> str:
     total  = len(rows)
 
     return f"""
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
 
   <div class="chart-box">
