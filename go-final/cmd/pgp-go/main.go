@@ -2,6 +2,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -23,15 +24,17 @@ func main() {
 
 func run(args []string) error {
 	if len(args) == 0 {
-		return errors.New("usage: pgp-go <encrypt|decrypt> [options]")
+		return errors.New("usage: pgp-go <encrypt|decrypt|serve> [options]")
 	}
 	switch args[0] {
 	case "encrypt":
 		return runEncrypt(args[1:])
 	case "decrypt":
 		return runDecrypt(args[1:])
+	case "serve":
+		return runServe(args[1:])
 	default:
-		return fmt.Errorf("unknown command %q (use encrypt or decrypt)", args[0])
+		return fmt.Errorf("unknown command %q (use encrypt, decrypt, or serve)", args[0])
 	}
 }
 
@@ -44,12 +47,15 @@ func addFileFlags(flags *flag.FlagSet, options *fileOptions) {
 	flags.StringVar(&options.input, "in", "", "input file")
 	flags.StringVar(&options.output, "out", "", "output file (must not already exist)")
 }
+
 func runEncrypt(args []string) error {
 	flags := flag.NewFlagSet("encrypt", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	var files fileOptions
+	var batch batchOptions
 	var publicKeyPath string
 	addFileFlags(flags, &files)
+	addBatchFlags(flags, &batch)
 	flags.StringVar(&publicKeyPath, "public-key", "", "armored or binary public key file")
 	if err := flags.Parse(args); err != nil {
 		return fmt.Errorf("encrypt options: %w", err)
@@ -60,9 +66,16 @@ func runEncrypt(args []string) error {
 	if publicKeyPath == "" {
 		return errors.New("encrypt requires -public-key")
 	}
-	validatedFiles, err := validateFileOptions(files)
+	prepared, batchMode, err := prepareBatch(files, batch)
 	if err != nil {
 		return err
+	}
+	var validatedFiles fileOptions
+	if !batchMode {
+		validatedFiles, err = validateFileOptions(files)
+		if err != nil {
+			return err
+		}
 	}
 
 	keyFile, err := os.Open(publicKeyPath)
@@ -77,6 +90,9 @@ func runEncrypt(args []string) error {
 	if closeErr != nil {
 		return fmt.Errorf("close public key file: %w", closeErr)
 	}
+	if batchMode {
+		return runBatch("encrypt", prepared, encryptor.Encrypt)
+	}
 	return transformFile(validatedFiles, encryptor.Encrypt)
 }
 
@@ -84,12 +100,14 @@ func runDecrypt(args []string) error {
 	flags := flag.NewFlagSet("decrypt", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	var files fileOptions
+	var batch batchOptions
 	var privateKeyPath, passphrasePath string
 	var maxOutputBytes int64
 	addFileFlags(flags, &files)
+	addBatchFlags(flags, &batch)
 	flags.StringVar(&privateKeyPath, "private-key", "", "armored or binary private key file")
 	flags.StringVar(&passphrasePath, "passphrase-file", "", "file containing the private-key passphrase")
-	flags.Int64Var(&maxOutputBytes, "max-output-bytes", pgpcrypto.DefaultMaxOutputBytes, "maximum decrypted bytes")
+	flags.Int64Var(&maxOutputBytes, "max-output-bytes", pgpcrypto.DefaultMaxOutputBytes, "maximum decrypted bytes per file")
 	if err := flags.Parse(args); err != nil {
 		return fmt.Errorf("decrypt options: %w", err)
 	}
@@ -99,9 +117,16 @@ func runDecrypt(args []string) error {
 	if privateKeyPath == "" {
 		return errors.New("decrypt requires -private-key")
 	}
-	validatedFiles, err := validateFileOptions(files)
+	prepared, batchMode, err := prepareBatch(files, batch)
 	if err != nil {
 		return err
+	}
+	var validatedFiles fileOptions
+	if !batchMode {
+		validatedFiles, err = validateFileOptions(files)
+		if err != nil {
+			return err
+		}
 	}
 
 	passphrase, err := readPassphrase(passphrasePath)
@@ -125,6 +150,9 @@ func runDecrypt(args []string) error {
 	}
 	if closeErr != nil {
 		return fmt.Errorf("close private key file: %w", closeErr)
+	}
+	if batchMode {
+		return runBatch("decrypt", prepared, decryptor.Decrypt)
 	}
 	return transformFile(validatedFiles, decryptor.Decrypt)
 }
@@ -171,6 +199,13 @@ func validateFileOptions(options fileOptions) (fileOptions, error) {
 }
 
 func transformFile(options fileOptions, transform func(io.Writer, io.Reader) error) error {
+	return transformFileContext(context.Background(), options, transform)
+}
+
+func transformFileContext(ctx context.Context, options fileOptions, transform func(io.Writer, io.Reader) error) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	input, err := os.Open(options.input)
 	if err != nil {
 		return fmt.Errorf("open input file: %w", err)
@@ -183,17 +218,21 @@ func transformFile(options fileOptions, transform func(io.Writer, io.Reader) err
 		return fmt.Errorf("create temporary output: %w", err)
 	}
 	temporaryPath := temporary.Name()
-	published := false
+	// Always remove the temporary name on return. After publication the hard
+	// link is the commit point, so cleanup must never roll back the final path.
 	defer func() {
-		if !published {
-			_ = temporary.Close()
-			_ = os.Remove(temporaryPath)
-		}
+		_ = temporary.Close()
+		_ = os.Remove(temporaryPath)
 	}()
 	if err := temporary.Chmod(0o600); err != nil {
 		return fmt.Errorf("set temporary output permissions: %w", err)
 	}
-	if err := transform(temporary, input); err != nil {
+	reader := &contextReader{ctx: ctx, reader: input}
+	writer := &contextWriter{ctx: ctx, writer: temporary}
+	if err := transform(writer, reader); err != nil {
+		return err
+	}
+	if err := ctx.Err(); err != nil {
 		return err
 	}
 	if err := temporary.Sync(); err != nil {
@@ -202,25 +241,59 @@ func transformFile(options fileOptions, transform func(io.Writer, io.Reader) err
 	if err := temporary.Close(); err != nil {
 		return fmt.Errorf("close temporary output: %w", err)
 	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if err := publish(temporaryPath, options.output); err != nil {
 		return err
 	}
-	published = true
 	return nil
 }
+
+type contextReader struct {
+	ctx    context.Context
+	reader io.Reader
+}
+
+func (reader *contextReader) Read(buffer []byte) (int, error) {
+	if err := reader.ctx.Err(); err != nil {
+		return 0, err
+	}
+	n, err := reader.reader.Read(buffer)
+	if err == nil {
+		if contextErr := reader.ctx.Err(); contextErr != nil {
+			return n, contextErr
+		}
+	}
+	return n, err
+}
+
+type contextWriter struct {
+	ctx    context.Context
+	writer io.Writer
+}
+
+func (writer *contextWriter) Write(buffer []byte) (int, error) {
+	if err := writer.ctx.Err(); err != nil {
+		return 0, err
+	}
+	n, err := writer.writer.Write(buffer)
+	if err == nil {
+		if contextErr := writer.ctx.Err(); contextErr != nil {
+			return n, contextErr
+		}
+	}
+	return n, err
+}
 func publish(temporaryPath, outputPath string) error {
-	// A hard link publishes without a check-then-rename race and cannot replace
-	// a destination created concurrently. Both names are in the same resolved
-	// directory; this CLI intentionally has no overwrite mode.
+	// A hard link is the commit point: it publishes atomically without
+	// replacing a destination created concurrently. The caller removes the
+	// temporary name and never rolls the committed output back by pathname.
 	if err := os.Link(temporaryPath, outputPath); err != nil {
 		if errors.Is(err, os.ErrExist) {
 			return errors.New("output path already exists")
 		}
 		return fmt.Errorf("publish output file: %w", err)
-	}
-	if err := os.Remove(temporaryPath); err != nil {
-		_ = os.Remove(outputPath)
-		return fmt.Errorf("remove temporary output link: %w", err)
 	}
 	return nil
 }

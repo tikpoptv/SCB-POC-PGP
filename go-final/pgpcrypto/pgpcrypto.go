@@ -44,12 +44,15 @@ type DecryptConfig struct {
 	MaxOutputBytes int64
 }
 
-// Encryptor encrypts binary literal data to its configured recipients.
+// Encryptor encrypts binary literal data to its configured recipients. It is
+// safe for concurrent calls after construction; its key ring is immutable.
 type Encryptor struct {
 	recipients openpgp.EntityList
 }
 
-// Decryptor decrypts data with its configured private keys.
+// Decryptor decrypts data with its configured private keys. It is safe for
+// concurrent calls after construction; private keys are unlocked up front and
+// then treated as immutable.
 type Decryptor struct {
 	keyRing       openpgp.EntityList
 	maxOutputSize int64
@@ -187,17 +190,28 @@ func (encryptor *Encryptor) Encrypt(dst io.Writer, src io.Reader) error {
 		return errors.New("source and destination must not be nil")
 	}
 
-	plaintext, err := openpgp.Encrypt(dst, encryptor.recipients, nil, binaryHints, packetConfig(nil))
+	buffered := bufio.NewWriterSize(dst, BufferSize)
+	plaintext, err := openpgp.Encrypt(buffered, encryptor.recipients, nil, binaryHints, packetConfig(nil))
 	if err != nil {
-		return fmt.Errorf("initialize OpenPGP encryption: %w", err)
+		return errors.Join(fmt.Errorf("initialize OpenPGP encryption: %w", err), flushError(buffered))
 	}
 	buffer := acquireBuffer()
 	defer releaseBuffer(buffer)
-	if _, err := io.CopyBuffer(plaintext, src, *buffer); err != nil {
-		return errors.Join(fmt.Errorf("stream plaintext: %w", err), plaintext.Close())
+	_, copyErr := io.CopyBuffer(plaintext, src, *buffer)
+	closeErr := plaintext.Close()
+	flushErr := buffered.Flush()
+	if copyErr != nil {
+		return errors.Join(
+			fmt.Errorf("stream plaintext: %w", copyErr),
+			wrapError("finalize OpenPGP encryption", closeErr),
+			wrapError("flush encrypted output", flushErr),
+		)
 	}
-	if err := plaintext.Close(); err != nil {
-		return fmt.Errorf("finalize OpenPGP encryption: %w", err)
+	if closeErr != nil || flushErr != nil {
+		return errors.Join(
+			wrapError("finalize OpenPGP encryption", closeErr),
+			wrapError("flush encrypted output", flushErr),
+		)
 	}
 	return nil
 }
@@ -214,7 +228,8 @@ func (decryptor *Decryptor) Decrypt(dst io.Writer, src io.Reader) error {
 	}
 
 	decompressedLimit := decompressionBudget(decryptor.maxOutputSize)
-	message, err := openpgp.ReadMessage(src, decryptor.keyRing, nil, packetConfig(&decompressedLimit))
+	bufferedInput := bufio.NewReaderSize(src, BufferSize)
+	message, err := openpgp.ReadMessage(bufferedInput, decryptor.keyRing, nil, packetConfig(&decompressedLimit))
 	if err != nil {
 		return fmt.Errorf("read OpenPGP message: %w", err)
 	}
@@ -223,11 +238,28 @@ func (decryptor *Decryptor) Decrypt(dst io.Writer, src io.Reader) error {
 	}
 	buffer := acquireBuffer()
 	defer releaseBuffer(buffer)
-	limited := &limitWriter{writer: dst, remaining: decryptor.maxOutputSize}
-	if _, err := io.CopyBuffer(limited, message.UnverifiedBody, *buffer); err != nil {
-		return fmt.Errorf("stream decrypted plaintext: %w", err)
+	bufferedOutput := bufio.NewWriterSize(dst, BufferSize)
+	limited := &limitWriter{writer: bufferedOutput, remaining: decryptor.maxOutputSize}
+	_, copyErr := io.CopyBuffer(limited, message.UnverifiedBody, *buffer)
+	flushErr := bufferedOutput.Flush()
+	if copyErr != nil || flushErr != nil {
+		return errors.Join(
+			wrapError("stream decrypted plaintext", copyErr),
+			wrapError("flush decrypted output", flushErr),
+		)
 	}
 	return nil
+}
+
+func flushError(writer *bufio.Writer) error {
+	return wrapError("flush encrypted output", writer.Flush())
+}
+
+func wrapError(action string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("%s: %w", action, err)
 }
 
 func acquireBuffer() *[]byte {
