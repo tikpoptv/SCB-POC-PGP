@@ -1,95 +1,47 @@
-# pgp-go (Final Go Deliverable)
+# pgp-go
 
-ไดเรกทอรีนี้คือ implementation ภาษา Go ฉบับสุดท้ายที่แยกออกจาก POC benchmark ให้เป็นแพ็กเกจที่นำกลับมาใช้ได้และ CLI สำหรับไฟล์ ไม่ใช่ benchmark runner และไม่มี timing, variant registry, corpus หรือรายงาน benchmark
+Go implementation สำหรับเข้ารหัสและถอดรหัสไฟล์ด้วย OpenPGP รองรับทั้ง CLI และ synchronous HTTP service API โค้ดในไดเรกทอรีนี้แยกจาก POC benchmark และไม่มี corpus, key สำหรับระบบจริง, benchmark runner หรือรายงานผลทดสอบ
 
-## โปรไฟล์การเข้ารหัส
+## คุณสมบัติหลัก
 
-ค่าถูกกำหนดตายตัวตามผลชนะของ POC:
+- OpenPGP binary literal data
+- AES-256, SHA-256 และ ZLIB compression level `-1`
+- ZLIB ผ่าน `github.com/klauspost/compress/zlib`
+- Streaming ต่อไฟล์ด้วย reusable buffer ขนาด 64 KiB
+- Batch หลายไฟล์ด้วย bounded worker pool
+- จำนวนไฟล์ default 20 และปรับได้สูงสุด 1000
+- Output แบบ atomic no-clobber ต่อไฟล์
+- รองรับ armored และ binary key ring
+- รองรับ encrypted private key ผ่าน passphrase file
+- จำกัด key ring 16 MiB
+- จำกัด plaintext หลัง decrypt default 1 GiB ต่อไฟล์
 
-- OpenPGP binary literal data (`b`)
-- AES-256
-- ZLIB ผ่าน local fork ที่ใช้ `github.com/klauspost/compress/zlib`
-- SHA-256
-- compression level `-1` (default)
-- streaming payload ด้วย buffer 64 KiB ที่ใช้ซ้ำได้ โดยไม่อ่านไฟล์ทั้งหมดเข้า memory
-- จำกัด key input ที่ 16 MiB ต่อ key ring
-- decryption จำกัด plaintext แบบ inclusive ที่ 1 GiB โดย default และตั้ง internal decompression budget แยกเพื่อเผื่อ OpenPGP packet framing
+> 64 KiB เป็นขนาด payload copy buffer ไม่ใช่เพดาน memory ทั้ง process เพราะ OpenPGP metadata และ key material ยังถูก parse โดย dependency
 
-> ขอบเขต memory 64 KiB ใช้กับการ copy payload เท่านั้น metadata ของ OpenPGP/key ถูก parse โดย dependency และไม่อยู่ภายใต้ขอบเขต buffer นี้ จึงยังต้องทำ threat-model/security review ก่อนรับ input จากแหล่งที่ไม่เชื่อถือ
+## ความต้องการ
 
-พฤติกรรม benchmark ชื่อ `go-stream-parallel` ถูกนำมาใช้เป็นสองชั้น: แพ็กเกจ `pgpcrypto` ทำ streaming ต่อไฟล์ ส่วน CLI batch จัด bounded worker pool สำหรับหลายไฟล์ โดยจำกัดจำนวนงานพร้อมกันตามค่าที่ขอ, `GOMAXPROCS` และจำนวนไฟล์
+- Go 1.24
+- Filesystem ที่รองรับ hard link
 
-## Build และใช้งาน CLI
-
-ต้องใช้ Go 1.24:
+## Build
 
 ```sh
 go build -o pgp-go ./cmd/pgp-go
-
-./pgp-go encrypt \
-  -in plaintext.bin \
-  -out message.pgp \
-  -public-key recipient-public.asc
-
-./pgp-go decrypt \
-  -in message.pgp \
-  -out plaintext.bin \
-  -private-key recipient-private.asc \
-  -passphrase-file private-key.pass \
-  -max-output-bytes 1073741824
 ```
 
-`-passphrase-file` ใช้ได้เฉพาะ `decrypt` และ CLI ไม่มี flag สำหรับส่ง passphrase โดยตรง เพื่อลดการรั่วผ่าน process list โดยจะตัด line ending หนึ่งชุด (`LF` หรือ `CRLF`) ท้ายไฟล์ passphrase หาก private key ไม่ได้เข้ารหัสให้ละ flag นี้ได้
-CLI รับเฉพาะ input/output แบบไฟล์ ปฏิเสธกรณี input และ output resolve เป็นไฟล์เดียวกัน และ **ไม่รองรับ overwrite**: destination ที่มีอยู่แล้วรวมถึง symlink จะถูกปฏิเสธเสมอ CLI resolve directory ปลายทางครั้งเดียว เขียน temporary file mode `0600` ใน directory นั้น แล้ว publish แบบ atomic no-clobber ด้วย hard link เมื่อเกิดข้อผิดพลาดจะลบ temporary output และไม่ทิ้ง final output ที่เขียนไม่ครบ วิธีนี้ไม่ใช่ crash-durability guarantee เพราะไม่ได้ `fsync` directory และ filesystem ต้องรองรับ hard link
+คำสั่งหลักมี 3 แบบ:
 
-## Batch หลายไฟล์
-
-คำสั่ง `encrypt` และ `decrypt` เดิมรองรับ batch ด้วย `-manifest` โดยห้ามใช้ร่วมกับ `-in` หรือ `-out` manifest v1 เป็น JSON รูปแบบตายตัวและไม่รับ field ที่ไม่รู้จักหรือ JSON ต่อท้าย:
-
-```json
-{"version":1,"files":[{"id":"file-1","input":"documents/input.pdf","output":"documents/input.pdf.pgp"}]}
+```text
+pgp-go serve   # HTTP service API
+pgp-go encrypt # CLI encrypt แบบไฟล์เดียวหรือ batch
+pgp-go decrypt # CLI decrypt แบบไฟล์เดียวหรือ batch
 ```
 
-`id` ต้องไม่ว่างหลัง trim และยาวไม่เกิน 256 bytes ส่วน `input`/`output` ต้องเป็น relative path ที่ไม่ว่าง ห้าม absolute path และ path traversal ทุก batch ต้องระบุ `-input-root` กับ `-output-root`; CLI จะ resolve root และ symlink ล่วงหน้า ตรวจว่า canonical path ยังอยู่ภายใน root, input มีอยู่จริง, output ยังไม่มีแม้เป็น symlink และตรวจ duplicate ID/canonical output ก่อนเริ่มแปลงไฟล์ใด ๆ directory แม่ของ output ต้องมีอยู่แล้ว
+## Service API
 
-ตัวอย่างเข้ารหัส:
+Service หนึ่ง process ทำ operation เดียว โดยกำหนด `encrypt` หรือ `decrypt` ตอนเริ่ม process ผู้เรียก API ส่งเฉพาะ relative file paths และไม่สามารถกำหนด operation, filesystem root, key หรือ passphrase ผ่าน request ได้
 
-```sh
-./pgp-go encrypt \
-  -manifest encrypt-manifest.json \
-  -input-root ./incoming \
-  -output-root ./encrypted \
-  -public-key recipient-public.asc \
-  -max-files 20 \
-  -workers 0
-```
-
-ตัวอย่างถอดรหัส (manifest ระบุ path ของ ciphertext ใต้ input root และ plaintext ใต้ output root):
-
-```sh
-./pgp-go decrypt \
-  -manifest decrypt-manifest.json \
-  -input-root ./encrypted \
-  -output-root ./decrypted \
-  -private-key recipient-private.asc \
-  -passphrase-file private-key.pass \
-  -max-output-bytes 1073741824 \
-  -workers 4
-```
-
-จำนวนไฟล์สูงสุด default เท่ากับ **20** ปรับได้ด้วย `-max-files` เป็นค่าบวกแต่ห้ามเกิน safety cap 1000; batch ว่างหรือเกิน limit จะถูกปฏิเสธก่อนทำงาน `-workers 0` หมายถึงเลือกอัตโนมัติจาก `GOMAXPROCS` หากกำหนดค่าบวก จำนวน worker ที่ใช้จริงจะไม่เกินค่าที่ขอ และทุกกรณีจะไม่เกิน `GOMAXPROCS` หรือจำนวนไฟล์ โดยใช้อย่างน้อย 1 worker ค่า `-max-output-bytes` ของ `decrypt` บังคับแยกต่อไฟล์ ไม่ใช่ยอดรวมทั้ง batch
-
-เมื่อ manifest และ config ถูกต้อง CLI จะเขียน compact JSON หนึ่ง object ไป stdout โดยมี `version`, `operation`, `maxFiles`, `workers` และ `results` ที่เรียงตามลำดับใน manifest เสมอ แต่ละผลมีสถานะ `success` หรือ `failed`; failure ใช้ `errorCode` คงที่ `operation_failed` พร้อมข้อความที่ sanitize แล้ว ไฟล์หนึ่งล้มเหลวจะไม่ยกเลิกไฟล์อื่น และ process exit 1 หลังเขียน JSON หากมี failure อย่างน้อยหนึ่งไฟล์
-
-Batch เป็น **atomic ต่อไฟล์ ไม่ใช่ all-or-nothing**: แต่ละไฟล์ยังใช้ temporary mode `0600` และ publish แบบ hard-link no-clobber จึงไม่มี final file ที่เขียนไม่ครบจาก job ที่ล้มเหลว แต่ output ของ job ที่สำเร็จจะคงอยู่แม้ job อื่นล้มเหลว
-
-การตรวจ canonical path ป้องกัน path traversal จากค่าใน manifest แต่ไม่ใช่ filesystem sandbox สำหรับ directory tree ที่ process อื่นสามารถ rename หรือเปลี่ยน symlink ระหว่างรันได้ ดังนั้น `-input-root`, `-output-root` และ ancestor directories ต้องอยู่ภายใต้การควบคุมของระบบที่เรียก CLI ตลอดอายุของ batch
-
-## Service API แบบ synchronous
-
-คำสั่ง `serve` เปิด HTTP API โดยกำหนด operation ตายตัวตอนเริ่ม process ผู้เรียก API ไม่สามารถเลือก operation, root, key หรือ passphrase ใน request ได้ API ทำงานแบบ **synchronous**: `POST /v1/jobs` จะรอจนทุกไฟล์สำเร็จหรือล้มเหลวแล้วจึงส่ง batch report กลับ
-
-ตัวอย่าง service สำหรับ encrypt (คำสั่งเต็ม):
+### เริ่ม Encrypt Service
 
 ```sh
 ./pgp-go serve \
@@ -104,8 +56,7 @@ Batch เป็น **atomic ต่อไฟล์ ไม่ใช่ all-or-noth
   -max-concurrent-jobs 1 \
   -job-timeout 30m
 ```
-
-ตัวอย่าง service สำหรับ decrypt (คำสั่งเต็ม):
+### เริ่ม Decrypt Service
 
 ```sh
 ./pgp-go serve \
@@ -123,116 +74,275 @@ Batch เป็น **atomic ต่อไฟล์ ไม่ใช่ all-or-noth
   -job-timeout 30m
 ```
 
-`-listen` มี default `127.0.0.1:8080`; HTTP ที่ไม่ใช้ TLS อนุญาตเฉพาะ loopback เท่านั้น หาก bind ไปยัง address อื่นต้องระบุ `-tls-cert-file` และ `-tls-key-file` ครบทั้งคู่ และเรียก API ผ่าน HTTPS เพื่อป้องกัน bearer token กับ path metadata ระหว่างส่งข้อมูล `-operation`, `-input-root`, `-output-root` และ `-api-token-file` เป็นค่าบังคับ รวมถึง `-public-key` สำหรับ encrypt หรือ `-private-key` สำหรับ decrypt ส่วน `-passphrase-file` ใช้ได้เฉพาะ decrypt ระบบจะ resolve และตรวจ root, อ่าน bearer token และ parse keyเพียงครั้งเดียวก่อนเริ่มรับ request พร้อมล้าง passphrase bytes หลัง parse key
+### TLS
 
-ตรวจสุขภาพได้โดยไม่ต้องส่ง token:
+HTTP ที่ไม่ใช้ TLS อนุญาตเฉพาะ loopback เช่น `127.0.0.1` และ `::1` หาก listen บน address อื่นต้องระบุ certificate และ private key ครบทั้งคู่:
 
-```http
-GET /healthz
+```sh
+./pgp-go serve \
+  -operation encrypt \
+  -listen 0.0.0.0:8443 \
+  -tls-cert-file /run/secrets/tls.crt \
+  -tls-key-file /run/secrets/tls.key \
+  -input-root /srv/incoming \
+  -output-root /srv/encrypted \
+  -api-token-file /run/secrets/pgp-api-token \
+  -public-key /run/secrets/recipient-public.asc
 ```
 
-response `200 OK`:
+### ส่งงาน
 
-```json
-{"status":"ok"}
-```
-
-ส่ง job โดยใช้ manifest v1 เดียวกับ CLI ทุก path ต้องเป็น relative path ใต้ root ที่กำหนดตอน startup:
+`POST /v1/jobs` เป็น synchronous API: response จะถูกส่งหลังจากทุกไฟล์ใน job สำเร็จหรือล้มเหลวแล้ว
 
 ```sh
 curl -i http://127.0.0.1:8080/v1/jobs \
   -X POST \
   -H 'Authorization: Bearer YOUR_TOKEN' \
   -H 'Content-Type: application/json' \
-  --data '{"version":1,"files":[{"id":"file-1","input":"documents/input.pdf","output":"documents/input.pdf.pgp"}]}'
+  --data '{
+    "version": 1,
+    "files": [
+      {
+        "id": "file-1",
+        "input": "documents/input.pdf",
+        "output": "documents/input.pdf.pgp"
+      }
+    ]
+  }'
 ```
 
-request รับเฉพาะ JSON รูปแบบนี้ ไม่รับ field ที่ไม่รู้จักหรือ JSON ต่อท้าย และไม่รับ operation, root, key หรือ passphrase:
+Request schema:
 
 ```json
-{"version":1,"files":[{"id":"file-1","input":"documents/input.pdf","output":"documents/input.pdf.pgp"}]}
-```
-
-เมื่อทุกไฟล์สำเร็จจะได้ `200 OK`; ถ้ามี operation failure อย่างน้อยหนึ่งไฟล์จะได้ `207 Multi-Status` พร้อม report ที่เรียงตาม manifest เสมอ:
-
-```json
-{"version":1,"operation":"encrypt","maxFiles":20,"workers":1,"results":[{"id":"file-1","input":"documents/input.pdf","output":"documents/input.pdf.pgp","status":"success"}]}
-```
-
-failure ต่อไฟล์ใน HTTP ใช้ข้อความทั่วไปที่คงที่และไม่เปิดเผย absolute path หรือ internal error:
-
-```json
-{"id":"file-1","input":"documents/input.pdf","output":"documents/input.pdf.pgp","status":"failed","errorCode":"operation_failed","error":"operation failed"}
-```
-
-error ระดับ request ใช้ schema คงที่:
-
-```json
-{"version":1,"error":{"code":"invalid_job","message":"job validation failed"}}
-```
-
-HTTP status ที่ API ใช้คือ `200` เมื่อสำเร็จทั้งหมด, `207` เมื่อมี per-file operation failure, `400` สำหรับ JSON ผิดรูปแบบ/unknown field/trailing JSON, `401` เมื่อ bearer token ไม่ถูกต้อง, `405` เมื่อ method ไม่ถูกต้อง, `413` เมื่อ body เกิน 1 MiB, `415` เมื่อ `Content-Type` ไม่ใช่ `application/json`, `422` เมื่อ JSON ถูกต้องแต่ job ไม่ผ่าน preflight validation, `429` เมื่อจำนวน in-flight jobs เต็ม และ `500` สำหรับ internal error
-
-ไฟล์ token จำกัด 4 KiB ตัด line ending ท้ายไฟล์หนึ่งชุด (`LF` หรือ `CRLF`) และต้องไม่ว่าง `POST /v1/jobs` ต้องส่ง `Authorization: Bearer <token>`; service เปรียบเทียบ token แบบ constant-time และไม่คืน config ที่ละเอียดอ่อนผ่าน health endpoint
-
-`-max-files` default 20 และมี hard cap 1000; request body จำกัด 1 MiB; header จำกัด 16 KiB; `-workers 0` เลือกจาก `GOMAXPROCS` และจำนวน worker จริงต่อ job จะถูก clamp ด้วย `GOMAXPROCS` กับจำนวนไฟล์ `-max-concurrent-jobs` default 1 ต้องเป็นค่าบวกและไม่เกิน 100 ส่วน `-job-timeout` default `30m` และต้องเป็นค่าบวก ดังนั้นจำนวน file transforms ที่ active พร้อมกันสูงสุดของ process คือ `max-concurrent-jobs * effective workers` การยกเลิก request, timeout หรือ graceful shutdown จะหยุด dispatch งานใหม่และหยุด streaming ที่ read/write boundary พร้อมลบ temporary file หาก cancellation เกิดก่อน hard-link commit point; หาก commit เกิดขึ้นพร้อม cancellation พอดี final output ที่เขียนครบแล้วอาจถูก publish สำเร็จและจะไม่ถูก rollback
-
-## Package API
-
-รองรับ public/private key ring ทั้ง ASCII-armored และ binary constructor ฝั่ง encrypt ต้องการเฉพาะ public key ส่วน constructor ฝั่ง decrypt รับ passphrase แบบ optional และถอดรหัสทั้ง primary key กับ subkeys ที่เข้ารหัส
-
-```go
-package main
-
-import (
-    "os"
-
-    "github.com/poc-encryption/pgp-go/pgpcrypto"
-)
-
-func encrypt() error {
-    keyFile, err := os.Open("recipient-public.asc")
-    if err != nil {
-        return err
+{
+  "version": 1,
+  "files": [
+    {
+      "id": "file-1",
+      "input": "documents/input.pdf",
+      "output": "documents/input.pdf.pgp"
     }
-    defer keyFile.Close()
-
-    encryptor, err := pgpcrypto.NewEncryptor(keyFile)
-    if err != nil {
-        return err
-    }
-    src, err := os.Open("plaintext.bin")
-    if err != nil {
-        return err
-    }
-    defer src.Close()
-    dst, err := os.Create("message.pgp")
-    if err != nil {
-        return err
-    }
-    defer dst.Close()
-    return encryptor.Encrypt(dst, src)
+  ]
 }
 ```
 
-ใช้ `pgpcrypto.NewDecryptor(privateKeyReader, passphrase, nil)` เพื่อใช้ขีดจำกัด plaintext 1 GiB แบบ inclusive หรือส่ง `&pgpcrypto.DecryptConfig{MaxOutputBytes: n}` โดย `n` ต้องมากกว่าศูนย์ แล้วเรียก `Decrypt(dst, src)` ค่า internal decompression budget จะสูงกว่า plaintext limit เล็กน้อยเพื่อรองรับ OpenPGP literal-packet framing แต่ plaintext ที่เขียนจะไม่เกิน `MaxOutputBytes`
+ข้อกำหนด:
 
-private key ring ต้องไม่เข้ารหัสทั้งหมด หรือ encrypted primary/subkey ทุกตัวใน ring ต้องปลดล็อกได้ด้วย passphrase เดียวที่ส่งให้ constructor
+- `id` ต้องไม่ว่าง, ไม่ซ้ำ และยาวไม่เกิน 256 bytes
+- `input` และ `output` ต้องเป็น relative path ใต้ root ที่กำหนดตอน startup
+- ไม่รับ absolute path, NUL, path traversal, unknown JSON field หรือ JSON ต่อท้าย
+- Input ต้องมีอยู่และ directory แม่ของ output ต้องมีอยู่แล้ว
+- Output ต้องยังไม่มีและห้าม canonical output ซ้ำกันใน job เดียว
 
-เมธอด package เป็น streaming API แต่ destination อาจมีข้อมูลบางส่วนเมื่อ library คืน error (รวม MDC/integrity error ที่พบตอนอ่านถึง EOF) caller ที่ต้องการ atomic file ต้องเขียน temporary file และ rename เอง หรือใช้ CLI นี้
+### Response
 
-## Static/security scanning
+สำเร็จทั้งหมดจะได้ `200 OK`:
+
+```json
+{
+  "version": 1,
+  "operation": "encrypt",
+  "maxFiles": 20,
+  "workers": 1,
+  "results": [
+    {
+      "id": "file-1",
+      "input": "documents/input.pdf",
+      "output": "documents/input.pdf.pgp",
+      "status": "success"
+    }
+  ]
+}
+```
+
+หากมีบางไฟล์ล้มเหลวจะได้ `207 Multi-Status` ผลลัพธ์ยังเรียงตาม request และไฟล์อื่นจะทำงานต่อ:
+
+```json
+{
+  "id": "file-1",
+  "input": "documents/input.pdf",
+  "output": "documents/input.pdf.pgp",
+  "status": "failed",
+  "errorCode": "operation_failed",
+  "error": "operation failed"
+}
+```
+
+HTTP API ใช้ข้อความผิดพลาดทั่วไปเพื่อไม่เปิดเผย absolute path หรือ internal error
+
+### HTTP Status
+
+| Status | ความหมาย |
+|---|---|
+| `200` | ทุกไฟล์สำเร็จ |
+| `207` | มี operation failure อย่างน้อยหนึ่งไฟล์ |
+| `400` | JSON ผิดรูปแบบ, unknown field หรือมี JSON ต่อท้าย |
+| `401` | Bearer token ไม่ถูกต้อง |
+| `404` | ไม่พบ endpoint |
+| `405` | HTTP method ไม่ถูกต้อง |
+| `413` | Request body เกิน 1 MiB |
+| `415` | `Content-Type` ไม่ใช่ `application/json` |
+| `422` | Job ไม่ผ่าน preflight validation |
+| `429` | จำนวน in-flight jobs เต็ม |
+| `500` | Internal server error |
+
+Error ระดับ request ใช้ schema เดียวกัน:
+
+```json
+{
+  "version": 1,
+  "error": {
+    "code": "invalid_job",
+    "message": "job validation failed"
+  }
+}
+```
+
+### Health Check
+
+```http
+GET /healthz
+```
+
+```json
+{"status":"ok"}
+```
+
+Health endpoint ไม่ต้องใช้ bearer token และไม่คืน operation, root หรือข้อมูล key
+### Service Limits
+
+| ค่า | Default | ขอบเขต |
+|---|---:|---:|
+| `-max-files` | `20` | `1–1000` ไฟล์ต่อ job |
+| `-workers` | `0` | `0` ใช้ค่าจาก `GOMAXPROCS` |
+| `-max-concurrent-jobs` | `1` | `1–100` jobs |
+| `-job-timeout` | `30m` | ต้องมากกว่า `0` |
+| Request body | — | 1 MiB |
+| Request header | — | 16 KiB |
+| Token file | — | 4 KiB |
+| Key ring | — | 16 MiB |
+| Decrypted plaintext | 1 GiB | ต่อไฟล์ |
+
+Worker ต่อ job จะไม่เกินค่าที่ขอ, `GOMAXPROCS` หรือจำนวนไฟล์ จำนวน file transforms สูงสุดทั้ง process คือ `max-concurrent-jobs × effective workers`
+
+เมื่อ request ถูกยกเลิกหรือหมดเวลา ระบบจะหยุด dispatch งานใหม่และหยุด streaming ที่ read/write boundary หากยกเลิกก่อน hard-link commit point จะไม่มี final output แต่หาก cancellation เกิดพร้อม commit พอดี output ที่เขียนครบแล้วอาจถูก publish สำเร็จและจะไม่ถูก rollback
+
+## CLI
+
+### ไฟล์เดียว
+
+Encrypt:
 
 ```sh
+./pgp-go encrypt \
+  -in plaintext.bin \
+  -out message.pgp \
+  -public-key recipient-public.asc
+```
+
+Decrypt:
+
+```sh
+./pgp-go decrypt \
+  -in message.pgp \
+  -out plaintext.bin \
+  -private-key recipient-private.asc \
+  -passphrase-file private-key.pass \
+  -max-output-bytes 1073741824
+```
+
+`-passphrase-file` ใช้เฉพาะ decrypt และตัด line ending ท้ายไฟล์หนึ่งชุด (`LF` หรือ `CRLF`) หาก private key ไม่ได้เข้ารหัสไม่ต้องระบุ flag นี้
+
+### Batch
+
+CLI batch ใช้ manifest schema เดียวกับ Service API:
+
+```sh
+./pgp-go encrypt \
+  -manifest encrypt-manifest.json \
+  -input-root ./incoming \
+  -output-root ./encrypted \
+  -public-key recipient-public.asc \
+  -max-files 20 \
+  -workers 0
+```
+
+```sh
+./pgp-go decrypt \
+  -manifest decrypt-manifest.json \
+  -input-root ./encrypted \
+  -output-root ./decrypted \
+  -private-key recipient-private.asc \
+  -passphrase-file private-key.pass \
+  -max-output-bytes 1073741824 \
+  -workers 4
+```
+
+CLI เขียน compact JSON report ไป stdout หากมี failure อย่างน้อยหนึ่งไฟล์จะเขียน report ให้ครบก่อน exit ด้วย code `1`
+
+## Package API
+
+แพ็กเกจ `pgpcrypto` เป็น streaming core ต่อไฟล์:
+
+```go
+keyFile, err := os.Open("recipient-public.asc")
+if err != nil {
+    return err
+}
+defer keyFile.Close()
+
+encryptor, err := pgpcrypto.NewEncryptor(keyFile)
+if err != nil {
+    return err
+}
+
+return encryptor.Encrypt(destination, source)
+```
+
+สำหรับ decrypt ใช้ `pgpcrypto.NewDecryptor(privateKeyReader, passphrase, config)` โดย `nil` config ใช้ plaintext limit default 1 GiB เมธอด `Encrypt` และ `Decrypt` ใช้พร้อมกันหลาย goroutine ได้หลัง constructor สำเร็จ
+
+Package API อาจเขียน destination บางส่วนก่อนคืน error ผู้เรียกที่ต้องการ atomic file ควรใช้ temporary file ก่อน publish หรือใช้ CLI/Service API
+
+## Output Safety
+
+- ไม่มี overwrite mode
+- Destination ที่มีอยู่แล้วรวมถึง symlink จะถูกปฏิเสธ
+- Temporary output ใช้ permission `0600`
+- Final output ถูก publish ด้วย hard link แบบ atomic no-clobber
+- Batch เป็น atomic ต่อไฟล์ ไม่ใช่ transaction ทั้ง job
+- Output ที่สำเร็จจะคงอยู่แม้ไฟล์อื่นใน job ล้มเหลว
+
+ข้อจำกัด:
+
+- Filesystem ต้องรองรับ hard link
+- ไม่มี directory `fsync` จึงไม่รับประกัน crash durability
+- Canonical-path validation ป้องกัน traversal จาก request แต่ไม่ใช่ filesystem sandbox
+- Input/output roots และ ancestor directories ต้องไม่ถูก process ที่ไม่น่าเชื่อถือ rename หรือสลับ symlink ระหว่างทำงาน
+
+## Security Notes
+
+- Service API บังคับ Bearer authentication สำหรับ `POST /v1/jobs`
+- Token ถูกเปรียบเทียบแบบ constant-time และต้องเป็น single-line value ที่ไม่ว่าง
+- ห้ามเก็บ operational key, token หรือ passphrase ใน source code, command line หรือ log
+- Private key ที่ปลดล็อกแล้วอยู่ใน process memory ตลอดอายุ service
+- Ciphertext มี integrity protection แต่ระบบนี้ไม่มี signing และไม่ยืนยันตัวผู้ส่ง
+- ควรให้ผู้เชี่ยวชาญตรวจ cryptography, key lifecycle, dependency และ threat model ก่อนใช้งาน production
+
+โฟลเดอร์นี้ไม่มี operational key หรือ passphrase ของระบบจริง แต่ local fork อาจมี test fixtures จาก upstream ซึ่ง secret scanner สามารถรายงานได้
+
+## Local `go-crypto` Fork
+
+`third_party/go-crypto` เป็น local fork ของ `github.com/ProtonMail/go-crypto v1.4.1` เพื่อเปลี่ยน OpenPGP ZLIB implementation จาก standard library เป็น `github.com/klauspost/compress/zlib v1.19.0` โดยยังคงรูปแบบ ZLIB/RFC 1950 และ OpenPGP interoperability
+
+รายละเอียด upstream commit, checksum และ intentional diff อยู่ใน [FORK.md](FORK.md)
+
+## Validation และ Security Scan
+
+```sh
+go build ./...
 go vet ./...
 go test ./...
+go test -race ./...
 (cd third_party/go-crypto && go test ./...)
-govulncheck ./...  # เมื่อได้ติดตั้ง govulncheck แล้ว
+govulncheck ./...  # ต้องติดตั้ง govulncheck ก่อน
 ```
-## ข้อควรระวังสำหรับ production
-
-โฟลเดอร์นี้ไม่มี operational/application key หรือ passphrase ของระบบจริง แต่ vendored dependency มี non-production test key fixtures จาก upstream ซึ่ง secret scanner อาจรายงาน ระบบจริงควรเก็บ key ใน KMS หรือ secret manager ที่เหมาะสม กำหนดสิทธิ์ขั้นต่ำ และมีนโยบาย rotation/revocation ที่ทดสอบแล้ว ห้ามเก็บ passphrase ใน source code, command line หรือ log
-
-การเข้ารหัสนี้ **ไม่มีการ sign และไม่ยืนยันตัวผู้ส่ง** ผู้รับทราบได้ว่า ciphertext ผ่าน integrity protection แต่ไม่ควรตีความว่าเป็น sender authentication หากระบบต้องการ authenticity ต้องออกแบบ signing และ trust policy แยกต่างหาก
-
-`third_party/go-crypto` เป็น local fork จาก POC เพื่อเปลี่ยน ZLIB implementation รายละเอียดและ upstream commit/checksum ที่ตรวจไว้มีใน [FORK.md](FORK.md) แม้รูปแบบ output ยัง interoperable กับ OpenPGP แต่ release pipeline ต้อง reproduce และ verify diff จริง ไม่ควรเชื่อเอกสารเพียงอย่างเดียว ผู้ตรวจสอบยังต้องประเมิน dependency risk, key lifecycle, interoperability, metadata limits และ threat model ก่อนใช้ production รวมถึงทำ security/cryptography review โดยผู้เชี่ยวชาญ
